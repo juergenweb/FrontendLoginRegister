@@ -58,7 +58,7 @@ Redirection,Weiterleitung,,site/modules/FrontendLoginRegister/FrontendLoginRegis
 "Enter a period of time in days after which the user account will be deleted %s and the account verification is still pending.","Geben Sie einen Zeitraum in Tagen ein, nach dem das Benutzerkonto gelöscht wird %s und die Kontobestätigung noch immer ausständig ist.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,5eb3fe131298728186b065e9d7dc1b18
 ", after the reminder mail has been sent",", nachdem eine Erinnerungsmail gesendet wurde",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,f96d57ee423376f2bb4cb1b230a81a39
 Roles,Rollen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,a5cd3ed116608dac017f14c046ea56bf
-"Select the role(s) which should be added to newly registered users.","Wählen Sie die Rolle(n) aus, welche einem",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,fb006e4ada7f7ff5a3ece9e053779372
+"Select the role(s) which should be added to newly registered users.","Wählen Sie die Rolle(n) aus, welche einem neu registrierten Benutzer zugewiesen werden soll(en).",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,fb006e4ada7f7ff5a3ece9e053779372
 "Please select which fields should be displayed on the frontend registration form.","Bitte wählen Sie aus, welche Eingabe-Felder im Registrierungs-Formular im Frontend angezeigt werden sollen.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,80c53233639ee052db80d2cfa861dbc5
 "Account settings",Konto-Einstellungen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,8af703b2bf59cc9742883ae7f4cb0e5b
 "Account deletion",Konto-Löschung,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,dee12d83249dd7abd9012ae73fc3b012
@@ -117,7 +117,7 @@ Roles,Rollen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,a5
 "%s form fields","%s Formular Felder",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,030a8dd567f5606ce0d0e8cdf51183ed
 "Field email was set to unique, because this is necessary for sending emails to the right user.","Das E-Mail Feld wurde auf unique gesetzt, da dies für das Senden von E-Mails notwendig ist.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,207d9f1e507bf62843b1d84d689c0148
 Days,Tage,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,e807d3ccf8d24c8c1a3d86db5da78da8
-"According to your settings, an unverified user account will be deleted %s day(s) after the registration.","Entsprechend Ihrer Einstellungen wird in nicht bestätigtes Benutzerkonto nach %s Tag(en) gelöscht.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,81ab11fbe84d59b70b91cfa26e671874
+"According to your settings, an unverified user account will be deleted %s day(s) after the registration.","Entsprechend Ihrer Einstellungen wird ein nicht bestätigtes Benutzerkonto nach %s Tag(en) gelöscht.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,81ab11fbe84d59b70b91cfa26e671874
 en,de,description,file,hash
 "Action required to activate your account","Aktion erforderlich, um Ihr Konto zu aktivieren",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,fc6b228c1c76a11ae16c0ae5cfdd61c8
 "Have you forgotten to verify your account?","Haben Sie vergessen, Ihr Konto zu bestätigen?",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,dd79d2ddc57b56fbb60b6e534495e2b7
