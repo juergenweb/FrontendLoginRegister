@@ -1,4 +1,4 @@
-# FrontendLogin
+# FrontendLoginRegister
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
 
@@ -19,7 +19,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - "One-click" switch between login or login and registration option
 - Double opt-in with activation link on new registrations
 - Automatic sending of reminder mails, if account has not been activated after a certain time
-- Automatic deletion of unverified accounts after a certain time to prevent unused accounts (user will be warned via email before deletion) 
+- Automatic deletion of unverified accounts after a certain time to prevent unused accounts (user will be warned via email before deletion)
 - Option to use TFA-Email if installed for higher security on login
 - Mutli-language
 - Select if you want to login with username and password or email and password
@@ -31,12 +31,12 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - Support for SeoMaestro if installed
 
 ## Installation
-Download the module, rename the module folder from FrontendLogin-main to FrontendLogin and add it inside the
+Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
 site/modules folder. Refresh your modules in the backend and install the module as usual.
 Go to the module configuration and make your settings.
 
 ## Configuration
-The FrontendLogin module works out of the box, but it offers the following configuration:
+The FrontendLoginRegister module works out of the box, but it offers the following configuration:
 
 * **`Login or Login/Registration`** Select, if you want to offer only login or in addition the possibility for registration
 * **`Userdata for login`** Decide whether to log in with username and password or email and password
@@ -69,7 +69,7 @@ this:
 // This is the code of the fl_registerpage.php which includes the registration form
             echo '<div id="content">';
             echo $page->body;
-            echo $modules->get('FrontendLogin')->RegisterPage();
+            echo $modules->get('FrontendLoginRegister')->RegisterPage();
             echo '</div>';
 ```
 If you want to change some parameters of a form, you can use the FrontendForms API
@@ -78,7 +78,7 @@ If you want to change some parameters of a form, you can use the FrontendForms A
 // This is the code of the fl_registerpage.php which includes the registration form
             echo '<div id="content">';
             echo $page->body;
-            $form = $modules->get('FrontendLogin')->RegisterPage();
+            $form = $modules->get('FrontendLoginRegister')->RegisterPage();
             $form->setErrorMsg('OMG, there are errors!'); // set a new error message
             $form->disableCaptcha(); // disable the CAPTCHA if it is globally enabled
             $form->setMinTime(10); // set the min time until the form should be submitted to 10 seconds
@@ -140,10 +140,10 @@ the workflow to let users register, login, logout, change their profile data and
 
 ## Double opt-in for newly registered users
 To prevent fake registration, every new registered user will get a confirmation email which contains an activiation link to verify his account. After the user has acitvated his account by clicking on the link, the status of this account will change to "confirmed" and the user will be able to login.
-At the backend you can see the account confirmation inside the user table. 
+At the backend you can see the account confirmation inside the user table.
 If an account is confirmed, than the date and time of the confirmation will be displayed in the table.
 
-![alt text](https://github.com/juergenweb/FrontendLogin/blob/main/images/usertable.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/usertable.png?raw=true)
 
 Just to mention: The verification date will only be added to users which verified their account via email, not at users created in the backend.
 
