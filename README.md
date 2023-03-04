@@ -95,23 +95,26 @@ if you have made changes before you uninstall the module. Otherwise, you have to
 
 ## What happens during the installation process?
 
-### Creation of 5 new user fields which will be added to the user template
+### Creation of 8 new user fields which will be added to the user template
 
 During the installation process of this module 5 new fields will be created:
 
 - fl_activation: Stores the activation code if a new account was created
-- fl_recovery: Stores the recovery code if a new password was requested
-- fl_recoveryDateTime: Stores the date and time when the recovery code was created
-- fl_activationVerified: Holds the date and time when the user has verified his account
+- fl_activationdatetime: Holds the date and time when the user has verified his account
 - fl_reminderDateTime: Holds the date and time when the reminder email was sent
+- fl_recoverylogindata: Stores the recovery code if a new password was requested
+- fl_recoverylogindatadatetime: Stores the date and time when the recovery code was created
+- fl_deleteaccount: This field holds the deletion code if the user wants to delete his account
+- fl_deleteaccountdatetime: This field holds the date/time when the deletion code was created
+- fl_unlockaccount: This field contains the code to unlock the account
 
-These 5 fields will be added to the user template, but they are hidden by default, because they are only needed for
+These 8 fields will be added to the user template, but they are hidden by default, because they are only needed for
 the administration of users by this module and not to be filled out by humans.
 These fields fe contain activation codes, timestamps and so on... nothing you will need to take care about.
 
-### Creation of 9 new templates
+### Creation of 10 new templates
 
-In addition 9 new templates will be created. These templates are needed for the pages, that will be created by this
+In addition 10 new templates will be created. These templates are needed for the pages, that will be created by this
 module.
 
 - fl_activationpage: Template which checks the activation code sent by the user to activate the account
@@ -123,10 +126,11 @@ module.
 - fl_loginpage: Template which contains the login form.
 - fl_logoutpage: Template which contains the session logout.
 - fl_profilepage: Template which contains the profile form if the user is logged in.
+- fl_unlockaccountpage: Template which contains the form to unlock the account by using the password. 
 
-### Creation of 9 new pages
+### Creation of 10 new pages
 
-At the last step 9 new pages, which use the templates above, will be created under the homepage. These pages are for
+At the last step 10 new pages, which use the templates above, will be created under the homepage. These pages are for
 the workflow to let users register, login, logout, change their profile data and so on.
 
 - Account activation page
@@ -138,6 +142,7 @@ the workflow to let users register, login, logout, change their profile data and
 - Profile page
 - Login data forgotten page
 - Create new login data page
+- Unlock account page
 
 ## Double opt-in for newly registered users
 To prevent fake registration, every new registered user will get a confirmation email which contains an activiation link to verify his account. After the user has acitvated his account by clicking on the link, the status of this account will change to "confirmed" and the user will be able to login.
@@ -164,7 +169,6 @@ As you can see, always the same email address with some password variations was 
 By default, the number of max. attempts is set to 5. So after the 5th attempt, the module checks if a user account with the given email address exists. If yes, then a lock code will be written inside the database to the appropriate user. The user will get an email containing the information about the locked account and a link to unlock it again.
 If a user has an entry with the lock code inside the database, it is no longer possible to login to the account until the lock code will be removed by using the unlock link.
 This measure is intended to protect access to user data. 
-
 
 
 ## Support for SeoMaestro
