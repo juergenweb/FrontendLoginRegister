@@ -1,4 +1,4 @@
-# FrontendLoginRegister
+# FrontendLogin
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
 
@@ -14,12 +14,29 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - CronJob: Will be installed automatically, if not installed
 - TfaEmail: Only if you want to use 2-factor-authentication with email and code
 
+## Highlights
+- "One-click" integration of an user login/registration system without the hazzle of creating all pages by hand
+- "One-click" switch between login or login and registration option
+- Double opt-in with activation link on new registrations
+- Automatic sending of reminder mails, if account has not been activated after a certain time
+- Automatic deletion of unverified accounts after a certain time to prevent unused accounts (user will be warned via email before deletion) 
+- Option to use TFA-Email if installed for higher security on login
+- Mutli-language
+- Select if you want to login with username and password or email and password
+- Select the desired roles for newly created users
+- Select, which fields of the user template should be displayed on the registration and profile form (beside the mandatory fields)
+- Offer users the possibility to delete their account in the members area using a deletion link with time expiration
+- Customize the texts of the emails send by this modules
+- Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights)
+- Support for SeoMaestro if installed
+
 ## Installation
-Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
+Download the module, rename the module folder from FrontendLogin-main to FrontendLogin and add it inside the
 site/modules folder. Refresh your modules in the backend and install the module as usual.
+Go to the module configuration and make your settings.
 
 ## Configuration
-The FrontendLoginRegister module works out of the box, but it offers the following configuration:
+The FrontendLogin module works out of the box, but it offers the following configuration:
 
 * **`Login or Login/Registration`** Select, if you want to offer only login or in addition the possibility for registration
 * **`Userdata for login`** Decide whether to log in with username and password or email and password
@@ -38,6 +55,7 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`Select email template`** Select which HTML email template should be used for sending emails
 * **`From email address`** Enter the email address, which should be displayed as sender email address for emails
 * **`Sender name`** Enter the name, which should be displayed as sender of the emails
+* **`Email Texts`** You can customize the text of each email, that will be send by this module, using a CKEditor field
 
 Some settings will be taken from the FrontendForms module settings (fe enable/disable Captcha, logging failed attempts)
 and cannot be set individually in the module configuration of this module globally, but you can always change form
@@ -49,16 +67,18 @@ this:
 
 ```php
 // This is the code of the fl_registerpage.php which includes the registration form
-echo '<div id="content">';
-            echo $modules->get('FrontendLoginRegister')->RegisterPage();
+            echo '<div id="content">';
+            echo $page->body;
+            echo $modules->get('FrontendLogin')->RegisterPage();
             echo '</div>';
 ```
 If you want to change some parameters of a form, you can use the FrontendForms API
 
 ```php
 // This is the code of the fl_registerpage.php which includes the registration form
-echo '<div id="content">';
-            $form = $modules->get('FrontendLoginRegister')->RegisterPage();
+            echo '<div id="content">';
+            echo $page->body;
+            $form = $modules->get('FrontendLogin')->RegisterPage();
             $form->setErrorMsg('OMG, there are errors!'); // set a new error message
             $form->disableCaptcha(); // disable the CAPTCHA if it is globally enabled
             $form->setMinTime(10); // set the min time until the form should be submitted to 10 seconds
@@ -70,11 +90,11 @@ You can find much more infos in the Readme file of the FrontendForms module, so 
 into detail at this point.
 
 > ⚠ If you uninstall the module, all manual changes to the templates will be lost, so make a back-up of your templates
-if you have made changes before you uninstall the module. Otherwise, you have to write your changes again to the templates.
+if you have made changes before you uninstall the module. Otherwise, you have to write your changes to the templates again.
 
 ## What happens during the installation process?
 
-### Creation of 5 new fields
+### Creation of 5 new user fields which will be added to the user template
 
 During the installation process of this module 5 new fields will be created:
 
@@ -118,6 +138,15 @@ the workflow to let users register, login, logout, change their profile data and
 - Login data forgotten page
 - Create new login data page
 
+## Double opt-in for newly registered users
+To prevent fake registration, every new registered user will get a confirmation email which contains an activiation link to verify his account. After the user has acitvated his account by clicking on the link, the status of this account will change to "confirmed" and the user will be able to login.
+At the backend you can see the account confirmation inside the user table. 
+If an account is confirmed, than the date and time of the confirmation will be displayed in the table.
+
+![alt text](https://github.com/juergenweb/FrontendLogin/blob/main/images/usertable.png?raw=true)
+
+Just to mention: The verification date will only be added to users which verified their account via email, not at users created in the backend.
+
 ## Support for SeoMaestro
 If you have installed the fabulous SeoMaestro module by Wanze, this module set some default values for all pages,
 that will be created by this module to the seo field too. This is very comfortable, because you do not have to take care
@@ -139,10 +168,6 @@ The module will be shipped with the German translations (default is English).
 After installing a language file all titles and descriptions in that language will be added to the pages (and to SeoMaestro fields if installed).
 
 ## ToDo
-Email templates translation files will not be found by ProcessWire by default, because these are HTML and not PHP
-files - Eventually using a hook to add them to the translation files list
+Testing, testing, testing....
 
-Translations in the email templates are always in the default language. Static translations will not be rendered in the 
-user language.
-
-This read me file will be completed time after time - so please be patient ;-)
+This read me file will be extended time after time - so please be patient ;-)
