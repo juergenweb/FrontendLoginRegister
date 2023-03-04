@@ -266,8 +266,7 @@ class LoginPage extends FrontendLoginRegisterPages
             return $form->render();
         } else {
             // render login form
-            // TODO setMaxAttempts wieder auf z.b 5 ändern
-            $this->setMaxAttempts(0);
+            $this->setMaxAttempts(5);
             $this->setMinTime(3);
             $this->setMaxTime(3600);
             $this->setSuccessMsg($this->_('You are now logged in.'));
@@ -364,6 +363,7 @@ class LoginPage extends FrontendLoginRegisterPages
                     $keys = $this->array_keys_multi($this->wire('session')->get($user_field_name));
 
                     if ($this->getMaxAttempts()) {
+                        bd($this->getMaxAttempts());
                         // set lock if $session blocked is set
                         $limit_reached = (!is_null($this->wire('session')->get('blocked')));
                     } else {
@@ -372,11 +372,14 @@ class LoginPage extends FrontendLoginRegisterPages
                     }
                     if ($limit_reached) {
 
+                        $lock_account = false; // set to false by default
+
                         // check if always the same username or email was used
                         if (array_unique($keys)) {
                             // always the same email or username was used for the login attempts
                             // so check if a user exists with this username or email in the database
-                            if ($this->wire('users')->get($this->input_selectlogin . '=' . $keys[0])) {
+                            if (($this->wire('users')->get($this->input_selectlogin . '=' . $keys[0])->id) != 0) {
+
                                 // user was found
                                 $this->user = $this->wire('users')->get($this->input_selectlogin . '=' . $keys[0]);
 
