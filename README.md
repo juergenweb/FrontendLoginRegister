@@ -105,7 +105,7 @@ During the installation process of this module 5 new fields will be created:
 - fl_recoverylogindata: Stores the recovery code if a new password was requested
 - fl_recoverylogindatadatetime: Stores the date and time when the recovery code was created
 - fl_deleteaccount: This field holds the deletion code if the user wants to delete his account
-- fl_deleteaccountdatetime: This field holds the date/time when the deletion code was created. This is needed because the deletion code is only valid for 5 hours.
+- fl_deleteaccountdatetime: This field holds the date/time when the deletion code was created. This is needed because the deletion code is only valid for 5 minutes.
 - fl_unlockaccount: This field contains the code to unlock the account
 
 These 8 fields will be added to the user template, but they are hidden by default, because they are only needed for
