@@ -15,7 +15,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - TfaEmail: Only if you want to use 2-factor-authentication with email and code
 
 ## Highlights
-- "One-click" integration of an user login/registration system without the hazzle of creating all pages by hand
+- "One-click" integration of an user login/registration system without the hazzle of creating all pages and forms by hand
 - "One-click" switch between login or login and registration option
 - Double opt-in with activation link on new registrations
 - Automatic sending of reminder mails, if account has not been activated after a certain time
@@ -29,6 +29,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - Customize the texts of the emails send by this modules
 - Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights)
 - Support for SeoMaestro if installed
+- Lock accounts via code inside the database if someone tries to log in with same username or email and different password variations 
 
 ## Installation
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
@@ -146,6 +147,25 @@ If an account is confirmed, than the date and time of the confirmation will be d
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/usertable.png?raw=true)
 
 Just to mention: The verification date will only be added to users which verified their account via email, not at users created in the backend.
+
+## Completely lock accounts by suspicious behavior
+This is for the case if someone tries to login with same username or email (depending on your settings) and different variations of passwords.
+
+Example: A user tries to login with the following credentials using email and password:
+
+* test@example/password1
+* test@example/password2
+* test@example/password3
+* test@example/password4
+* test@example/password4
+
+As you can see, always the same email address with some password variations was used to try a login. To prevent such an attempt to hack an account, this module identifies a behaviour where same email address (or same username) was used.
+
+By default, the number of max. attempts is set to 5. So after the 5th attempt, the module checks if a user account with the given email address exists. If yes, then a lock code will be written inside the database to the appropriate user. The user will get an email containing the information about the locked account and a link to unlock it again.
+If a user has an entry with the lock code inside the database, it is no longer possible to login to the account until the lock code will be removed by using the unlock link.
+This measure is intended to protect access to user data. 
+
+
 
 ## Support for SeoMaestro
 If you have installed the fabulous SeoMaestro module by Wanze, this module set some default values for all pages,
