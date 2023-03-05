@@ -58,7 +58,7 @@ Redirection,Weiterleitung,,site/modules/FrontendLoginRegister/FrontendLoginRegis
 "Enter a period of time in days after which the user account will be deleted %s and the account verification is still pending.","Geben Sie einen Zeitraum in Tagen ein, nach dem das Benutzerkonto gelöscht wird %s und die Kontobestätigung noch immer ausständig ist.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,5eb3fe131298728186b065e9d7dc1b18
 ", after the reminder mail has been sent",", nachdem eine Erinnerungsmail gesendet wurde",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,f96d57ee423376f2bb4cb1b230a81a39
 Roles,Rollen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,a5cd3ed116608dac017f14c046ea56bf
-"Select the role(s) which should be added to newly registered users.","Wählen Sie die Rolle(n) aus, welche einem neu registrierten Benutzer zugewiesen werden soll(en).",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,fb006e4ada7f7ff5a3ece9e053779372
+"Select the role(s) which should be added to newly registered users.","Wählen Sie die Rolle(n) aus, welche einem neu registrierten Benutzer zugewiesen werden sollen.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,fb006e4ada7f7ff5a3ece9e053779372
 "Please select which fields should be displayed on the frontend registration form.","Bitte wählen Sie aus, welche Eingabe-Felder im Registrierungs-Formular im Frontend angezeigt werden sollen.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,80c53233639ee052db80d2cfa861dbc5
 "Account settings",Konto-Einstellungen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,8af703b2bf59cc9742883ae7f4cb0e5b
 "Account deletion",Konto-Löschung,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,dee12d83249dd7abd9012ae73fc3b012
@@ -119,17 +119,19 @@ Roles,Rollen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,a5
 Days,Tage,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,e807d3ccf8d24c8c1a3d86db5da78da8
 "According to your settings, an unverified user account will be deleted %s day(s) after the registration.","Entsprechend Ihrer Einstellungen wird ein nicht bestätigtes Benutzerkonto nach %s Tag(en) gelöscht.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,81ab11fbe84d59b70b91cfa26e671874
 en,de,description,file,hash
-"Action required to activate your account","Aktion erforderlich, um Ihr Konto zu aktivieren",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,fc6b228c1c76a11ae16c0ae5cfdd61c8
-"Have you forgotten to verify your account?","Haben Sie vergessen, Ihr Konto zu bestätigen?",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,dd79d2ddc57b56fbb60b6e534495e2b7
-"Your account has been deleted","Ihr benutzer-Konto wurde gelöscht",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,220d4fb4dc0df6ce398ab2143fe1b991
-"Good bye!",Aufwiedersehen!,,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,45dbe67ab9d69929dc41b8bfe83ce764
-"A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.","Beim Speichern der Benutzerdaten ist ein technisches Problem aufgetreten, so dass die Benutzerdaten nicht gespeichert werden konnten. Bitte versuchen Sie es noch einmal. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Webmaster dieser Website.",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,c21061f89026131a859929bf526452e4
-Login?,Anmelden?,,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,3d60e1651d302a5aaf33325d3f7d6298
-"Change password","Passwort ändern",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,0b39c5aca15b84b1ad53a94d6b3feb78
-"Old password","Altes Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,062d2b8bc2cfac7772c75ae8090fb9d1
-"New password","Neues Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,3544848f820b9d94a3f3871a382cf138
-Language,Sprache,,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,4994a8ffeba4ac3140beb89e8d41f174
-TFA,2-Faktor-Authentifizierung,,site/modules/FrontendLoginRegister/pages/FrontendLoginPages.php,61bca12cd76652bf2fe763b5c4952066
+"Action required to activate your account","Aktion erforderlich zur Aktivierung Ihres Benutzer-Kontos",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,fc6b228c1c76a11ae16c0ae5cfdd61c8
+"Have you forgotten to verify your account?","Haben Sie vergessen, Ihr Benutzer-Konto zu bestätigen?",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,dd79d2ddc57b56fbb60b6e534495e2b7
+"Your account has been deleted","Ihr Benutzer-Konto wurde gelöscht",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,220d4fb4dc0df6ce398ab2143fe1b991
+"Good bye!",Aufwiedersehen!,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,45dbe67ab9d69929dc41b8bfe83ce764
+"A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.","Beim Speichern der Benutzerdaten ist ein technisches Problem aufgetreten, so dass die Benutzerdaten nicht gespeichert werden konnten. Bitte versuchen Sie es noch einmal. Sollte das Problem weiterhin bestehen, wenden Sie sich bitte an den Webmaster dieser Seite.",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c21061f89026131a859929bf526452e4
+Login?,Anmelden?,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,3d60e1651d302a5aaf33325d3f7d6298
+"Change password","Password ändern",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,0b39c5aca15b84b1ad53a94d6b3feb78
+"Old password","Altes Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,062d2b8bc2cfac7772c75ae8090fb9d1
+"New password","Neues Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,3544848f820b9d94a3f3871a382cf138
+Language,Sprache,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,4994a8ffeba4ac3140beb89e8d41f174
+TFA,=,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,61bca12cd76652bf2fe763b5c4952066
+day,Tag,"Singular Version",site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,628b7db04235f228d40adc671413a8c8
+days,Tage,"Plural Version",site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,44fdec47036f482b68b748f9d786801b
 en,de,description,file,hash
 Cancel,Abbrechen,,site/modules/FrontendLoginRegister/pages/LoginPage.php,ea4788705e6873b424c65e91c2846b19
 "Forgot login data?","Zugangsdaten vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,688a8c015589eb6d8210fa3de138e784
@@ -201,6 +203,9 @@ Profile,"Meine Profil-Seite",,site/modules/FrontendLoginRegister/config/template
 "Unlock your account","Entsperrung Ihres Kontos",,site/modules/FrontendLoginRegister/config/templatePages.php,6a5e2245a59fa1823aee98c980fc2567
 "Please enter your password to unlock your account.","Bitte geben Sie Ihr Passwort ein, um Ihr Konto zu entsperren.",,site/modules/FrontendLoginRegister/config/templatePages.php,49a1ebd568e287ce93c4f9693f81236b
 "Unlock your account after it was locked due to multiple unsuccessful attempts to login.","Entsperren Sie Ihr Konto, nachdem es aufgrund mehrerer erfolgloser Anmeldeversuche gesperrt wurde.",,site/modules/FrontendLoginRegister/config/templatePages.php,dd234a82889475fb18d0c8ce2fa10050
+en,de,description,file,hash
+"Your account is now unlocked.","Ihr Benutzer-Konto is nun gesperrt.",,site/modules/FrontendLoginRegister/pages/UnlockAccountPage.php,c42b700b5da2c2880998a156692e30fa
+"Unlock your account","Entsperren Sie Ihr Benutzer-Konto",,site/modules/FrontendLoginRegister/pages/UnlockAccountPage.php,6a5e2245a59fa1823aee98c980fc2567
 en,de,description,file,hash
 "Activation code",Aktivierungs-Code,,site/modules/FrontendLoginRegister/config/userFields.php,008aeca484f4370679310037e98baa88
 "This field holds the activation code if account was not activated, otherwise it is empty.","Dieses Feld enthält den Aktivierungscode, wenn das Konto noch nicht aktiviert wurde. Anderenfalls ist es leer.",,site/modules/FrontendLoginRegister/config/userFields.php,8510cce68342b048165e728c4d44cd2a
