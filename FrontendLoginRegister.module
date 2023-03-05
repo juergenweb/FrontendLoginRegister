@@ -87,7 +87,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-            'version' => '1.0.0',
+            'version' => '1.1.0',
             'singular' => true,
             'autoload' => true,
             'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.15', 'LazyCron'],
@@ -195,6 +195,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $activation_date = $user->getUnformatted('created');
 
                     $diff_time = $this->input_remind * 60 * 60 * 24;
+                    // TODO rückgängig
+                    $diff_time = $this->input_remind * 60 * 60;
 
                     if ((int)$activation_date + $diff_time < time()) {
                         // send reminder email to the user
@@ -241,6 +243,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                 }
                 $diff_time = $this->input_delete * 60 * 60 * 24;
+                // TODO rückgängig
+                $diff_time = $this->input_delete * 60 * 60;
 
                 if ((int)$reminder_date + $diff_time < time()) {
                     // send deletion confirmation email to the user
@@ -476,7 +480,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @param HookEvent $event
      * @return void
      */
-    protected function allowHTML(HookEvent $event): void
+    protected function allowHTML(HookEvent $event):void
     {
         $field = $event->object;
         // names of all fields where HTML tags are allowed in description and notes
@@ -489,7 +493,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_deletion_confirmation',
             'input_unlock_account'
         ];
-        if(in_array($field->name, $field_names)){
+        if (in_array($field->name, $field_names)) {
             $field->entityEncodeText = false;
         }
     }
@@ -503,14 +507,14 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
 
         // add the additional text
-        if($field->info){
-            $placeholder_list = '<h3>'.$this->_('Description of the placeholders used').':</h3>';
-            $placeholder_list .=  '<ul class"ph-info ">';
-            foreach($field->info as $ph_name => $ph_desc){
-                $placeholder_list .= '<li class="description">'.$ph_name.': '.$ph_desc.'</li>';
+        if ($field->info) {
+            $placeholder_list = '<h3>' . $this->_('Description of the placeholders used') . ':</h3>';
+            $placeholder_list .= '<ul class"ph-info ">';
+            foreach ($field->info as $ph_name => $ph_desc) {
+                $placeholder_list .= '<li class="description">' . $ph_name . ': ' . $ph_desc . '</li>';
             }
             $placeholder_list .= '</ul>';
-            $return = $return.$placeholder_list;
+            $return = $return . $placeholder_list;
         }
 
         // Populate back return value, if you have modified it
@@ -528,8 +532,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         <p>You will receive this email, because you have registered for an account at [[DOMAINVALUE]] on [[CURRENTDATETIMEVALUE]].<br>
         To confirm that you are the person who registered on this site, please click the link below to activate your account.</p>
         <p>[[VERIFICATIONLINK]]</p>
-        <p>After verification, your account is activated and you can log in with your credentials.</p>
-        <p>If you did not registered for an account, please ignore this email.</p>
+        <p>After verification, your account is activated, and you can log in with your credentials.</p>
+        <p>If you did not register for an account, please ignore this email.</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
         HEREA;
     }
@@ -547,7 +551,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         Without activation your account will be deleted in [[DAYSTODELETE]] on [[DELETEDATE]].<br>
         To activate your account, please click the following link to complete your registration:</p>
         <p>[[VERIFICATIONLINK]]</p>
-        <p>If you did not registered for an account, please ignore this email.</p>
+        <p>If you did not register for an account, please ignore this email.</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
         HEREA;
     }
@@ -577,7 +581,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         return <<<HEREA
         <p>Dear user</p>
         <p>You will receive this email, because you have requested a deletion link for your account at [[DOMAINVALUE]].<br>
-        Please click the link to delete your account, but please note that this link is only valid for 5 minutes and it only works if you are logged in.</p>
+        Please click the link to delete your account, but please note that this link is only valid for 5 minutes, and it only works if you are logged in.</p>
         <p>[[DELETEACCOUNTLINK]]</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
         HEREA;
@@ -821,9 +825,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $activation_notes = $this->_('You can adapt the text to your needs, but the placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
-        $activation_notes .= '<br>'.$this->_('All other placeholders are optional.');
+        $activation_notes .= '<br>' . $this->_('All other placeholders are optional.');
         $activationemail->notes = $activation_notes;
-        $activationemail->addTextAfterNotes= 'test';
+        $activationemail->addTextAfterNotes = 'test';
         $activationemail->required = 1;
         $email_text_fieldset->add($activationemail);
 
@@ -839,9 +843,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[TFACODE]]' => $this->_('The TFA-code, that has to be entered on the login form to log.'),
             '[[EXPIRATIONTIME]]' => $this->_('The time in minutes how long the code is valid (fe 5 minutes).'),
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
-         ];
+        ];
         $tfamail_notes = $this->_('The placeholder [[TFACODE]] must be present inside the text, because it contains the TFA code.');
-        $tfamail_notes .= '<br>'.$this->_('All other placeholders are optional.');
+        $tfamail_notes .= '<br>' . $this->_('All other placeholders are optional.');
         $tfamail->notes = $tfamail_notes;
         $tfamail->required = 1;
         $email_text_fieldset->add($tfamail);
@@ -861,7 +865,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $reminderemail_notes = $this->_('The placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
-        $reminderemail_notes .= '<br>'.$this->_('All other placeholders are optional.');
+        $reminderemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
         $reminderemail->notes = $reminderemail_notes;
         $reminderemail->useLanguages = true;
         $reminderemail->required = 1;
@@ -881,7 +885,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $passwordforgottenemail_notes = $this->_('The placeholder [[RECOVERPASSWORDLINK]] must be present inside the text, because it contains the link to create a new password.');
-        $passwordforgottenemail_notes .= '<br>'.$this->_('All other placeholders are optional.');
+        $passwordforgottenemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
         $passwordforgottenemail->notes = $passwordforgottenemail_notes;
         $passwordforgottenemail->useLanguages = true;
         $passwordforgottenemail->required = 1;
@@ -899,7 +903,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $deleteaccountemail_notes = $this->_('The placeholder [[DELETEACCOUNTLINK]] must be present inside the text, because it contains the link to delete the account.');
-        $deleteaccountemail_notes .= '<br>'.$this->_('All other placeholders are optional.');
+        $deleteaccountemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
         $deleteaccountemail->notes = $deleteaccountemail_notes;
         $deleteaccountemail->useLanguages = true;
         $deleteaccountemail->required = 1;
@@ -936,7 +940,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $unlock_account_notes = $this->_('The placeholder [[UNLOCKACCOUNTLINK]] must be present inside the text, because it contains the link unlock the account.');
-        $unlock_account_notes .= '<br>'.$this->_('All other placeholders are optional.');
+        $unlock_account_notes .= '<br>' . $this->_('All other placeholders are optional.');
         $unlock_account->notes = $unlock_account_notes;
         $unlock_account->useLanguages = true;
         $unlock_account->required = 1;
