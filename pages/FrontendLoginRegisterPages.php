@@ -105,7 +105,7 @@ class FrontendLoginRegisterPages extends Form
         $this->setMailPlaceholder('registrationdate',
             $this->wire('datetime')->date($this->getDateFormat($user), $user->created));
         // 2) number of days to deletion
-        $daystodelete = $this->_n('day', 'days', $this->input_delete)
+        $daystodelete = $this->_n('day', 'days', $this->input_delete);
         $this->setMailPlaceholder('daystodelete', (string)$this->input_delete.' '.$daystodelete);
         // 3) deletion date
         //calculate delete date
