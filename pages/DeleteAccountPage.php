@@ -152,7 +152,10 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
             // delete the user
             $this->wire('users')->delete($this->user);
         }
-        return parent::render();
+        // render the form on the frontend
+        $content =  $this->wire('page')->body;
+        $content .= parent::render();
+        return $content;
     }
 
 }
