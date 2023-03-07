@@ -39,19 +39,21 @@ trait checkUser
     /**
      * Check if a user exists with this querystring (code) in the database
      * @param string $querystringParameterName
-     * @return int
+     * @return bool
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function checkQueryStringUser(string $querystringParameterName): int
+    public function checkQueryStringUser(string $querystringParameterName): bool
     {
         $fieldName = str_replace('code', '', $querystringParameterName); // remove the string "code" from the string
-        $user = $this->wire('users')->get('fl_' . $fieldName . '=' . $this->queryString);
-        if($user->id != 0){
-            $this->user = $user;
-        }
-        return $user->id;
 
+        $user = $this->wire('users')->get('fl_' . $fieldName . '=' . $this->queryString);
+        bd($user);
+        if($user->id != 0){
+            $this->user = $user; // set the user object to the property user
+            return true;
+        }
+        return false;
     }
 
 }
