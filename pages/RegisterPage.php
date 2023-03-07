@@ -164,6 +164,7 @@ class RegisterPage extends FrontendLoginRegisterPages
                     $this->setMailPlaceholder('daystodelete', (string)$this->input_delete);
                     $this->setMailPlaceholder('deletedate', $this->wire('datetime')->date($this->getDateFormat($newUser), $newUser->fl_activationdatetime));
                     $this->setMailPlaceholder('verificationlink', $this->createActivationLink($newUser));
+                    $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($newUser));
 
                     // send an email with the activation link to the user
                     $m = new WireMail();
@@ -196,15 +197,21 @@ class RegisterPage extends FrontendLoginRegisterPages
                 $email = $this->getValue($email_field_name);
                 // run only if an email address was entered
             if ($this->getActivationCode($email)) {
-                //if($this->sendReminderMail($this->wire('users')->get('email='.$email))){
+                // send reminder mail
+                if($this->sendReminderMail($this->wire('users')->get('email='.$email))) {
                     // overwrite alert message
                     $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('It seems that you have already registered before but have forgotten to activate your account. To activate your account, please follow the instructions inside the mail that have been sent to you.'));
+                    // do not display the form
+                    $this->showForm = false;
+                }
                 }
             }
 
 
         }
         // render the form on the frontend
-        return parent::render();
+        $content =  $this->wire('page')->body;
+        $content .= parent::render();
+        return $content;
     }
 }
