@@ -43,7 +43,6 @@ class FrontendLoginRegisterPages extends Form
     protected string $redirectSuccess = '';
     protected string $queryString = ''; // The get parameter of the querystring
     protected string $input_preventIPs = ''; // String of forbidden IP addresses
-    protected string $pathToBodyFolder = ''; // The path to the mail body folder
 
     /*objects*/
     protected Page $login_page; // the login page object
@@ -106,7 +105,7 @@ class FrontendLoginRegisterPages extends Form
             $this->wire('datetime')->date($this->getDateFormat($user), $user->created));
         // 2) number of days to deletion
         $daystodelete = $this->_n('day', 'days', $this->input_delete);
-        $this->setMailPlaceholder('daystodelete', (string)$this->input_delete.' '.$daystodelete);
+        $this->setMailPlaceholder('daystodelete', $this->input_delete .' '.$daystodelete);
         // 3) deletion date
         //calculate delete date
         $delete_date_ts = time() + ((int)$this->input_delete * 86400);
@@ -114,6 +113,8 @@ class FrontendLoginRegisterPages extends Form
             $this->wire('datetime')->date($this->getDateFormat($user), $delete_date_ts));
         // 4) verification link
         $this->setMailPlaceholder('verificationlink', $this->createActivationLink($user));
+        // 5) not registered link
+        $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($user));
 
         $m->to($user->email);
         $m->from($this->input_email);
@@ -247,13 +248,13 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function checkForQueryString(string $queryStringName, string $redirect = '/'):string
+    protected function checkForQueryString(string $queryStringName, string|bool $redirect = '/'):string
     {
         // get the query string
         $queryString = $this->wire('input')->queryStringClean(['validNames' => [$queryStringName]]);
         $this->queryString = str_replace($queryStringName . '=', '', $queryString);
         //$this->queryString = $this->wire('sanitizer')->entities($this->wire('input')->get($queryStringName));
-        if (!$this->queryString) {
+        if (!$this->queryString && $redirect) {
             $this->wire('session')->redirect($redirect);
         }
         return $this->queryString;
@@ -364,23 +365,12 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function createLanguage():void
     {
-        // add the language field
-        $language = new Select('language');
-        $language->setLabel($this->_('Language'));
-        $languageIDs = [];
-        $user_lang_id = $this->user->language->id;
+        $language = new \FrontendForms\Language('language');
 
-        $language->setAttribute('value', $user_lang_id);
-        foreach ($this->wire('languages') as $lang) {
-            $languageIDs[] = $lang->id;
-        }
-
-        $language->setRule('required')->setCustomFieldName($this->_('Language'));
-        $language->setRule('integer');
-        $language->setRule('In', $languageIDs);
-        if (count($languageIDs) > 1) {
+        // add language field only if number of languages is higher than 1
+        if(count($this->wire('languages')) > 1){
             $this->add($language);
-        } // show this input only if site is multi-language (number of languages > 1)
+        }
     }
 
     /**
