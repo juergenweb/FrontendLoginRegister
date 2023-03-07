@@ -87,10 +87,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-            'version' => '1.1.0',
+            'version' => '1.0.0',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.15', 'LazyCron'],
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.16', 'LazyCron'],
         ];
     }
 
@@ -140,26 +140,20 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // send email to remind the user to activate the account
         $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
-
         // delete inactive accounts after a certain time
         $this->addHookAfter('LazyCron::everyHour', $this, 'deleteAccount');
-
         // set pages status to hidden on certain pages
         $this->addHookAfter('Modules::saveConfig', $this, 'setPageStatus');
-
         // set email to unique in the email field settings
         $this->addHookAfter('Modules::saveConfig', $this, 'setEmailUnique');
-
         // add the label "hours" next to the inputfield
         $this->addHookAfter('InputfieldInteger::render', $this, 'addDaysLabel');
+        // allow HTML tags inside the description of the inputfield_delete
         $this->addHookBefore('InputfieldInteger::render', $this, 'insertText');
-
         // write title, name and description in the page fields after adding a new translation file to a language
         $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToPages');
-
         // store the id of the page currently visited in a session - needed to get the last visited page
         $this->addHookAfter('Page::render', $this, 'setPageVisitedSession');
-
         // add javascript file to the HEAD section
         $this->addHookAfter('Page::render', $this, 'addAssets');
         // allow HTML tags in field notes and descriptions
@@ -188,13 +182,15 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             // find all users with activation code
             $users = $this->wire('users')->find('fl_activation!=');
             foreach ($users as $user) {
-                // take only user with empty fl_reminderdatetime
 
+                // take only user with empty fl_reminderdatetime
                 if (!$user->fl_reminderdatetime) {
 
                     $activation_date = $user->getUnformatted('created');
 
                     $diff_time = $this->input_remind * 60 * 60 * 24;
+                    // TODO rückgängig
+                    $diff_time = $this->input_remind * 60 * 60;
 
                     if ((int)$activation_date + $diff_time < time()) {
                         // send reminder email to the user
@@ -241,6 +237,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                 }
                 $diff_time = $this->input_delete * 60 * 60 * 24;
+                // TODO rückgängig
+                $diff_time = $this->input_delete * 60 * 60;
 
                 if ((int)$reminder_date + $diff_time < time()) {
                     // send deletion confirmation email to the user
@@ -529,7 +527,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         To confirm that you are the person who registered on this site, please click the link below to activate your account.</p>
         <p>[[VERIFICATIONLINK]]</p>
         <p>After verification, your account is activated, and you can log in with your credentials.</p>
-        <p>If you did not register for an account, please ignore this email.</p>
+        <p>If you did not register for an account, please ignore this email or click the following link to delete the user account and to prevent getting further emails.</p>
+        <p>[[NOTREGISTEREDLINK]]</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
         HEREA;
     }
@@ -547,7 +546,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         Without activation your account will be deleted in [[DAYSTODELETE]] on [[DELETEDATE]].<br>
         To activate your account, please click the following link to complete your registration:</p>
         <p>[[VERIFICATIONLINK]]</p>
-        <p>If you did not register for an account, please ignore this email.</p>
+        <p>If you did not register for an account, please ignore this email or click the following link to delete the user account and to prevent getting further emails.</p>
+        <p>[[NOTREGISTEREDLINK]]</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
         HEREA;
     }
@@ -608,9 +608,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     {
         return <<<HEREA
         <p>Dear user</p>
-        <p>Please use the code below to login into your account.</p>
+        <p>Please enter the code below on the screen to login into your account.</p>
         <p>[[TFACODE]]</p>
-        <p>Please note: This code is only valid for [[EXPIRATIONTIME]] seconds.</p>
+        <p>Please note: This code is only valid for [[EXPIRATIONTIME]].</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top:15px;">[[DONOTREPLAYVALUE]]</p>
         HEREA;
     }
@@ -818,6 +818,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
             '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
+            '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.'),
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $activation_notes = $this->_('You can adapt the text to your needs, but the placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
@@ -837,7 +838,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $tfamail->description = $this->_('Enter the text for the email which contains the TFA code if TFA is enabled.');
         $tfamail->info = [
             '[[TFACODE]]' => $this->_('The TFA-code, that has to be entered on the login form to log.'),
-            '[[EXPIRATIONTIME]]' => $this->_('The time in minutes how long the code is valid (fe 5 minutes).'),
+            '[[EXPIRATIONTIME]]' => $this->_('The time the code is valid including the unit (fe 5 minutes).'),
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $tfamail_notes = $this->_('The placeholder [[TFACODE]] must be present inside the text, because it contains the TFA code.');
@@ -858,6 +859,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DAYSTODELETE]]' => $this->_('The number of days until an unverified account will be deleted (fe 5).'),
             '[[DELETEDATE]]' => $this->_('The date where an unverified account will be deleted.'),
             '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
+            '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.'),
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $reminderemail_notes = $this->_('The placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
@@ -942,8 +944,20 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $unlock_account->required = 1;
         $email_text_fieldset->add($unlock_account);
 
-        $inputfields->add($email_text_fieldset);
+        $placeholders = new InputfieldMarkup();
+        $p_text = '<h3>'.$this->_('List of all additional placeholders, which can be used in the email texts').'</h3>';
+        $p_text .= '<p>'.$this->_('If you want, you can use any of the following placeholders in your email texts.').'</p>';
+        // create all general placeholders from Form class
+        $form = new Form('myid');
+        $p_text .= '<ul>';
+        foreach($form->generalPlaceholders() as $placeholder => $value){
+          $p_text .= '<li>[['.strtoupper($placeholder).']]: '.$value.'</li>';
+        }
+        $p_text .= '</ul>';
+        $placeholders->markupText = $p_text;
+        $email_text_fieldset->add($placeholders);
 
+        $inputfields->add($email_text_fieldset);
 
         // Email settings
         $emailfieldset = $modules->get('InputfieldFieldset');
@@ -1126,7 +1140,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             */
             
             echo '<div id="content">';
-            echo \$page->body;
             echo \$modules->get('FrontendLoginRegister')->$class();
             echo '</div>';
 EOT;
