@@ -53,6 +53,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
         //pass
         $pass = new Password('password');
         $pass->showPasswordToggle(); // add a checkbox below the input field to toggle show/hide the password in plain text
+        $pass->setRule('checkPasswordOfUser', $this->user);
         $this->add($pass);
 
         $button = new Button('submit');
@@ -78,16 +79,18 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
      */
     public function render(): string
     {
-
+        $content = '';
         if ($this->isValid()) {
             // grab the user and remove the lock code from the database
             $this->user->setOutputFormatting(false);
             $this->user->fl_unlockaccount = ''; // delete the lock code in the database
             $this->user->save();
             $this->user->setOutputFormatting();
+        } else {
+            $content .=  $this->wire('page')->body;
         }
-
-        return parent::render();
+        $content .= parent::render();
+        return $content;
     }
 
 }
