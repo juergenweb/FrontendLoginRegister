@@ -112,7 +112,10 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
             $this->user->setOutputFormatting();
         }
 
-        return parent::render();
+        // render the form on the frontend
+        $content =  $this->wire('page')->body;
+        $content .= parent::render();
+        return $content;
     }
 
 }
