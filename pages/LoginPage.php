@@ -5,7 +5,7 @@ namespace FrontendLoginRegister;
 
 /*
  * Class to create a login form
- * Supports TfaEmail too
+ * Supports TfaEmail too if enabled in the configuration settings
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb
@@ -23,10 +23,11 @@ use FrontendForms\Password as Password;
 use FrontendForms\Username as Username;
 use ProcessWire\HookEvent as HookEvent;
 use ProcessWire\Tfa as Tfa;
+use ProcessWire\TfaEmail;
 use ProcessWire\User;
-use ProcessWire\Wire as Wire;
 use ProcessWire\WireException;
 use ProcessWire\WireLog as WireLog;
+use ProcessWire\WireMail;
 use ProcessWire\WirePermissionException;
 use function ProcessWire\wireMail;
 
@@ -38,9 +39,7 @@ class LoginPage extends FrontendLoginRegisterPages
     protected Link $cl; // cancel link object
     protected Link $rl; // register link object
     protected Link $pfl; // password forgotten link object
-    protected string $loginCode = ''; // the login code which will be sent via email
-    // after how many failed attempts with same username/email and different passwords combinations
-    // should the user account locked via code inside the database
+
     protected int|string $lock_number = 5; // number after how many attempts a user account should be locked if maxAttempts is not set
 
     /**
@@ -58,14 +57,13 @@ class LoginPage extends FrontendLoginRegisterPages
         $this->rl = new Link('registerLink'); // instantiate a new instance for a link
         $this->pfl = new Link('passwordforgottenLink'); // instantiate a new instance for a link
 
+        bd($this->tfa->codeExpire);
+
         // Hook to replace start method entirely
         $this->addHookBefore('Tfa::start', $this, 'start');
 
-        // Grab the login code and add it to the property "logincode"
-        $this->addHookBefore('TfaEmail::emailCode', $this, 'getCode');
-
-        // Hook to return an error message if mail with authentication could not be sent
-        $this->addHookAfter('TfaEmail::emailCode', $this, 'checkCodeSent');
+        // Hook to replace emailCode method entirely
+        $this->addHookBefore('TfaEmail::emailCode', $this, 'emailCode');
 
     }
 
@@ -101,7 +99,7 @@ class LoginPage extends FrontendLoginRegisterPages
     }
 
     /**
-     * Method to create a link to cancel the login process
+     * Method to create a link to the registration page
      * @return Link
      * @throws WireException
      */
@@ -115,6 +113,7 @@ class LoginPage extends FrontendLoginRegisterPages
 
     /**
      * Send an email with the unlock account link to the user
+     * If the account is locked via a lock code, the user can unlock his account by getting an unlock link via email
      * @param User $user
      * @param string $code
      * @return bool
@@ -173,6 +172,8 @@ class LoginPage extends FrontendLoginRegisterPages
         /*
          Check if "deletion" session from deletion link is active
          This is the case if user clicks on the deletion link inside the email and is not logged in
+         Then he will be redirected from the deletion page to this page, where he has to log in first
+         to be able to delete his account permanently.
          */
         if ($this->wire('session')->get('deletion')) {
             // user comes from redirect of delete account page, but was not logged in
@@ -238,7 +239,9 @@ class LoginPage extends FrontendLoginRegisterPages
                 $form->add($this->___cancelLink());
             }
 
+            // log failed attempts if enabled
             $this->addLogFailedLoginAttempt();
+
             if ($form->isValid()) {
                 $this->tfa->sessionReset(); // remove all tfa session values
                 $this->wire('session')->forceLogin($user); // force login
@@ -304,6 +307,7 @@ class LoginPage extends FrontendLoginRegisterPages
                 $this->add($this->___registerLink());
             }
 
+            // log failed attempts if enabled
             $this->addLogFailedLoginAttempt();
 
             if ($this->isValid()) {
@@ -325,6 +329,7 @@ class LoginPage extends FrontendLoginRegisterPages
                     }
                 } else {
                     //an activation code is present -> user has not activated his account till now
+                    // send a reminder mail to activate the account
                     if ($user->fl_activation) {
                         // send reminder email to the user that he must activate his account
                         if ($this->sendReminderMail($user)) {
@@ -334,8 +339,7 @@ class LoginPage extends FrontendLoginRegisterPages
 
                         // check if TFA is enabled in the settings
                         if ($this->input_tfa) {
-                            // Hook to customize the email content of the authentication code mail
-                            $this->addHookBefore('WireMail::send', $this, 'changeMailData');
+
                             $this->wire('session')->set('type',
                                 'TfaEmail'); // set session for outputting message that a code was sent by email
                             $this->tfa->start($user->name, $this->getValue('pass')); // redirects
@@ -354,7 +358,6 @@ class LoginPage extends FrontendLoginRegisterPages
                     }
                 }
             } else {
-                // grab the post values
 
                 // grab the first field name: could be username or email
                 $user_field_name = $this->getAttribute('id') . '-' . $this->input_selectlogin;
@@ -363,7 +366,6 @@ class LoginPage extends FrontendLoginRegisterPages
                     $keys = $this->array_keys_multi($this->wire('session')->get($user_field_name));
 
                     if ($this->getMaxAttempts()) {
-                        bd($this->getMaxAttempts());
                         // set lock if $session blocked is set
                         $limit_reached = (!is_null($this->wire('session')->get('blocked')));
                     } else {
@@ -389,7 +391,7 @@ class LoginPage extends FrontendLoginRegisterPages
                             }
                         }
 
-                        // run code only if $lock_account is tre
+                        // run code only if $lock_account is true
                         if ($lock_account) {
 
                             // generate a random code
@@ -399,6 +401,8 @@ class LoginPage extends FrontendLoginRegisterPages
                             if ($this->sendAccountLockedMail($this->user, $lockCode)) {
                                 // remove session blocked if present because the account has been locked
                                 $this->wire('session')->remove('blocked');
+                                // remove the attempts session
+                                $this->wire('session')->remove('attempts');
 
                                 // save the lock code inside the database
                                 $this->user->setOutputFormatting(false);
@@ -434,12 +438,16 @@ class LoginPage extends FrontendLoginRegisterPages
                 $this->wire('session')->remove('error');
             }
 
-            return parent::render();
+            // render the form on the frontend
+            $content =  $this->wire('page')->body;
+            $content .= parent::render();
+            return $content;
         }
     }
 
     /**
      * Get all username/email inputs of the unsuccessful login attempts
+     * Will be needed to check if login attempts are always with the same username or email
      * @param array $array - the session array
      * @return array
      */
@@ -538,7 +546,9 @@ class LoginPage extends FrontendLoginRegisterPages
      */
     public function start(HookEvent $event)
     {
-        $event->replace = true;// replace the original start method completely
+        // replace the original start method completely
+        $event->replace = true;
+
         // change the field "username" to "name" because this is the name in the DB
         $dbFieldName = ($this->input_selectlogin == 'username') ? 'name' : $this->input_selectlogin;
         // grab the user
@@ -568,7 +578,9 @@ class LoginPage extends FrontendLoginRegisterPages
         }
         if (!$tfaModule->enabledForUser($user, $settings)) {
             return true;
-        } // check if Tfa is enabled for the current user
+        }
+
+        // check if Tfa is enabled for the current user
         if ($tfaModule->startUser($user, $settings)) {
             $key = $this->tfa->getSessionKey(true);
             $this->wire('session')->redirect($this->tfa->startUrl . '?tfa=' . $key);
@@ -582,50 +594,90 @@ class LoginPage extends FrontendLoginRegisterPages
     }
 
     /**
-     * Method to hook before the mail->send() method to customize the email
-     * Change the text, add a title property, change the subject, add email template if set
-     * @param HookEvent $event
-     * Triggered by addHookBefore WireMail::send
-     * @throws WireException
+     * Create time string containing hours, minutes and seconds out of seconds
+     * @param int $seconds
+     * @return string
      */
-    protected function changeMailData(HookEvent $event)
+    protected function secondsToTime(int $seconds):string
     {
-        $m = $event->object;
-        $m->subject(sprintf($this->_('Your authentication code for %s'), $this->wire('config')->httpHost));
-        // TODO title will not be used and displayed
-        $m->title($this->_('Use this code to login into your account'));
-        $this->setSenderName($m);
-        $m->mailTemplate($this->input_emailTemplate);
+        $times = [];
+
+        $sec = $seconds % 60;
+        $times[2] = ($sec <= 9) ? '0' . $sec : (string)$sec;
+
+        $hrs = (int)($seconds / 60);
+
+        $minutes = $hrs % 60;
+        $times[1] = ($minutes <= 9) ? '0' . $minutes : (string)$minutes;
+
+        $hours = (int)($hrs / 60);
+        $times[0] = ($hours <= 9) ? '0' . $hours : (string)$hours;
+
+        ksort($times);
+        $unit = $this->_('seconds');
+
+        if ($times[0] == '00') {
+            unset($times[0]);
+        } else {
+            $unit = $this->_n($this->_('hour'),
+                $this->_('hours'), (int)$times[0]);
+        }
+        if (!isset($times[0])) {
+            if ($times[1] != '00') {
+                $unit = $this->_n($this->_('minute'),
+                    $this->_('minutes'), (int)$times[1]);
+            } else {
+                unset($times[1]);
+            }
+        }
+        return  implode(':', $times) . ' ' . $unit;
     }
 
     /**
-     * Grab the login code and add it to the property "logincode"
-     * This code will be added to the email
-     * Will be triggered by addHookBefore TfaEmail:emailCode
+     * Method that replace the original emailCode method entirely
+     * Uses custom text for the code email
      * @param HookEvent $event
      * @return void
-     */
-    protected function getCode(HookEvent $event):void
-    {
-        $this->loginCode = $event->arguments(1);
-        $this->setMailPlaceholder('tfacode', $this->loginCode);
-        $this->setMailPlaceholder('expirationtime', (string)$this->tfa->codeExpire);
-    }
-
-    /** Add hook after emailCode to check if mail with code was sent successfully to the user
-     * @param HookEvent $event - get the event object
-     * Will be triggered by addHookAfter TfaEmail::emailCode
-     * Clears all warnings on the backend
-     * Creates an error message on the frontend if email could not be sent
      * @throws WireException
      */
-    protected function checkCodeSent(HookEvent $event)
+    protected function emailCode(HookEvent $event)
     {
-        if (!$event->return) {
-            $errorMsg = json_encode(['alert_dangerClass' => $this->_('Unable to send email due to possible email configuration error.')]);
-            $this->wire('session')->set('error', $errorMsg);
+        // replace the original emailCode method entirely
+        $event->replace = true;
+
+        // get user email, code and expiration time
+        $email = $event->arguments[0];
+        $code = $event->arguments[1];
+        $expire = $this->tfa->codeExpire;
+
+        // set placeholders for code and expiration time
+        // 1) tfa code
+        $this->setMailPlaceholder('tfacode', '<div id="tfacode">' . $code . '</div>');
+        // 2) expiration time
+        $this->setMailPlaceholder('expirationtime', $this->secondsToTime($expire));
+
+        // create own email
+        $m = new WireMail();
+        $m->subject(sprintf($this->_('Your authentication code for %s'), $this->wire('config')->httpHost));
+        $m->title($this->_('Use this code to login into your account'));
+
+        $m->to($email);
+        $m->from($this->input_email);
+        $this->setSenderName($m);
+        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext'));
+        $m->mailTemplate($this->input_emailTemplate);
+
+        if ($m->send()) {
+            // create alert text to enter the code on the screen
+            $alert = $this->getAlert();
+            $alert->setCSSClass('alert_warningClass');
+            $alert->setText($this->_('A code has been sent to you by email - please find it and enter it on this screen.'));
+            $event->return = true;
+        } else {
+            // output an error message that the mail could not be sent
+            $this->generateEmailSentErrorAlert();
+            $event->return = false;
         }
-        Wire::warnings('clear all'); // remove the displaying of "A code was sent to..." message in the backend after login on the frontend
     }
 
     /**
@@ -635,7 +687,7 @@ class LoginPage extends FrontendLoginRegisterPages
      */
     protected function checkIfAccountLocked(User $user):bool
     {
-        return (!is_null($user->fl_unlockaccount));
+        return ($user->fl_unlockaccount != '');
     }
 
 }
