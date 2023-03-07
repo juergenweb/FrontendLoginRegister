@@ -138,7 +138,10 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                 }
             }
         }
-        return parent::render();
+        // render the form on the frontend
+        $content =  $this->wire('page')->body;
+        $content .= parent::render();
+        return $content;
     }
 
 }
