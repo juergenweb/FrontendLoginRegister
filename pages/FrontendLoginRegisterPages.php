@@ -12,6 +12,7 @@ namespace FrontendLoginRegister;
  * Created: 06.07.2022
  */
 
+use DateTime;
 use Exception;
 use FrontendForms\Email as Email;
 use FrontendForms\FieldsetClose as FieldsetClose;
@@ -20,9 +21,9 @@ use FrontendForms\Form as Form;
 use FrontendForms\InputFields;
 use FrontendForms\InputPassword as InputPassword;
 use FrontendForms\InputRadioMultiple as InputRadioMultiple;
+use FrontendForms\Language;
 use FrontendForms\Password as Password;
 use FrontendForms\PasswordConfirmation as PasswordConfirmation;
-use FrontendForms\Select as Select;
 use FrontendForms\Username as Username;
 use ProcessWire\Field;
 use ProcessWire\FrontendForms;
@@ -101,18 +102,18 @@ class FrontendLoginRegisterPages extends Form
     protected function daysToDelete(User $user):int
     {
         // registration date
-        $registration = new \DateTime();
+        $registration = new DateTime();
         $registration->setTimestamp($user->created);
 
         // current date
-        $current = new \DateTime();
+        $current = new DateTime();
         $current->setTimestamp(time());
 
         // get difference between now and registration date in days
         $diff = $registration->diff($current);
         $diff_days = $diff->format('%a');
 
-        return ($diff_days + $this->input_delete);
+        return ((int)$diff_days + $this->input_delete);
     }
 
     /**
@@ -126,7 +127,7 @@ class FrontendLoginRegisterPages extends Form
 
         $days_to_delete = $this->daysToDelete($user);
 
-        $date_to_delete_ts = (new \DateTime('NOW'))->modify('+' . $days_to_delete . ' days')->getTimestamp();
+        $date_to_delete_ts = (new DateTime('NOW'))->modify('+' . $days_to_delete . ' days')->getTimestamp();
 
         $m = new WireMail();
 
@@ -404,7 +405,7 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function createLanguage():void
     {
-        $language = new \FrontendForms\Language('language');
+        $language = new Language('language');
 
         // add language field only if number of languages is higher than 1
         if (count($this->wire('languages')) > 1) {
