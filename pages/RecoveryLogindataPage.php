@@ -70,7 +70,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         $this->add($pass);
 
         //password confirmation
-        $passwordConfirm = new PasswordConfirmation($this->getID() . '-password', 'password-confirm');
+        $passwordConfirm = new PasswordConfirmation('password-confirm', $this->getID() . '-password');
         $passwordConfirm->showPasswordToggle()->setLabel($this->_('Show password confirmation'));
         $this->add($passwordConfirm);
 
