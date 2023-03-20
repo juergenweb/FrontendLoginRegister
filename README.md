@@ -195,6 +195,24 @@ installation process of this module and during the installation of a module tran
 Please note: All the default values that will be set during the installation of this module or during the installation
 process of a language file are my own preferences - you can change them whenever you want later on.
 
+## Support for custom user fields
+If you have added additional input fields to the user template (fe name, surname,...), they will also be selectable for the registration and profile form on the frontend. 
+This means, that you can add them in the module configuration to the profile or registration form and they will be rendered on the frontend too (like email, password,..)
+There is only one restriction: Only Processwire inputfields of the follwing types will be supported at the moment:
+
+* FieldtypeEmail
+* FieldtypePassword,
+* FieldtypeText
+* FieldtypeTextarea
+* FieldtypeCheckbox
+* FieldtypeInteger
+* FieldtypeFloat
+* FieldtypeDatetime
+* FieldtypeURL
+* FieldtypePage
+
+All other field types will be ignored and cannot be selected.
+
 ## Multi-language
 The module will be shipped with the German translations (default is English).
 After installing a language file all titles and descriptions in that language will be added to the pages (and to SeoMaestro fields if installed).
