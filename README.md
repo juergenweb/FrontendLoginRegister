@@ -103,6 +103,8 @@ changes will be deleted too.
 
 ### Creation of 8 new user fields which will be added to the user template
 
+Creation of 10 templates (one for each page) seems to be a little bit of overload at the first sight. But this makes it all very flexible and customizable. 
+
 During the installation process of this module 5 new fields will be created:
 
 - fl_activation: Stores the activation code if a new account was created
