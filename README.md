@@ -213,6 +213,8 @@ There is only one restriction: Only Processwire inputfields of the follwing type
 
 All other field types will be ignored and cannot be selected.
 
+Just to mention: Only fields, which are editable by an user will be displayed. Fields which are added to the user template, but the user has not the right to edit it will not be displayed. So if you are adding custom fields to the user template take care that you set the status to editable. 
+
 ## Multi-language
 The module will be shipped with the German translations (default is English).
 After installing a language file all titles and descriptions in that language will be added to the pages (and to SeoMaestro fields if installed).
