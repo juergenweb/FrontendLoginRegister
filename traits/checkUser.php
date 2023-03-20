@@ -48,7 +48,6 @@ trait checkUser
         $fieldName = str_replace('code', '', $querystringParameterName); // remove the string "code" from the string
 
         $user = $this->wire('users')->get('fl_' . $fieldName . '=' . $this->queryString);
-        bd($user);
         if($user->id != 0){
             $this->user = $user; // set the user object to the property user
             return true;
