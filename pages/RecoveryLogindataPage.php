@@ -57,7 +57,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         // username (show only if username and password are selected as login data)
         if ($this->input_selectlogin == 'username') {
             $usernameText = '<p>' . $this->_('If you have forgotten your username too, you can enter a new one here. Otherwise, let this field empty and fill out only the password fields.') . '</p>';
-            $username = new Username();
+            $username = new Username('username');
             $username->removeRule('required');
             $username->getFieldWrapper()->prepend($usernameText);
             $this->add($username);
