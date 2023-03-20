@@ -44,11 +44,13 @@ class FrontendLoginRegisterPages extends Form
     protected string $queryString = ''; // The get parameter of the querystring
     protected string $input_preventIPs = ''; // String of forbidden IP addresses
 
+    protected array $loginregister = []; // array that holds all module configuration properties
+
     /*objects*/
     protected Page $login_page; // the login page object
     protected Page $delete_page; // the delete page object
     protected Page $delete_request_page; // the delete request page object
-    protected FrontendForms $frontendForms;
+    protected FrontendForms $frontendForms; // the FrontendForms module object
 
     /**
      * Every form must have an id, so let's add it via the constructor
@@ -61,6 +63,7 @@ class FrontendLoginRegisterPages extends Form
 
         // get module configuration data from FrontendLoginRegister module and create properties of each setting
         foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
+            $this->loginregister[$key] = $value;
             $this->$key = $value;
         }
 
@@ -91,26 +94,53 @@ class FrontendLoginRegisterPages extends Form
     ];
 
     /**
+     * Calculate the difference in days between now and the deletion date
+     * @param User $user
+     * @return int
+     */
+    protected function daysToDelete(User $user):int
+    {
+        // registration date
+        $registration = new \DateTime();
+        $registration->setTimestamp($user->created);
+
+        // current date
+        $current = new \DateTime();
+        $current->setTimestamp(time());
+
+        // get difference between now and registration date in days
+        $diff = $registration->diff($current);
+        $diff_days = $diff->format('%a');
+
+        return ($diff_days + $this->input_delete);
+    }
+
+    /**
      * Send a reminder mail to the user if account is not activated
      * @param User $user
      * @return bool
      * @throws WireException
      */
-    protected function sendReminderMail(User $user): bool
+    protected function sendReminderMail(User $user):bool
     {
+
+        $days_to_delete = $this->daysToDelete($user);
+
+        $date_to_delete_ts = (new \DateTime('NOW'))->modify('+' . $days_to_delete . ' days')->getTimestamp();
+
         $m = new WireMail();
+
         // create placeholder variables
         // 1) registration date
         $this->setMailPlaceholder('registrationdate',
             $this->wire('datetime')->date($this->getDateFormat($user), $user->created));
         // 2) number of days to deletion
-        $daystodelete = $this->_n('day', 'days', $this->input_delete);
-        $this->setMailPlaceholder('daystodelete', $this->input_delete .' '.$daystodelete);
+        // nicht aktiviert
+        $daystodelete_text = $this->_n('day', 'days', $days_to_delete);
+        $this->setMailPlaceholder('daystodelete', $days_to_delete . ' ' . $daystodelete_text);
         // 3) deletion date
-        //calculate delete date
-        $delete_date_ts = time() + ((int)$this->input_delete * 86400);
         $this->setMailPlaceholder('deletedate',
-            $this->wire('datetime')->date($this->getDateFormat($user), $delete_date_ts));
+            $this->wire('datetime')->date($this->getDateFormat($user), $date_to_delete_ts));
         // 4) verification link
         $this->setMailPlaceholder('verificationlink', $this->createActivationLink($user));
         // 5) not registered link
@@ -121,8 +151,9 @@ class FrontendLoginRegisterPages extends Form
         $this->setSenderName($m);
         $m->subject($this->_('Action required to activate your account'));
         $m->title($this->_('Have you forgotten to verify your account?'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext'));
+        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext', $this->loginregister));
         $m->mailTemplate($this->input_emailTemplate);
+
         if ($m->send()) {
             return true;
         }
@@ -134,29 +165,30 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function sendDeletionConfirmationMail(User $user): bool
+    protected function sendDeletionConfirmationMail(User $user):bool
     {
-        $m = new WireMail();
-        // create placeholder variables
+        if (!$this->input_prevent_send_deletion_email) {
 
-        $days  = $this->input_delete + $this->input_remind;
-        $this->setMailPlaceholder('daystodelete', (string)$days);
+            // create placeholders
+            $this->setMailPlaceholder('registrationdate',
+                $this->wire('datetime')->date($this->getDateFormat($user), $user->created));
+            $this->setMailPlaceholder('registerurl', $this->wire('pages')->get('template=fl_registerpage')->httpUrl);
 
-        $this->setMailPlaceholder('registrationdate',
-            $this->wire('datetime')->date($this->getDateFormat($user), $user->created));
-        $this->setMailPlaceholder('registerurl', $this->wire('pages')->get('template=fl_registerpage')->httpUrl);
-
-        $m->to($user->email);
-        $m->from($this->input_email);
-        $this->setSenderName($m);
-        $m->subject($this->_('Your account has been deleted'));
-        $m->title($this->_('Good bye!'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation'));
-        $m->mailTemplate($this->input_emailTemplate);
-        if ($m->send()) {
-            return true;
+            // create mail
+            $m = new WireMail();
+            $m->to($user->email);
+            $m->from($this->input_email);
+            $this->setSenderName($m);
+            $m->subject($this->_('Your account has been deleted'));
+            $m->title($this->_('Good bye!'));
+            $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregister));
+            $m->mailTemplate($this->input_emailTemplate);
+            if ($m->send()) {
+                return true;
+            }
+            return false;
         }
-        return false;
+        return true;
     }
 
 
@@ -302,27 +334,32 @@ class FrontendLoginRegisterPages extends Form
             $pwfieldsetStart = new FieldsetOpen();
             $pwfieldsetStart->setLegend($this->_('Change password'));
             $this->add($pwfieldsetStart);
+
             // old password
             $oldPass = new InputPassword('oldpass');
             $oldPass->setLabel($this->_('Old password'));
-            $oldPass->setRule('requiredWith', 'newpass')->setCustomFieldName($this->_('Old password'));
+            $oldPass->removeRule('required'); // will be changed to requiredWith afterwards
+            $oldPass->setRule('requiredWith',
+                $this->getID() . '-newpass')->setCustomFieldName($this->_('Old password'));
             $oldPass->setRule('checkPasswordOfUser', $this->user);
             $oldPass->showPasswordToggle();
+            bd($oldPass->getRules());
             $this->add($oldPass);
+
             // new password
             $newPass = new InputPassword('pass');
             $newPass->setLabel($this->_('New password'));
-            $newPass->setRule('requiredWith', 'oldpass')->setCustomFieldName($this->_('New password'));
-            $newPass->setRule('meetsPasswordConditions');
-            $newPass->setRule('safePassword');
+            $newPass->removeRule('required'); // will be replaced by requiredWith afterwards
+            $newPass->setRule('requiredWith',
+                $this->getID() . '-oldpass')->setCustomFieldName($this->_('New password'));
+            bd($newPass->getRules());
             $newPass->showPasswordToggle();
             $newPass->showPasswordRequirements();
             $this->add($newPass);
+
         } else {
             // password
             $pass = new Password('pass');
-            $pass->setRule('meetsPasswordConditions');
-            $pass->setRule('safePassword');
             $pass->showPasswordToggle();
             $pass->showPasswordRequirements();
             $this->add($pass);
@@ -330,7 +367,9 @@ class FrontendLoginRegisterPages extends Form
 
         // password confirmation
         $confirm_id = $this->getID() . '-pass';
-        $passConfirm = new PasswordConfirmation($confirm_id, 'pass-confirm');
+        $passConfirm = new PasswordConfirmation('pass-confirm', $confirm_id);
+        $passConfirm->removeRule('required'); // will be replaced by requiredWith afterwards
+        $passConfirm->setRule('requiredWith', $this->getID() . '-oldpass');
         $passConfirm->showPasswordToggle();
         $this->add($passConfirm);
         // create fieldset end
@@ -368,7 +407,7 @@ class FrontendLoginRegisterPages extends Form
         $language = new \FrontendForms\Language('language');
 
         // add language field only if number of languages is higher than 1
-        if(count($this->wire('languages')) > 1){
+        if (count($this->wire('languages')) > 1) {
             $this->add($language);
         }
     }
@@ -420,8 +459,8 @@ class FrontendLoginRegisterPages extends Form
         // insert it on the second position [1] after username or email
         $fields[] = $pass_field;
 
-        $noCreation = ['pass', 'email', 'language', 'tfa'];
         // These fields should not be created with the createFormField method because we create them manually
+        $noCreation = ['pass', 'email', 'language', 'tfa'];
 
         // add username field on top
         if ($this->input_selectlogin == 'username') {
