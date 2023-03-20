@@ -27,6 +27,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected array $userSettings = []; // Holds the data for the specific user
     protected string|int $input_delete = 3; // The time in days after which the user will be deleted
     protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
+    protected string|int $input_prevent_send_deletion_email = ''; // prevent sending of email after user account has been deleted
     protected string $input_selectlogin = 'email'; // Select between log in with username or email
     protected string $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
     protected string $input_selectloginregister = 'loginregister'; // Select if login only or login and register
@@ -35,7 +36,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string $input_sender = ''; // The name of the sender for the emails (fe MyCompany)
     protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
     protected string|int $input_tfa = 0; // Use Tfa by default
-    protected array $input_preventContinents = []; // Users, of these countries are excluded to log in on the page
     protected array $input_roles = []; // IDs of all roles a new user will get
     protected string|int $input_deleteProfile = 0; // Whether the use can delete his account or not
 
@@ -110,6 +110,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'userSettings' => [],
             'input_delete' => 3,
             'input_remind' => 1,
+            'input_prevent_send_deletion_email' => '',
             'input_selectlogin' => 'email',
             'input_removeJS' => '',
             'input_selectloginregister' => 'loginregister',
@@ -118,7 +119,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_sender' => '',
             'input_redirectSuccess' => '-1',
             'input_tfa' => 0,
-            'input_preventContinents' => [],
             'input_deleteProfile' => 0,
             'input_activationtext' => self::activationText(),
             'input_remindertext' => self::reminderText(),
@@ -593,7 +593,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         <p>Dear user</p>
         <p>We want to inform you that your account at [[DOMAINVALUE]] has now been deleted on [[CURRENTDATETIMEVALUE]].<br>
         The reason for the deletion is that your account has not been activated  since your registration on [[REGISTRATIONDATE]].<br>
-        To prevent inactive accounts, every account not verified within [[DAYSTODELETE]] days will be deleted automatically.<br>
+        To prevent inactive accounts, every account not verified will be deleted after a certain time automatically.<br>
         If you want to register again, please visit [[REGISTERURL]] and register once more.</p>
         <p>We wish you a nice day!</p>
         <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p> 
@@ -744,8 +744,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $remember->required = 1;
         $remember->min = 0;
         $remember->inputType = 'number';
-        $remember->columnWidth = 50;
+        $remember->columnWidth = 34;
         $registrationfieldset->add($remember);
+
 
         // select after which time should the user be remembered to activate his account
         $delete = $modules->get('InputfieldInteger');
@@ -758,8 +759,20 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $delete->required = 1;
         $delete->min = 0;
         $delete->inputType = 'number';
-        $delete->columnWidth = 50;
+        $delete->columnWidth = 33;
         $registrationfieldset->add($delete);
+
+        // Enable or disable sending of email after user account has been deleted
+        $prevent_send_deletion_email = $modules->get('InputfieldCheckbox');
+        $prevent_send_deletion_email->attr('name', 'input_prevent_send_deletion_email');
+        $prevent_send_deletion_email->attr('checked', $this->prevent_send_deletion_email == '1' ? 'checked' : '');
+        $prevent_send_deletion_email->label = $this->_('Disable sending of the deletion confirmation email');
+        $prevent_send_deletion_email->label2 = $this->_('Disable sending the email');
+        $prevent_send_deletion_email->description = $this->_('Usually a user will be informed via email after his unverified account has been deleted. By checking the box, the sending of the email after account deletion will be disabled.');
+        $prevent_send_deletion_email->showIf = 'input_delete>0';
+        $prevent_send_deletion_email->columnWidth = 33;
+        $registrationfieldset->add($prevent_send_deletion_email);
+
 
         // Roles field
         $addRoles = $this->modules->get('InputfieldCheckboxes');
@@ -917,7 +930,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
             '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
-            '[[DAYSTODELETE]]' => $this->_('The number of days until an unverified account will be deleted (fe 5).'),
             '[[REGISTERURL]]' => $this->_('The URL to the registration page.'),
             '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
@@ -945,13 +957,13 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $email_text_fieldset->add($unlock_account);
 
         $placeholders = new InputfieldMarkup();
-        $p_text = '<h3>'.$this->_('List of all additional placeholders, which can be used in the email texts').'</h3>';
-        $p_text .= '<p>'.$this->_('If you want, you can use any of the following placeholders in your email texts.').'</p>';
+        $p_text = '<h3>' . $this->_('List of all additional placeholders, which can be used in the email texts') . '</h3>';
+        $p_text .= '<p>' . $this->_('If you want, you can use any of the following placeholders in your email texts.') . '</p>';
         // create all general placeholders from Form class
         $form = new Form('myid');
         $p_text .= '<ul>';
-        foreach($form->generalPlaceholders() as $placeholder => $value){
-          $p_text .= '<li>[['.strtoupper($placeholder).']]: '.$value.'</li>';
+        foreach ($form->generalPlaceholders() as $placeholder => $value) {
+            $p_text .= '<li>[[' . strtoupper($placeholder) . ']]: ' . $value . '</li>';
         }
         $p_text .= '</ul>';
         $placeholders->markupText = $p_text;
@@ -1027,8 +1039,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $nameAttribute = 'input_' . $name;
         $f = $this->modules->get('InputfieldCheckboxes');
         $f->attr('name', $nameAttribute);
-        $fieldName = $this->_(ucfirst($name));
-        $f->label = sprintf($this->_('%s form fields'), $fieldName);
+        $f->label = $this->_('Fields of the profile form');
+        if ($nameAttribute == 'input_registration') {
+            $f->label = $this->_('Fields of the registration form');
+        }
         if ($colWidth != 100) {
             $f->columnWidth = $colWidth;
         }
@@ -1037,10 +1051,18 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         foreach ($fields as $inputname => $v) {
             if (!in_array($v->name, $exclude)) {
                 $f->addOption($inputname, $v->label);
+                // TODO funktioniert nicht
+                $f->attr('readonly', (in_array($v->id, ['3', '92'])) ? 'readonly' : '');
+
+
                 $f->attr('checked', (in_array($v->id, $this->$nameAttribute)) ? 'checked' : '');
             }
         }
         $f->value = $this->$nameAttribute;
+        $f->notes = $this->_('Email and password field are mandatory and cannot be disabled');
+        if ($this->input_selectlogin == 'username') {
+            $f->notes = $this->_('Email, username and password field are mandatory and cannot be disabled');
+        }
         return $f;
     }
 
@@ -1091,7 +1113,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         }
 
         wire('templates')->get('name=user')->fields->save();
+
+        $path_to_backup_dir = $this->wire('config')->paths->$this . 'backup/';
         // create new templates for the pages
+
         foreach ($this->templatePages as $templateName => $fieldproperties) {
             // new fieldgroup
             $fieldgroup = new Fieldgroup();
@@ -1130,7 +1155,16 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $template->save();
             //open the file and write the content to it
             $class = $fieldproperties['className'];
-            $contents = <<<EOT
+
+            // first check if template file inside the backup folder exist with this name
+            $path_to_file = $path_to_backup_dir. $templateName . '.php';
+            if ($this->wire('files')->exists($path_to_file)) {
+                // grab the content of this file and add it to the variable $contents
+                $contents = $this->wire('files')->fileGetContents($path_to_file);
+            } else {
+                // create new content
+
+                $contents = <<<EOT
             <?php 
             namespace ProcessWire;
         
@@ -1143,7 +1177,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             echo \$modules->get('FrontendLoginRegister')->$class();
             echo '</div>';
 EOT;
-
+            }
             $file = wire('config')->paths->templates . $templateName . '.php';
             wire('files')->filePutContents($file, trim($contents));
             //create new page using this template under the homepage
@@ -1190,6 +1224,9 @@ EOT;
             $p->save();
         }
 
+        // remove the backup directory from the module
+        $this->wire('files')->rmdir($path_to_backup_dir, true);
+
         /**
          * add field activation date to User list (ProcessUser)
          * In the user overview a new table column will be added to show the date, when the account was verified
@@ -1208,6 +1245,22 @@ EOT;
      */
     public function uninstall():void
     {
+
+
+        // create a backup of all pages and save it inside the newly created directory "backup"
+
+        // create directory first
+        $dir_path = $this->wire('config')->paths->$this . 'backup/';
+        $this->wire('files')->mkdir($dir_path);
+
+        // get all module template files under inside the template directory
+        $path = $this->wire('config')->paths->templates;
+        $module_template_files = glob($path . 'fl_*.php');
+
+        // copy all template files to the backup folder
+        foreach ($module_template_files as $path) {
+            $this->wire('files')->copy($path, $dir_path);
+        }
 
         // remove fields from templates -> usually only from user template
         foreach ($this->wire('templates') as $template) {
