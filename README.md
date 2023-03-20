@@ -29,7 +29,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - Customize the texts of the emails send by this modules
 - Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights)
 - Support for SeoMaestro if installed
-- Lock accounts via code inside the database if someone tries to log in with same username or email and different password variations 
+- Lock accounts via code inside the database if someone tries to log in with same username or email and different password variations
 
 ## Installation
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
@@ -90,8 +90,14 @@ If you want to change some parameters of a form, you can use the FrontendForms A
 You can find much more infos in the Readme file of the FrontendForms module, so I do not want to go more
 into detail at this point.
 
-> ⚠ If you uninstall the module, all manual changes to the templates will be lost, so make a back-up of your templates
-if you have made changes before you uninstall the module. Otherwise, you have to write your changes to the templates again.
+If you uninstall the module, all template files including your changes will be copied to a backup folder inside the
+root folder of this module.
+
+On a reinstall this backup-files with all of your changes will be taken and copied
+to the templates folder. The backup folder will be deleted afterwards.
+
+So all your changes will not get lost after uninstall of the module. Only if you delete the module completely all your 
+changes will be deleted too.
 
 ## What happens during the installation process?
 
@@ -126,7 +132,7 @@ module.
 - fl_loginpage: Template which contains the login form.
 - fl_logoutpage: Template which contains the session logout.
 - fl_profilepage: Template which contains the profile form if the user is logged in.
-- fl_unlockaccountpage: Template which contains the form to unlock the account by using the password. 
+- fl_unlockaccountpage: Template which contains the form to unlock the account by using the password.
 
 ### Creation of 10 new pages
 
@@ -168,7 +174,7 @@ As you can see, always the same email address with some password variations was 
 
 By default, the number of max. attempts is set to 5. So after the 5th attempt, the module checks if a user account with the given email address exists. If yes, then a lock code will be written inside the database to the appropriate user. The user will get an email containing the information about the locked account and a link to unlock it again.
 If a user has an entry with the lock code inside the database, it is no longer possible to login to the account until the lock code will be removed by using the unlock link.
-This measure is intended to protect access to user data. 
+This measure is intended to protect access to user data.
 
 
 ## Support for SeoMaestro
