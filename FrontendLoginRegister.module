@@ -42,7 +42,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     /* Class objects */
     protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
 
-    protected $frontendLoginConfig = []; // property that holds all configuration values of the module config
+    protected array $frontendLoginConfig = []; // property that holds all configuration values of the module config
 
     /**
      * @throws WireException
@@ -342,7 +342,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             if (($h = fopen("$csvFile_path", "r")) !== false) {
                 // Each line in the file is converted into an individual array that we call $data
                 // The items of the array are comma separated
-                while (($data = fgetcsv($h, 1000, ",")) !== false) {
+                while (($data = fgetcsv($h, 1000)) !== false) {
                     // Each individual array is being pushed into the nested array
                     $translations_array[] = $data;
                 }
@@ -1040,28 +1040,26 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // Exclude these fields from the selectable fields in module configuration
         $exclude = array_merge(array_keys($this->userFields), ['roles', 'admin_theme', 'tfa_type']);
         $nameAttribute = 'input_' . $name;
-        $f = $this->modules->get('InputfieldCheckboxes');
+        $f = $this->wire('modules')->get("InputfieldAsmSelect");
         $f->attr('name', $nameAttribute);
-        $f->label = $this->_('Fields of the profile form');
-        if ($nameAttribute == 'input_registration') {
-            $f->label = $this->_('Fields of the registration form');
-        }
         if ($colWidth != 100) {
             $f->columnWidth = $colWidth;
         }
 
-        // create checkboxes for each field
+        // create asm select options for form fields
         foreach ($fields as $inputname => $v) {
             if (!in_array($v->name, $exclude)) {
                 $f->addOption($inputname, $v->label);
-                // TODO funktioniert nicht
-                $f->attr('readonly', (in_array($v->id, ['3', '92'])) ? 'readonly' : '');
-
-
-                $f->attr('checked', (in_array($v->id, $this->$nameAttribute)) ? 'checked' : '');
             }
         }
-        $f->value = $this->$nameAttribute;
+        if ($nameAttribute == 'input_registration') {
+            $f->attr('value', $this->frontendLoginConfig['input_registration']);
+            $f->label = $this->_('Fields of the registration form');
+        } else {
+            $f->attr('value', $this->frontendLoginConfig['input_profile']);
+            $f->label = $this->_('Fields of the profile form');
+        }
+
         $f->notes = $this->_('Email and password field are mandatory and cannot be disabled');
         if ($this->input_selectlogin == 'username') {
             $f->notes = $this->_('Email, username and password field are mandatory and cannot be disabled');
