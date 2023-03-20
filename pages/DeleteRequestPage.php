@@ -70,6 +70,8 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
 
         if ($this->isValid()) {
 
+            $content = '';
+
             // generate a random code
             $deleteCode = $this->createQueryCode(); // create the deletion code
 
@@ -83,7 +85,7 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
             $this->setSenderName($m);
             $m->subject($this->_('Action required to delete your account'));
             $m->title($this->_('Please click the link inside the mail'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext'));
+            $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext', $this->loginregister));
             $m->mailTemplate($this->input_emailTemplate);
 
             // save user data only if mail was sent successfully
@@ -101,9 +103,10 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
                 // output an error message that the mail could not be sent
                 $this->generateEmailSentErrorAlert();
             }
+        } else {
+            $content =  $this->wire('page')->body;
         }
         // render the form on the frontend
-        $content =  $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
