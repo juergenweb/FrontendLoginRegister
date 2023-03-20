@@ -344,7 +344,6 @@ class FrontendLoginRegisterPages extends Form
                 $this->getID() . '-newpass')->setCustomFieldName($this->_('Old password'));
             $oldPass->setRule('checkPasswordOfUser', $this->user);
             $oldPass->showPasswordToggle();
-            bd($oldPass->getRules());
             $this->add($oldPass);
 
             // new password
