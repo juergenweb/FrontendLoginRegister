@@ -45,8 +45,8 @@ class FrontendLoginRegisterPages extends Form
     protected string $queryString = ''; // The get parameter of the querystring
     protected string $input_preventIPs = ''; // String of forbidden IP addresses
 
-    protected array $loginregister = []; // array that holds all module configuration properties
-
+    protected array $loginregisterConfig = []; // array that holds all module configuration properties
+    protected array $frontendformsConfig = []; // array that holds all module configuration properties from FrontenForms
     /*objects*/
     protected Page $login_page; // the login page object
     protected Page $delete_page; // the delete page object
@@ -64,16 +64,20 @@ class FrontendLoginRegisterPages extends Form
 
         // get module configuration data from FrontendLoginRegister module and create properties of each setting
         foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
-            $this->loginregister[$key] = $value;
-            $this->$key = $value;
+            $this->loginregisterConfig[$key] = $value;
+        }
+
+        // grab FrontendForms object to get configuration values
+        $this->frontendForms = $this->wire('modules')->get('Frontendforms');
+        foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
+            $this->frontendformsConfig[$key] = $value;
         }
 
         $this->login_page = $this->wire('pages')->get('template=fl_loginpage');
         $this->delete_page = $this->wire('pages')->get('template=fl_deleteaccountpage');
         $this->delete_request_page = $this->wire('pages')->get('template=fl_deleterequestpage');
 
-        // grab FrontendForms object to get configuration values
-        $this->frontendForms = $this->wire('modules')->get('Frontendforms');
+
 
     }
 
@@ -113,7 +117,7 @@ class FrontendLoginRegisterPages extends Form
         $diff = $registration->diff($current);
         $diff_days = $diff->format('%a');
 
-        return ((int)$diff_days + $this->input_delete);
+        return ((int)$diff_days + $this->loginregisterConfig['input_delete']);
     }
 
     /**
@@ -148,12 +152,12 @@ class FrontendLoginRegisterPages extends Form
         $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($user));
 
         $m->to($user->email);
-        $m->from($this->input_email);
+        $m->from($this->loginregisterConfig['input_email']);
         $this->setSenderName($m);
         $m->subject($this->_('Action required to activate your account'));
         $m->title($this->_('Have you forgotten to verify your account?'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext', $this->loginregister));
-        $m->mailTemplate($this->input_emailTemplate);
+        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig));
+        $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
         if ($m->send()) {
             return true;
@@ -168,7 +172,7 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function sendDeletionConfirmationMail(User $user):bool
     {
-        if (!$this->input_prevent_send_deletion_email) {
+        if (!$this->loginregisterConfig['input_prevent_send_deletion_email']) {
 
             // create placeholders
             $this->setMailPlaceholder('registrationdate',
@@ -178,12 +182,12 @@ class FrontendLoginRegisterPages extends Form
             // create mail
             $m = new WireMail();
             $m->to($user->email);
-            $m->from($this->input_email);
+            $m->from($this->loginregisterConfig['input_email']);
             $this->setSenderName($m);
             $m->subject($this->_('Your account has been deleted'));
             $m->title($this->_('Good bye!'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregister));
-            $m->mailTemplate($this->input_emailTemplate);
+            $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig));
+            $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
             if ($m->send()) {
                 return true;
             }
@@ -209,8 +213,8 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function setSenderName(WireMail $mail):void
     {
-        if ($this->input_sender) {
-            $name = $this->input_sender;
+        if ($this->loginregisterConfig['input_sender']) {
+            $name = $this->loginregisterConfig['input_sender'];
         } else {
             $name = 'noreply@' . $this->wire('config')->httpHost;
         }
@@ -310,13 +314,13 @@ class FrontendLoginRegisterPages extends Form
             }
             if (property_exists($this, $date_property)) {
                 // check if a date format in the given language exists
-                return $this->$date_property;
+                return $this->frontendformsConfig[$date_property];
             } else {
                 // otherwise use the default format
-                return $this->input_dateformat;
+                return $this->frontendformsConfig['input_dateformat'];
             }
         } else {
-            return $this->input_dateformat;
+            return $this->frontendformsConfig['input_dateformat'];
         }
     }
 
@@ -447,10 +451,9 @@ class FrontendLoginRegisterPages extends Form
         $noCreation = ['pass', 'email', 'language', 'tfa'];
 
         // add username field on top
-        if ($this->input_selectlogin == 'username') {
+        if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
             $form->add($this->createName());
         }
-
         foreach ($fields as $field) {
             if (in_array($field->name, $noCreation)) {
                 $methodName = 'create' . ucfirst($field->name);
@@ -470,7 +473,8 @@ class FrontendLoginRegisterPages extends Form
      */
     public function getFormFieldsSelected(string $fieldName):array
     {
-        $fields = $this->$fieldName;
+
+        $fields = $this->loginregisterConfig[$fieldName];
         $formFields = [];
         if ($fields) {
             foreach ($fields as $fieldName) {
