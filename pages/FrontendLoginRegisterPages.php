@@ -504,6 +504,11 @@ class FrontendLoginRegisterPages extends Form
             $class = 'FrontendForms\\' . $this->linkingFieldTypes[$fieldtypeName];
             $field = new $class($fieldtype->name);
             $field->setLabel($fieldtype->label);
+            // add stored values if user is logged in
+            if($this->wire('user')->isLoggedin()){
+                $field_name = $fieldtype->name;
+                $field->setAttribute('value', $this->wire('user')->$field_name);
+            }
             if ($fieldtype->notes) {
                 $field->setNotes($fieldtype->notes);
             }
