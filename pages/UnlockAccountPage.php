@@ -53,6 +53,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
         //pass
         $pass = new Password('password');
         $pass->showPasswordToggle(); // add a checkbox below the input field to toggle show/hide the password in plain text
+        $pass->setRule('required');
         $pass->setRule('checkPasswordOfUser', $this->user);
         $this->add($pass);
 
