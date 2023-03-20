@@ -212,7 +212,6 @@ class LoginPage extends FrontendLoginRegisterPages
 
             // Create the form for the authentication code
             $form = new Form('tfa');
-            $this->form = $form;
             $form->setMaxAttempts(3);
             $form->setMinTime(3);
             $form->setMaxTime(3600);
@@ -639,7 +638,7 @@ class LoginPage extends FrontendLoginRegisterPages
      * @return void
      * @throws WireException
      */
-    protected function emailCode(HookEvent $event)
+    protected function emailCode(HookEvent $event): void
     {
         // replace the original emailCode method entirely
         $event->replace = true;
