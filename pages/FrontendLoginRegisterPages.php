@@ -353,7 +353,6 @@ class FrontendLoginRegisterPages extends Form
             $newPass->removeRule('required'); // will be replaced by requiredWith afterwards
             $newPass->setRule('requiredWith',
                 $this->getID() . '-oldpass')->setCustomFieldName($this->_('New password'));
-            bd($newPass->getRules());
             $newPass->showPasswordToggle();
             $newPass->showPasswordRequirements();
             $this->add($newPass);
