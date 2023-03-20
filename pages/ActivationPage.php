@@ -75,7 +75,6 @@ class ActivationPage extends FrontendLoginRegisterPages
                     $this->user->fl_activation = ''; // delete the activation code
                     $this->user->fl_activationdatetime = time(); // set the activation code time stamp
 
-
                     // check if TfaEmail is installed and enable it for the user automatically
                     if ($this->wire('modules')->isInstalled('TfaEmail')) {
                         $tfa = new TfaEmail();
