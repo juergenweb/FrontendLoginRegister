@@ -173,7 +173,7 @@ class RegisterPage extends FrontendLoginRegisterPages
                     $this->setSenderName($m);
                     $m->subject($this->_('Action required to activate your account'));
                     $m->title($this->_('Please click the link to verify your registration'));
-                    $m->bodyHTML($this->getLangValueOfConfigField('input_activationtext'));
+                    $m->bodyHTML($this->getLangValueOfConfigField('input_activationtext', $this->loginregister));
                     $m->mailTemplate($this->input_emailTemplate);
                     if($m->send()){
                         $successMsg = $this->_('Your account has been created successfully. To activate your account, please follow the instructions inside the mail that has been sent to you.');
