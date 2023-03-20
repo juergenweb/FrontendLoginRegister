@@ -443,21 +443,6 @@ class FrontendLoginRegisterPages extends Form
 
         $fields = $this->getFormFieldsSelected($needle);
 
-        // sort the fields new, that the password field is always on the second position
-        foreach ($fields as $key => $val) {
-            if ($val['name'] === 'pass') {
-                $field_key = $key;
-            }
-        }
-        // get the password field object
-        $pass_field = $fields[$field_key];
-
-        // remove the pass field from the array
-        unset($fields[$field_key]);
-
-        // insert it on the second position [1] after username or email
-        $fields[] = $pass_field;
-
         // These fields should not be created with the createFormField method because we create them manually
         $noCreation = ['pass', 'email', 'language', 'tfa'];
 
