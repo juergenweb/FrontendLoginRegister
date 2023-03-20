@@ -57,7 +57,6 @@ class LoginPage extends FrontendLoginRegisterPages
         $this->rl = new Link('registerLink'); // instantiate a new instance for a link
         $this->pfl = new Link('passwordforgottenLink'); // instantiate a new instance for a link
 
-        bd($this->tfa->codeExpire);
 
         // Hook to replace start method entirely
         $this->addHookBefore('Tfa::start', $this, 'start');
@@ -138,7 +137,7 @@ class LoginPage extends FrontendLoginRegisterPages
         $this->setSenderName($m);
         $m->subject($this->_('We have detected suspicious activity on your user account'));
         $m->title($this->_('Action required to unlock your account'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account'));
+        $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregister));
         $m->mailTemplate($this->input_emailTemplate);
 
         if ($m->send()) {
@@ -259,7 +258,7 @@ class LoginPage extends FrontendLoginRegisterPages
             }
 
             // add info about how long the code will be valid
-            $expireTime = $tfaSession['codes'][0]['expires'] - time();
+            $expireTime = $module->codeExpire - time();
             if (($expireTime) && $this->wire('user')->isGuest()) {
                 // show info only if it will be submitted in time and user is not logged in
                 $msg .= '<br>' . sprintf($this->_('This code is still valid for %s seconds.'),
@@ -648,7 +647,7 @@ class LoginPage extends FrontendLoginRegisterPages
         // get user email, code and expiration time
         $email = $event->arguments[0];
         $code = $event->arguments[1];
-        $expire = $this->tfa->codeExpire;
+        $expire = $this->tfa->getModule()->codeExpire;
 
         // set placeholders for code and expiration time
         // 1) tfa code
@@ -664,7 +663,7 @@ class LoginPage extends FrontendLoginRegisterPages
         $m->to($email);
         $m->from($this->input_email);
         $this->setSenderName($m);
-        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext'));
+        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregister));
         $m->mailTemplate($this->input_emailTemplate);
 
         if ($m->send()) {
