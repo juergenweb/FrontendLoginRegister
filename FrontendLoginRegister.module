@@ -1107,11 +1107,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         ];
 
         $hiddenTemplates = [
-            'fl_deleteaccountpage',
-            'fl_deleterequestpage'
+            'fl_deleteaccountpage'
         ];
-
-
+        
         // Check if role "registered" exists for newly registered users - otherwise create it
         if (!wire('roles')->get('registered')->id) {
             $role = wire('roles')->add('registered');
@@ -1222,11 +1220,11 @@ EOT;
             // create new page object
             $p->template = $templateName;
             // set status to unpublished on certain pages by default
-            if(in_array($templateName, $unpublishedTemplates)){
+            if (in_array($templateName, $unpublishedTemplates)) {
                 $p->addStatus(Page::statusUnpublished);
             }
             // set status to hidden on certain pages by default
-            if(in_array($templateName, $hiddenTemplates)){
+            if (in_array($templateName, $hiddenTemplates)) {
                 $p->addStatus(Page::statusHidden);
             }
             // set parent page
@@ -1434,7 +1432,7 @@ EOT;
         $deleteAccountPage = $this->wire('pages')->get('template=fl_deleteaccountpage');
         $deleteRequestPage = $this->wire('pages')->get('template=fl_deleterequestpage');
 
-        if($this->input_deleteProfile){
+        if ($this->input_deleteProfile) {
             // remove unpublished status
             $deleteAccountPage->removeStatus(Page::statusUnpublished);
             $deleteRequestPage->removeStatus(Page::statusUnpublished);
