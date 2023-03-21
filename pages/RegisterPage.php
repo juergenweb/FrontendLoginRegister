@@ -73,7 +73,7 @@ class RegisterPage extends FrontendLoginRegisterPages
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function getActivationCode(string $email): string
+    protected function getActivationCode(string $email):string
     {
         $user = $this->wire('users')->get('email=' . $email);
         $code = '';
@@ -91,16 +91,17 @@ class RegisterPage extends FrontendLoginRegisterPages
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function getDeleteDateTime(bool $timestamp = false): string
+    protected function getDeleteDateTime(bool $timestamp = false):string
     {
         $current_date = date('Y-m-d');
         $current_time = date('H:i');
 
-        $new_date = date('Y-m-d', strtotime($current_date. ' + '.$this->input_delete.' days'));
-        if($timestamp){
-            return $this->wire('datetime')->stringToTimestamp($new_date.' '.$current_time, 'Y-m-d H:i');
+        $new_date = date('Y-m-d',
+            strtotime($current_date . ' + ' . $this->loginregisterConfig['input_delete'] . ' days'));
+        if ($timestamp) {
+            return $this->wire('datetime')->stringToTimestamp($new_date . ' ' . $current_time, 'Y-m-d H:i');
         } else {
-            return $new_date.' '.$current_time;
+            return $new_date . ' ' . $current_time;
         }
     }
 
@@ -109,7 +110,7 @@ class RegisterPage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function render(): string
+    public function render():string
     {
 
         if ($this->isValid()) {
@@ -120,97 +121,98 @@ class RegisterPage extends FrontendLoginRegisterPages
             $noEmailText = $this->_('If you do not see the email in a few minutes, check your “junk mail” folder or “spam” folder.');
             $registerNewText = $this->_('If you still have not received an email, please fill out the registration form again to receive a new activation link.');
 
-                $activationCode = $this->createQueryCode();// create the activation code
+            $activationCode = $this->createQueryCode();// create the activation code
 
-                // create the new user
-                $newUser = new User();
-                $newUser->of(false);
+            // create the new user
+            $newUser = new User();
+            $newUser->of(false);
 
-                // save username if login with username and password is selected
-                if ($this->input_selectlogin == 'username') {
-                    $newUser->name = $this->wire('sanitizer')->pageName($this->getValue('username'));
+            // save username if login with username and password is selected
+            if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
+                $newUser->name = $this->wire('sanitizer')->pageName($this->getValue('username'));
+            }
+
+            $newUser->email = $email; // save user email
+            $newUser->pass = $pass; // save password
+
+            // save user language only on multi-language site
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                $language = $this->wire('input')->post('register-form-language') !== null ? $this->wire('input')->post('register-form-language') : $this->wire('user')->language->id;
+                $newUser->language = $language; // save user language
+            }
+
+            $newUser->fl_activation = $activationCode; // save the activation code
+
+            // add all roles depending on configuration settings to the new user
+            foreach ($this->loginregisterConfig['input_roles'] as $role) {
+                $newUser->addRole($role);
+            }
+
+            if ($newUser->save()) {
+
+                // if TFA email is enabled - add it to the user
+                if ($this->loginregisterConfig['input_tfa']) {
+                    $tfa = new TfaEmail();
+                    $tfa->autoEnableUser($newUser);
                 }
 
-                $newUser->email = $email; // save user email
-                $newUser->pass = $pass; // save password
-
-                // save user language only on multi-language site
-                if($this->wire('modules')->isInstalled('LanguageSupport')) {
-                    $language = $this->wire('input')->post('register-form-language') !== null ? $this->wire('input')->post('register-form-language') : $this->wire('user')->language->id;
-                    $newUser->language = $language; // save user language
+                // set the language for the mail according to the user language on multi-language site
+                if ($this->wire('languages')) {
+                    $this->wire('languages')->setLanguage($newUser->language->name);
                 }
 
-                $newUser->fl_activation = $activationCode; // save the activation code
+                // create placeholders
+                $this->setMailPlaceholder('daystodelete', (string)$this->loginregisterConfig['input_delete']);
+                $this->setMailPlaceholder('deletedate',
+                    $this->wire('datetime')->date($this->getDateFormat($newUser), $newUser->fl_activationdatetime));
+                $this->setMailPlaceholder('verificationlink', $this->createActivationLink($newUser));
+                $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($newUser));
 
-                // add all roles depending on configuration settings to the new user
-                foreach ($this->input_roles as $role) {
-                    $newUser->addRole($role);
-                }
-
-                if ($newUser->save()) {
-
-                    // if TFA email is enabled - add it to the user
-                    if($this->input_tfa){
-                        $tfa = new TfaEmail();
-                        $tfa->autoEnableUser($newUser);
-                    }
-
-                    // set the language for the mail according to the user language on multi-language site
-                    if($this->wire('languages')){
-                        $this->wire('languages')->setLanguage($newUser->language->name);
-                    }
-
-                    // create placeholders
-                    $this->setMailPlaceholder('daystodelete', (string)$this->input_delete);
-                    $this->setMailPlaceholder('deletedate', $this->wire('datetime')->date($this->getDateFormat($newUser), $newUser->fl_activationdatetime));
-                    $this->setMailPlaceholder('verificationlink', $this->createActivationLink($newUser));
-                    $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($newUser));
-
-                    // send an email with the activation link to the user
-                    $m = new WireMail();
-                    $m->to($newUser->email);
-                    $m->from($this->input_email);
-                    $this->setSenderName($m);
-                    $m->subject($this->_('Action required to activate your account'));
-                    $m->title($this->_('Please click the link to verify your registration'));
-                    $m->bodyHTML($this->getLangValueOfConfigField('input_activationtext', $this->loginregister));
-                    $m->mailTemplate($this->input_emailTemplate);
-                    if($m->send()){
-                        $successMsg = $this->_('Your account has been created successfully. To activate your account, please follow the instructions inside the mail that has been sent to you.');
-                        $this->getAlert()->setText($successMsg . '<br>' . $noEmailText . '<br>' . $registerNewText);
-
-                    } else {
-                        // output an error message that the mail could not be sent
-                        $this->generateEmailSentErrorAlert();
-                    }
+                // send an email with the activation link to the user
+                $m = new WireMail();
+                $m->to($newUser->email);
+                $m->from($this->loginregisterConfig['input_email']);
+                $this->setSenderName($m);
+                $m->subject($this->_('Action required to activate your account'));
+                $m->title($this->_('Please click the link to verify your registration'));
+                $m->bodyHTML($this->getLangValueOfConfigField('input_activationtext', $this->loginregisterConfig));
+                $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
+                if ($m->send()) {
+                    $successMsg = $this->_('Your account has been created successfully. To activate your account, please follow the instructions inside the mail that has been sent to you.');
+                    $this->getAlert()->setText($successMsg . '<br>' . $noEmailText . '<br>' . $registerNewText);
 
                 } else {
-                        $this->savingUserProblemAlert();
-                      }
-                $newUser->of(true);
+                    // output an error message that the mail could not be sent
+                    $this->generateEmailSentErrorAlert();
+                }
+
+            } else {
+                $this->savingUserProblemAlert();
+            }
+            $newUser->of(true);
         } else {
             // form is not valid, so check if email address exists but is not verified
             // or in other words: check if user has been registered twice and has not activated his first registration
-            $email_field_name = $this->getAttribute('id').'-email';
+            $email_field_name = $this->getAttribute('id') . '-email';
 
-            if(array_key_exists($email_field_name, $this->formErrors)){
+            if (array_key_exists($email_field_name, $this->formErrors)) {
                 $email = $this->getValue($email_field_name);
                 // run only if an email address was entered
-            if ($this->getActivationCode($email)) {
-                // send reminder mail
-                if($this->sendReminderMail($this->wire('users')->get('email='.$email))) {
-                    // overwrite alert message
-                    $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('It seems that you have already registered before but have forgotten to activate your account. To activate your account, please follow the instructions inside the mail that have been sent to you.'));
-                    // do not display the form
-                    $this->showForm = false;
-                }
+                if ($this->getActivationCode($email)) {
+                    // send reminder mail
+                    if ($this->sendReminderMail($this->wire('users')->get('email=' . $email))) {
+                        // overwrite alert message
+                        $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('It seems that you have already registered before but have forgotten to activate your account. To activate your account, please follow the instructions inside the mail that have been sent to you.'));
+                        // do not display the form
+                        $this->showForm = false;
+                    }
                 }
             }
 
 
         }
         // render the form on the frontend
-        $content =  $this->wire('page')->body;
+        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
