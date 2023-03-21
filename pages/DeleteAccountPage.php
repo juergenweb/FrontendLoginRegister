@@ -71,10 +71,10 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
                 $info = new Alert();
                 $info->setAttribute('id', 'deletion-hint');
                 $info->setCSSClass('alert_warningClass');
-                $text = '<p>'.$this->_('Are you sure that you want to delete your whole account?').'<br>';
-                $text .= $this->_('Your profile and related account information will be deleted forever!').'<br>';
-                $text .= $this->_('Please note that there is no option to restore the account once it is deleted.').'<br>';
-                $text .= $this->_('If you are absolutely sure, please tick the box below to confirm your deletion.').'</p>';
+                $text = '<p>' . $this->_('Are you sure that you want to delete your whole account?') . '<br>';
+                $text .= $this->_('Your profile and related account information will be deleted forever!') . '<br>';
+                $text .= $this->_('Please note that there is no option to restore the account once it is deleted.') . '<br>';
+                $text .= $this->_('If you are absolutely sure, please tick the box below to confirm your deletion.') . '</p>';
                 $info->setText($text);
                 $this->add($info);
 
@@ -98,7 +98,7 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
      * Method to render a link to request a new deletion link if it has been expired
      * @return Link
      */
-    public function ___requestLink(): Link
+    public function ___requestLink():Link
     {
         $link = new Link('request-link');
         $link->setPageLink($this->delete_request_page);
@@ -111,13 +111,11 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
      * @return bool - returns true if link is expired
      * @throws WireException
      */
-    private function checkForDeletionLinkExpired(): bool
+    private function checkForDeletionLinkExpired():bool
     {
 
         if ((time() - $this->user->getUnformatted('fl_deleteaccountdatetime')) > 300) {
-            $this->getAlert()
-                ->setCSSClass('alert_dangerClass')
-                ->setText(sprintf($this->_('Your deletion link is expired. It was only valid for 5 minutes. Please %s for a new deletion link.'),
+            $this->getAlert()->setCSSClass('alert_dangerClass')->setText(sprintf($this->_('Your deletion link is expired. It was only valid for 5 minutes. Please %s for a new deletion link.'),
                     $this->___requestLink()->___render()));
             $this->showForm = false;
 
@@ -136,7 +134,7 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function __toString(): string
+    public function __toString():string
     {
         return $this->render();
     }
@@ -146,14 +144,14 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function render(): string
+    public function render():string
     {
         if ($this->isValid()) {
             // delete the user
             $this->wire('users')->delete($this->user);
         }
         // render the form on the frontend
-        $content =  $this->wire('page')->body;
+        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
