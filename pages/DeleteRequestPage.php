@@ -65,7 +65,7 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
      * @throws WireException
      * @throws WireException
      */
-    public function render(): string
+    public function render():string
     {
 
         if ($this->isValid()) {
@@ -81,12 +81,12 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
             // send an email with the deletion link to the user
             $m = wireMail();
             $m->to($this->user->email);
-            $m->from($this->input_email);
+            $m->from($this->loginregisterConfig['input_email']);
             $this->setSenderName($m);
             $m->subject($this->_('Action required to delete your account'));
             $m->title($this->_('Please click the link inside the mail'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext', $this->loginregister));
-            $m->mailTemplate($this->input_emailTemplate);
+            $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext', $this->loginregisterConfig));
+            $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
             // save user data only if mail was sent successfully
             if ($m->send()) {
@@ -104,7 +104,7 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
                 $this->generateEmailSentErrorAlert();
             }
         } else {
-            $content =  $this->wire('page')->body;
+            $content = $this->wire('page')->body;
         }
         // render the form on the frontend
         $content .= parent::render();
