@@ -48,7 +48,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
         $this->setMaxTime(600); // 10 minutes
         $this->setAttribute('action', $this->wire('page')->url . '?unlockaccountcode=' . $this->queryString);
         $successMsg = $this->_('Your account is now unlocked.');
-        $this->setSuccessMsg($successMsg.' '.$this->___loginLink()->___render());
+        $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
 
         //pass
         $pass = new Password('password');
@@ -78,7 +78,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function render(): string
+    public function render():string
     {
         $content = '';
         if ($this->isValid()) {
@@ -88,7 +88,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
             $this->user->save();
             $this->user->setOutputFormatting();
         } else {
-            $content .=  $this->wire('page')->body;
+            $content .= $this->wire('page')->body;
         }
         $content .= parent::render();
         return $content;
