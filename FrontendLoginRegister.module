@@ -327,12 +327,13 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $language = $event->arguments(1);
 
             // get the current user language
-            $current = $this->wire('user')->language;
+            //$current = $this->wire('user')->language;
 
             // set the user language to the language of the csv file
-            $this->wire('user')->language = $language;
+            //$this->wire('user')->language = $language;
 
             //instantiate Language translator class
+
             $translation = new LanguageTranslator($language);
 
             // The nested array to hold all the arrays
@@ -350,6 +351,24 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 fclose($h);
             }
 
+            // save data (label, description,..) to user fields in current language
+            $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . $this->className() . '/config/userfields.php');
+            foreach ($this->userFields as $name => $fieldproperties) {
+                //grab the field object
+                $f = $this->wire('fields')->get($name);
+                // create array of field properties that should be set and saved
+                $field_properties = ['label', 'description', 'notes'];
+                foreach ($field_properties as $property) {
+                    if ($f->$property) {
+                        ${$property} = $translation->getTranslation($textdomain, $f->$property);
+                        $property_lang = $property . $language->id;
+                        $f->set($property_lang, ${$property});
+                        $f->save($property);
+                    }
+                }
+            }
+
+            // save title, body and description to the pages in the current language
             foreach ($this->templatePages as $templateName => $properties) {
 
                 // get the title in the given language
@@ -428,7 +447,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             }
 
             // set the user language back
-            $this->wire('user')->language = $current;
+            //$this->wire('user')->language = $current;
         }
     }
 
@@ -1054,7 +1073,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         foreach ($fields as $inputname => $v) {
             if (!in_array($v->name, $exclude)) {
                 // allow only fields which are editable by the user
-                if(in_array($v->name, $userfields)){
+                if (in_array($v->name, $userfields)) {
                     $f->addOption($inputname, $v->label);
                 }
             }
@@ -1165,7 +1184,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $class = $fieldproperties['className'];
 
             // first check if template file inside the backup folder exist with this name
-            $path_to_file = $path_to_backup_dir. $templateName . '.php';
+            $path_to_file = $path_to_backup_dir . $templateName . '.php';
             if ($this->wire('files')->exists($path_to_file)) {
                 // grab the content of this file and add it to the variable $contents
                 $contents = $this->wire('files')->fileGetContents($path_to_file);
@@ -1257,7 +1276,7 @@ EOT;
         // remove field activation date from User list (ProcessUser)
         $data = wire('modules')->getConfig('ProcessUser');
         $key = array_search('fl_activationdatetime', $data);
-        if($key){
+        if ($key) {
             unset($data[$key]);
         }
         wire('modules')->saveConfig('ProcessUser', $data);
