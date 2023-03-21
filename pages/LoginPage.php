@@ -88,7 +88,7 @@ class LoginPage extends FrontendLoginRegisterPages
     public function ___passwordForgottenLink():Link
     {
         $this->pfl->setPageLink($this->wire('pages')->get('template=fl_forgotlogindatapage'));
-        if ($this->input_selectlogin === 'username') {
+        if ($this->loginregisterConfig['input_selectlogin'] === 'username') {
             $this->pfl->setLinkText($this->_('Forgot login data?'));
         } else {
             $this->pfl->setLinkText($this->_('Forgot password?'));
@@ -124,7 +124,7 @@ class LoginPage extends FrontendLoginRegisterPages
         // create placeholder for the email body
         $this->setMailPlaceholder('unlockaccountlink', $this->createCodeLink('fl_unlockaccountpage', $code));
         // set text for the placeholder login type
-        if ($this->input_selectlogin == 'email') {
+        if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
             $type = $this->_('email');
         } else {
             $type = $this->_('username');
@@ -133,12 +133,12 @@ class LoginPage extends FrontendLoginRegisterPages
 
         $m = wireMail();
         $m->to($user->email);
-        $m->from($this->input_email);
+        $m->from($this->loginregisterConfig['input_email']);
         $this->setSenderName($m);
         $m->subject($this->_('We have detected suspicious activity on your user account'));
         $m->title($this->_('Action required to unlock your account'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregister));
-        $m->mailTemplate($this->input_emailTemplate);
+        $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig));
+        $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
         if ($m->send()) {
             return true;
@@ -272,7 +272,7 @@ class LoginPage extends FrontendLoginRegisterPages
             $this->setMaxTime(3600);
             $this->setSuccessMsg($this->_('You are now logged in.'));
 
-            if ($this->input_selectlogin === 'email') {
+            if ($this->loginregisterConfig['input_selectlogin'] === 'email') {
                 // add the email field
                 $email = new Email('email');
                 $this->add($email);
@@ -284,7 +284,7 @@ class LoginPage extends FrontendLoginRegisterPages
 
             // pass
             $password = new Password('password');
-            if ($this->input_selectlogin === 'email') {
+            if ($this->loginregisterConfig['input_selectlogin'] === 'email') {
                 $password->setRule('matchEmail', 'email');
             } else {
                 $password->setRule('matchUsername', 'username');
@@ -301,7 +301,7 @@ class LoginPage extends FrontendLoginRegisterPages
             $this->add($this->passwordForgottenLink());
 
             // register link
-            if ($this->input_selectloginregister == 'loginregister') {
+            if ($this->loginregisterConfig['input_selectloginregister'] == 'loginregister') {
                 $this->add($this->___registerLink());
             }
 
@@ -310,11 +310,11 @@ class LoginPage extends FrontendLoginRegisterPages
 
             if ($this->isValid()) {
 
-                $fieldname = ($this->input_selectlogin == 'username') ? 'name' : $this->input_selectlogin;
+                $fieldname = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
 
                 if ($fieldname != 'name') {
                     // login with email
-                    $user = $this->wire('users')->get($fieldname . '=' . $this->getValue($this->input_selectlogin));
+                    $user = $this->wire('users')->get($fieldname . '=' . $this->getValue($this->loginregisterConfig['input_selectlogin']));
                 } else {
                     // login with username
                     $user = $this->wire('users')->get('name=' . $this->wire('input')->post('login-form-username'));
@@ -336,7 +336,7 @@ class LoginPage extends FrontendLoginRegisterPages
                     } else {
 
                         // check if TFA is enabled in the settings
-                        if ($this->input_tfa) {
+                        if ($this->loginregisterConfig['input_tfa']) {
 
                             $this->wire('session')->set('type',
                                 'TfaEmail'); // set session for outputting message that a code was sent by email
@@ -358,7 +358,7 @@ class LoginPage extends FrontendLoginRegisterPages
             } else {
 
                 // grab the first field name: could be username or email
-                $user_field_name = $this->getAttribute('id') . '-' . $this->input_selectlogin;
+                $user_field_name = $this->getAttribute('id') . '-' . $this->loginregisterConfig['input_selectlogin'];
 
                 if ($this->wire('session')->get($user_field_name)) {
                     $keys = $this->array_keys_multi($this->wire('session')->get($user_field_name));
@@ -378,10 +378,10 @@ class LoginPage extends FrontendLoginRegisterPages
                         if (array_unique($keys)) {
                             // always the same email or username was used for the login attempts
                             // so check if a user exists with this username or email in the database
-                            if (($this->wire('users')->get($this->input_selectlogin . '=' . $keys[0])->id) != 0) {
+                            if (($this->wire('users')->get($this->loginregisterConfig['input_selectlogin'] . '=' . $keys[0])->id) != 0) {
 
                                 // user was found
-                                $this->user = $this->wire('users')->get($this->input_selectlogin . '=' . $keys[0]);
+                                $this->user = $this->wire('users')->get($this->loginregisterConfig['input_selectlogin'] . '=' . $keys[0]);
 
                                 // for the rare case that the form will be submitted again to prevent creation of new code
                                 // do not create and send a code once more
@@ -437,7 +437,7 @@ class LoginPage extends FrontendLoginRegisterPages
             }
 
             // render the form on the frontend
-            $content =  $this->wire('page')->body;
+            $content = $this->wire('page')->body;
             $content .= parent::render();
             return $content;
         }
@@ -509,7 +509,7 @@ class LoginPage extends FrontendLoginRegisterPages
             $current_page_id = $this->wire('pages')->get('template=fl_loginpage')->id;
 
             switch (true) {
-                case($this->input_redirectSuccess == -1):
+                case($this->loginregisterConfig['input_redirectSuccess'] == -1):
                     if ($this->wire('session')->get('prevPage') > 0) {
                         $id = (int)$this->wire('session')->get('prevPage');
                         $this->wire('session')->remove('prevPage');
@@ -517,8 +517,8 @@ class LoginPage extends FrontendLoginRegisterPages
                         $id = $current_page_id;
                     }
                     break;
-                case($this->input_redirectSuccess > 0):
-                    $id = (int)$this->input_redirectSuccess;
+                case($this->loginregisterConfig['input_redirectSuccess'] > 0):
+                    $id = (int)$this->loginregisterConfig['input_redirectSuccess'];
                     break;
                 default:
                     $id = $current_page_id;
@@ -548,7 +548,7 @@ class LoginPage extends FrontendLoginRegisterPages
         $event->replace = true;
 
         // change the field "username" to "name" because this is the name in the DB
-        $dbFieldName = ($this->input_selectlogin == 'username') ? 'name' : $this->input_selectlogin;
+        $dbFieldName = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
         // grab the user
         if ($dbFieldName != 'name') {
             // get user by email
@@ -617,18 +617,16 @@ class LoginPage extends FrontendLoginRegisterPages
         if ($times[0] == '00') {
             unset($times[0]);
         } else {
-            $unit = $this->_n($this->_('hour'),
-                $this->_('hours'), (int)$times[0]);
+            $unit = $this->_n($this->_('hour'), $this->_('hours'), (int)$times[0]);
         }
         if (!isset($times[0])) {
             if ($times[1] != '00') {
-                $unit = $this->_n($this->_('minute'),
-                    $this->_('minutes'), (int)$times[1]);
+                $unit = $this->_n($this->_('minute'), $this->_('minutes'), (int)$times[1]);
             } else {
                 unset($times[1]);
             }
         }
-        return  implode(':', $times) . ' ' . $unit;
+        return implode(':', $times) . ' ' . $unit;
     }
 
     /**
@@ -638,7 +636,7 @@ class LoginPage extends FrontendLoginRegisterPages
      * @return void
      * @throws WireException
      */
-    protected function emailCode(HookEvent $event): void
+    protected function emailCode(HookEvent $event):void
     {
         // replace the original emailCode method entirely
         $event->replace = true;
@@ -660,10 +658,10 @@ class LoginPage extends FrontendLoginRegisterPages
         $m->title($this->_('Use this code to login into your account'));
 
         $m->to($email);
-        $m->from($this->input_email);
+        $m->from($this->loginregisterConfig['input_email']);
         $this->setSenderName($m);
-        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregister));
-        $m->mailTemplate($this->input_emailTemplate);
+        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregisterConfig));
+        $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
         if ($m->send()) {
             // create alert text to enter the code on the screen
