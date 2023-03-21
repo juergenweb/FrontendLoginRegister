@@ -50,7 +50,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
         $button = new Button('submit');
         $buttonText = $this->_('Recover password');
         // change button text, if username is used to log in
-        if ($this->input_selectlogin == 'username') {
+        if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
             $buttonText = $this->_('Request login data');
         }
         $button->setAttribute('value', $buttonText);
@@ -61,7 +61,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function __toString(): string
+    public function __toString():string
     {
         return $this->render();
     }
@@ -72,7 +72,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function render(): string
+    public function render():string
     {
         if ($this->isValid()) {
 
@@ -88,7 +88,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                 //check if account was activated or not
                 if ($user->fl_activation) {
                     // user has not activated his account til now - lets send a reminder email to activate the account
-                    if($this->sendReminderMail($user)){
+                    if ($this->sendReminderMail($user)) {
                         // overwrite alert message
                         $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('It seems that you have already registered for an account,  but your account is still pending approval. To activate your account, please follow the instructions inside the mail that have been sent to you. After that you can create your new login data.'));
                     }
@@ -97,7 +97,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                     // send an email to the user, which contains a link to set new login data
 
                     // create request text depending on login settings
-                    if ($this->input_selectlogin == 'username') {
+                    if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
                         $requestText = $this->_('login data (password and/or username)');
                     } else {
                         $requestText = $this->_('password');
@@ -105,7 +105,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
 
                     // create placeholder variables
                     $this->setMailPlaceholder('logindata', $requestText);
-                    $resetText = ($this->input_selectlogin == 'username') ? $this->_('login data') : $this->_('password');
+                    $resetText = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? $this->_('login data') : $this->_('password');
                     $this->setMailPlaceholder('resettext', $resetText);
                     $this->setMailPlaceholder('recoverPasswordlink',
                         $this->createCodeLink('fl_recoverylogindatapage', $recoveryCode));
@@ -113,12 +113,13 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
 
                     $m = new WireMail();
                     $m->to($user->email);
-                    $m->from($this->input_email);
+                    $m->from($this->loginregisterConfig['input_email']);
                     $this->setSenderName($m);
                     $m->subject(sprintf($this->_('Action required to reset your %s'), $resetText));
                     $m->title(sprintf($this->_('Create a new %s'), $requestText));
-                    $m->bodyHTML($this->getLangValueOfConfigField('input_passwordforgottentext', $this->loginregister));
-                    $m->mailTemplate($this->input_emailTemplate);
+                    $m->bodyHTML($this->getLangValueOfConfigField('input_passwordforgottentext',
+                        $this->loginregisterConfig));
+                    $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
                     // save user data only if mail was sent successfully
                     if ($m->send()) {
@@ -126,7 +127,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                         $user->of(false);
                         $user->fl_recoverylogindata = $recoveryCode; // save the code in the db
                         $user->fl_recoverylogindatadatetime = time(); // save the datetime string in the db
-                        if(!$user->save()){
+                        if (!$user->save()) {
                             // there was a problem saving the user
                             $this->savingUserProblemAlert();
                         }
@@ -139,7 +140,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
             }
         }
         // render the form on the frontend
-        $content =  $this->wire('page')->body;
+        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
