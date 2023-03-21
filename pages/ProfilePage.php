@@ -57,15 +57,15 @@ class ProfilePage extends FrontendLoginRegisterPages
         $this->add($button);
 
         // set success message
-        if($this->wire('input')->post('profile-form-submit')) {
+        if ($this->wire('input')->post('profile-form-submit')) {
             // set success message by default on post
             $this->setSuccessMsg($success_msg);
         }
 
         // set language values on redirect if language field is present inside the form
         $language_field = $this->getFormelementByName('profile-form-language');
-        if($language_field){
-            if($this->wire('session')->get('language')){
+        if ($language_field) {
+            if ($this->wire('session')->get('language')) {
                 // display the success message after redirection
                 $this->setSuccessMsg($this->_('Your profile data have been updated successfully.'));
                 $language_field->setDefaultValue($this->wire('session')->get('language'));
@@ -84,7 +84,7 @@ class ProfilePage extends FrontendLoginRegisterPages
      * @return Link
      * @throws WireException
      */
-    public function ___deleteAccountLink(): Link
+    public function ___deleteAccountLink():Link
     {
         $this->deleteAccountLink->setPageLink($this->wire('pages')->get('template=fl_deleterequestpage'))->setLinkText($this->_('Delete account'));
         $this->deleteAccountLink->wrap();
@@ -105,11 +105,11 @@ class ProfilePage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function render(): string
+    public function render():string
     {
 
         // Show link for account deletion, if enabled in the settings
-        if ($this->input_deleteProfile) {
+        if ($this->loginregisterConfig['input_deleteProfile']) {
             $this->add($this->___deleteAccountLink());
         }
 
@@ -118,7 +118,7 @@ class ProfilePage extends FrontendLoginRegisterPages
             $this->showForm = true;
 
             // grab the user language id before the saving process on multi-language site
-            if($this->wire('languages') && count($this->wire('languages')) > 1) {
+            if ($this->wire('languages') && count($this->wire('languages')) > 1) {
                 $old_user_lang = $this->user->language->id;
             }
 
@@ -132,21 +132,21 @@ class ProfilePage extends FrontendLoginRegisterPages
                         if ($value) {
                             $this->user->pass = $value;
                         }
-                    }  else {
+                    } else {
 
                         $this->user->$name = $value;
                     }
                 } else {
                     // username has to be changed to name as stored inside the database
-                    if($name == 'username'){
+                    if ($name == 'username') {
                         $this->user->name = $value;
                     }
                 }
             }
-            if($this->user->save()){
+            if ($this->user->save()) {
                 // check if site is multi-lingual
-                if($this->wire('languages') && count($this->wire('languages')) > 1) {
-                    if($old_user_lang != $this->user->language->id){
+                if ($this->wire('languages') && count($this->wire('languages')) > 1) {
+                    if ($old_user_lang != $this->user->language->id) {
                         $this->wire('session')->set('language', (string)$this->user->language->id);
                         // redirect to the local page with the new language
                         $this->wire('session')->redirect($this->wire('pages')->get($this->wire->page->id)->localUrl($this->wire('user')->language));
@@ -163,7 +163,7 @@ class ProfilePage extends FrontendLoginRegisterPages
         }
 
         // render the form on the frontend
-        $content =  $this->wire('page')->body;
+        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
