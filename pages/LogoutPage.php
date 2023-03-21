@@ -35,7 +35,7 @@ class LogoutPage extends FrontendLoginRegisterPages
     /**
      * @return string
      */
-    public function __toString(): string
+    public function __toString():string
     {
         return $this->render();
     }
@@ -44,7 +44,7 @@ class LogoutPage extends FrontendLoginRegisterPages
      * Render the alert
      * @return string
      */
-    public function render(): string
+    public function render():string
     {
         return $this->alert->___render();
     }
