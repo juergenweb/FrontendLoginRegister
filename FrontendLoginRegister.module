@@ -19,7 +19,7 @@ use ReflectionException;
 class FrontendLoginRegister extends WireData implements Module, ConfigurableModule
 {
 
-    /* Properties with default values */
+    /* Declaration  of properties */
     protected array $input_registration = ['3', '92']; // Fields that should be displayed on the registration form
     protected array $input_profile = ['3', '92']; // Fields that should be displayed on the profile form
     protected array $userFields = []; // Array of all user fields
@@ -37,7 +37,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
     protected string|int $input_tfa = 0; // Use Tfa by default
     protected array $input_roles = []; // IDs of all roles a new user will get
-    protected string|int $input_deleteProfile = 0; // Whether the use can delete his account or not
 
     /* Class objects */
     protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
@@ -54,7 +53,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         //  set the property values from the configuration settings from DB
         foreach ($this->wire('modules')->getConfig($this) as $key => $value) {
-            $this->frontendLoginConfig[$key] = $value;
+
+            $this->$key = $value;
         }
 
 
@@ -149,6 +149,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->addHookAfter('Modules::saveConfig', $this, 'setPageStatus');
         // set email to unique in the email field settings
         $this->addHookAfter('Modules::saveConfig', $this, 'setEmailUnique');
+        // set email to unique in the email field settings
+        $this->addHookAfter('Modules::saveConfig', $this, 'setDeletePagesStatus');
         // add the label "hours" next to the inputfield
         $this->addHookAfter('InputfieldInteger::render', $this, 'addDaysLabel');
         // allow HTML tags inside the description of the inputfield_delete
@@ -386,10 +388,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 // add the title and the description to the page
                 $p = wire('pages')->get('template=' . $templateName);
                 $p->of(false);
-                // set account deletion page status to hidden on page creation
-                if ($p->template->name === 'fl_deleteaccountpage') {
-                    $p->addStatus('hidden');
-                }
+
                 if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
                     // multi-language site
                     if (!$p->getLanguageValue($language->id, 'title')) {
@@ -676,7 +675,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'loginregister' => $this->_('Login and registration'),
             'login' => $this->_('Login only')
         ]);
-        $loginSelect->attr('value', $this->frontendLoginConfig['input_selectloginregister']);
+        $loginSelect->attr('value', $this->input_selectloginregister);
         $loginSelect->notes = $this->_('By selecting "Login only", the registration and activation page will be disabled.');
         $loginSelect->required = 1;
         $generalfieldset->add($loginSelect);
@@ -697,7 +696,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'email' => $this->_('Login with email and password'),
             'username' => $this->_('Login with username and password')
         ]);
-        $loginSelect->attr('value', $this->frontendLoginConfig['input_selectlogin']);
+        $loginSelect->attr('value', $this->input_selectlogin);
         $loginSelect->required = 1;
         $loginSelect->description = $this->_('Select your preferred login type.');
         $loginSelect->columnWidth = 33;
@@ -720,7 +719,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         foreach (wire('pages')->find('has_parent!=2,id!=2|7,template!=' . $templateNames . ',status<' . Page::statusTrash . ',include=all') as $page) {
             $redirectSuccess->addOption($page->id, $page->title);
         }
-        $redirectSuccess->attr('value', $this->frontendLoginConfig['input_redirectSuccess']);
+        $redirectSuccess->attr('value', $this->input_redirectSuccess);
         $redirectSuccess->required = 1;
         $redirectSuccess->description = $this->_('Select the page where you want to redirect after successful login.');
         $redirectSuccess->columnWidth = 33;
@@ -760,7 +759,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $remember = $modules->get('InputfieldInteger');
         $remember->label = $this->_('Sending reminder email');
         $remember->attr('name', 'input_remind');
-        $remember->attr('value', $this->frontendLoginConfig['input_remind']);
+        $remember->attr('value', $this->input_remind);
         $remember->description = $this->_('Enter a period of time in days after which an email will be sent to the user to remind him to activate his account, if the activation is still pending.');
         $remember->notes = $this->_('If you want to disable this feature, set the value to 0.');
         $remember->required = 1;
@@ -774,7 +773,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $delete = $modules->get('InputfieldInteger');
         $delete->label = $this->_('Delete inactive account');
         $delete->attr('name', 'input_delete');
-        $delete->attr('value', $this->frontendLoginConfig['input_delete']);
+        $delete->attr('value', $this->input_delete);
         $delete->description = sprintf($this->_('Enter a period of time in days after which the user account will be deleted %s and the account verification is still pending.'),
             '<span id="reminder-mail-text">' . $this->_(', after the reminder mail has been sent') . '</span>');
         $delete->notes = $this->_('If you want to disable this feature, set the value to 0.');
@@ -846,7 +845,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $activationemail = $modules->get('InputfieldCKEditor');
         $activationemail->label = $this->_('Text for the verification email');
         $activationemail->attr('name', 'input_activationtext');
-        $activationemail->attr('value', $this->frontendLoginConfig['input_activationtext']);
+        $activationemail->attr('value', $this->input_activationtext);
         $activationemail->useLanguages = true;
         $activationemail->description = $this->_('Please enter the text for the confirmation email in which the user will receive a confirmation link to activate his account.');
         $activationemail->info = [
@@ -868,7 +867,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $tfamail = $modules->get('InputfieldCKEditor');
         $tfamail->label = $this->_('Text for the email including the TFA code');
         $tfamail->attr('name', 'input_tfatext');
-        $tfamail->attr('value', $this->frontendLoginConfig['input_tfatext']);
+        $tfamail->attr('value', $this->input_tfatext);
         $tfamail->useLanguages = true;
         $tfamail->description = $this->_('Enter the text for the email which contains the TFA code if TFA is enabled.');
         $tfamail->info = [
@@ -886,7 +885,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $reminderemail = $modules->get('InputfieldCKEditor');
         $reminderemail->label = $this->_('Text for the reminder email');
         $reminderemail->attr('name', 'input_remindertext');
-        $reminderemail->attr('value', $this->frontendLoginConfig['input_remindertext']);
+        $reminderemail->attr('value', $this->input_remindertext);
         $reminderemail->description = $this->_('Enter the text for the reminder email, which will be send to the user if the account verification is still pending.');
         $reminderemail->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
@@ -908,7 +907,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $passwordforgottenemail = $modules->get('InputfieldCKEditor');
         $passwordforgottenemail->label = $this->_('Text for the password forgotten email');
         $passwordforgottenemail->attr('name', 'input_passwordforgottentext');
-        $passwordforgottenemail->attr('value', $this->frontendLoginConfig['input_passwordforgottentext']);
+        $passwordforgottenemail->attr('value', $this->input_passwordforgottentext);
         $passwordforgottenemail->description = $this->_('Enter the text for the mail which contains a link to reset the password, if the user has forgotten his login data.');
         $passwordforgottenemail->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
@@ -928,7 +927,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $deleteaccountemail = $modules->get('InputfieldCKEditor');
         $deleteaccountemail->label = $this->_('Text for the delete account email');
         $deleteaccountemail->attr('name', 'input_deleteaccounttext');
-        $deleteaccountemail->attr('value', $this->frontendLoginConfig['input_deleteaccounttext']);
+        $deleteaccountemail->attr('value', $this->input_deleteaccounttext);
         $deleteaccountemail->description = $this->_('Enter the text for the email, which contains a link to delete the account.');
         $deleteaccountemail->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
@@ -946,7 +945,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $deletion_confirmation = $modules->get('InputfieldCKEditor');
         $deletion_confirmation->label = $this->_('Text for the deletion confirmation account email');
         $deletion_confirmation->attr('name', 'input_deletion_confirmation');
-        $deletion_confirmation->attr('value', $this->frontendLoginConfig['input_deletion_confirmation']);
+        $deletion_confirmation->attr('value', $this->input_deletion_confirmation);
         $deletion_confirmation->description = $this->_('Enter the text for the email, that will be send to the user after successful deletion of his account.');
         $deletion_confirmation->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
@@ -963,7 +962,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $unlock_account = $modules->get('InputfieldCKEditor');
         $unlock_account->label = $this->_('Text for the unlock account email');
         $unlock_account->attr('name', 'input_unlock_account');
-        $unlock_account->attr('value', $this->frontendLoginConfig['input_unlock_account']);
+        $unlock_account->attr('value', $this->input_unlock_account);
         $unlock_account->description = $this->_('Enter the text for the email, that will be send to the user after the account was locked.');
         $unlock_account->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
@@ -1012,7 +1011,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $templates[$template] = ucfirst($template);
             }
             $emailTemplate->addOptions($templates);
-            $emailTemplate->attr('value', $this->frontendLoginConfig['input_emailTemplate']);
+            $emailTemplate->attr('value', $this->input_emailTemplate);
             $emailTemplate->required = 1;
             $emailTemplate->description = $this->_('Please select an email template.');
             $emailfieldset->add($emailTemplate);
@@ -1022,7 +1021,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $email = $modules->get('InputfieldEmail');
         $email->label = $this->_('From email address');
         $email->attr('name', 'input_email');
-        $email->attr('value', $this->frontendLoginConfig['input_email']);
+        $email->attr('value', $this->input_email);
         $email->required = true;
         $email->description = $this->_('This email address will be displayed as the sender of the emails sent by this module.');
         $email->columnWidth = 50;
@@ -1033,7 +1032,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $sender = $modules->get('InputfieldText');
         $sender->label = $this->_('From name');
         $sender->attr('name', 'input_sender');
-        $sender->attr('value', $this->frontendLoginConfig['input_sender']);
+        $sender->attr('value', $this->input_sender);
         $sender->placeholder = $this->_('fe. My company');
         $sender->description = $this->_('This name will be displayed as the sender of the emails sent by this module.');
         $sender->notes = sprintf($this->_('If no sender name will be entered, than %s will be used as the sender name.'),
@@ -1079,10 +1078,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             }
         }
         if ($nameAttribute == 'input_registration') {
-            $f->attr('value', $this->frontendLoginConfig['input_registration']);
+            $f->attr('value', $this->input_registration);
             $f->label = $this->_('Fields of the registration form');
         } else {
-            $f->attr('value', $this->frontendLoginConfig['input_profile']);
+            $f->attr('value', $this->input_profile);
             $f->label = $this->_('Fields of the profile form');
         }
 
@@ -1101,6 +1100,17 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      */
     public function install():void
     {
+        // set array of all pages (templates), that should be set to unpublished on install
+        $unpublishedTemplates = [
+            'fl_deleteaccountpage',
+            'fl_deleterequestpage'
+        ];
+
+        $hiddenTemplates = [
+            'fl_deleteaccountpage',
+            'fl_deleterequestpage'
+        ];
+
 
         // Check if role "registered" exists for newly registered users - otherwise create it
         if (!wire('roles')->get('registered')->id) {
@@ -1211,7 +1221,15 @@ EOT;
             $p = new Page();
             // create new page object
             $p->template = $templateName;
-            // set template
+            // set status to unpublished on certain pages by default
+            if(in_array($templateName, $unpublishedTemplates)){
+                $p->addStatus(Page::statusUnpublished);
+            }
+            // set status to hidden on certain pages by default
+            if(in_array($templateName, $hiddenTemplates)){
+                $p->addStatus(Page::statusHidden);
+            }
+            // set parent page
             $p->parent = wire('pages')->get(1);
             // set homepage with id 1 as the parent page
             $p->title = $fieldproperties['title'];
@@ -1398,6 +1416,32 @@ EOT;
             $email->flagUnique = 1;
             $email->save('flagUnique');
             wire('session')->message($this->_('Field email was set to unique, because this is necessary for sending emails to the right user.'));
+        }
+    }
+
+    /**
+     * Change status of DeleteRequestPage and DeleteAccountPage depending on input_deleteProfile
+     * inside module configuration
+     * box not checked -> set status unpublished
+     * box checked -> remove status unpublished
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function setDeletePagesStatus():void
+    {
+
+        $deleteAccountPage = $this->wire('pages')->get('template=fl_deleteaccountpage');
+        $deleteRequestPage = $this->wire('pages')->get('template=fl_deleterequestpage');
+
+        if($this->input_deleteProfile){
+            // remove unpublished status
+            $deleteAccountPage->removeStatus(Page::statusUnpublished);
+            $deleteRequestPage->removeStatus(Page::statusUnpublished);
+        } else {
+            // add unpublished status
+            $deleteAccountPage->addStatus(Page::statusUnpublished);
+            $deleteRequestPage->addStatus(Page::statusUnpublished);
         }
     }
 
