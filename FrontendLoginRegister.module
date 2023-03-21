@@ -1259,6 +1259,8 @@ EOT;
          * In the user overview a new table column will be added to show the date, when the account was verified
          */
         $data = wire('modules')->getConfig('ProcessUser');
+
+
         $data['showFields'][] = 'fl_activationdatetime';
         wire('modules')->saveConfig('ProcessUser', $data);
 
@@ -1275,9 +1277,10 @@ EOT;
 
         // remove field activation date from User list (ProcessUser)
         $data = wire('modules')->getConfig('ProcessUser');
-        $key = array_search('fl_activationdatetime', $data);
+
+        $key = array_search('fl_activationdatetime', $data['showFields']);
         if ($key) {
-            unset($data[$key]);
+            unset($data['showFields'][$key]);
         }
         wire('modules')->saveConfig('ProcessUser', $data);
 
