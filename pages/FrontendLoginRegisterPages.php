@@ -78,7 +78,6 @@ class FrontendLoginRegisterPages extends Form
         $this->delete_request_page = $this->wire('pages')->get('template=fl_deleterequestpage');
 
 
-
     }
 
     /**
@@ -509,7 +508,7 @@ class FrontendLoginRegisterPages extends Form
             $field = new $class($fieldtype->name);
             $field->setLabel($fieldtype->label);
             // add stored values if user is logged in
-            if($this->wire('user')->isLoggedin()){
+            if ($this->wire('user')->isLoggedin()) {
                 $field_name = $fieldtype->name;
                 $field->setAttribute('value', $this->wire('user')->$field_name);
             }
