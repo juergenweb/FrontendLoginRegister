@@ -23,7 +23,6 @@ use FrontendForms\Password as Password;
 use FrontendForms\Username as Username;
 use ProcessWire\HookEvent as HookEvent;
 use ProcessWire\Tfa as Tfa;
-use ProcessWire\TfaEmail;
 use ProcessWire\User;
 use ProcessWire\WireException;
 use ProcessWire\WireLog as WireLog;
@@ -371,18 +370,16 @@ class LoginPage extends FrontendLoginRegisterPages
                         $limit_reached = (count($keys) >= $this->lock_number);
                     }
                     if ($limit_reached) {
-
                         $lock_account = false; // set to false by default
 
                         // check if always the same username or email was used
                         if (array_unique($keys)) {
                             // always the same email or username was used for the login attempts
                             // so check if a user exists with this username or email in the database
-                            if (($this->wire('users')->get($this->loginregisterConfig['input_selectlogin'] . '=' . $keys[0])->id) != 0) {
-
+                            $checkuser = $this->wire('users')->get($this->loginregisterConfig['input_selectlogin'] . '=' . $_POST[$this->getID().'-'.$this->loginregisterConfig['input_selectlogin']]);
+                            if ($checkuser->id != 0) {
+                                $this->user = $checkuser;
                                 // user was found
-                                $this->user = $this->wire('users')->get($this->loginregisterConfig['input_selectlogin'] . '=' . $keys[0]);
-
                                 // for the rare case that the form will be submitted again to prevent creation of new code
                                 // do not create and send a code once more
                                 $lock_account = (!$this->user->fl_unlockaccount);
