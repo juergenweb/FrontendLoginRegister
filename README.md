@@ -25,7 +25,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - Select if you want to login with username and password or email and password
 - Select the desired roles for newly created users
 - Select, which fields of the user template should be displayed on the registration and profile form (beside the mandatory fields)
-- Offer users the possibility to delete their account in the members area using a deletion link with time expiration
+- Offer users the possibility to delete their account in the members area using a deletion link with time expiration. If enabled, 2 pages for account deletion will get that status published, otherwise the status published will be removed from this pages.
 - Customize the texts of the emails send by this modules
 - Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights)
 - Support for SeoMaestro if installed
