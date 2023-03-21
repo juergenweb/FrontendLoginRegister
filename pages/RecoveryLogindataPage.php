@@ -48,14 +48,14 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         $this->setMinTime(3); // 3 seconds
         $this->setMaxTime(600); // 10 minutes
         $this->setAttribute('action', $this->wire('page')->url . '?recoverylogindatacode=' . $this->queryString);
-        $quty = ($this->input_selectlogin == 'username') ? 2 : 1;
+        $quty = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 2 : 1;
         $pwtext = $this->_('Your new password has been saved, and you can log in into your account now.');
         $usernametext = $this->_('Your new login data have been saved. You can now log into your account.');
         $successMsg = _n($pwtext, $usernametext, $quty);
-        $this->setSuccessMsg($successMsg.' '.$this->___loginLink()->___render());
+        $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
 
         // username (show only if username and password are selected as login data)
-        if ($this->input_selectlogin == 'username') {
+        if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
             $usernameText = '<p>' . $this->_('If you have forgotten your username too, you can enter a new one here. Otherwise, let this field empty and fill out only the password fields.') . '</p>';
             $username = new Username('username');
             $username->removeRule('required');
@@ -75,7 +75,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         $this->add($passwordConfirm);
 
         $button = new Button('submit');
-        $buttonText = ($this->input_selectlogin == 'username') ? $this->_('Save new login data') : $this->_('Save new password');
+        $buttonText = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? $this->_('Save new login data') : $this->_('Save new password');
         $button->setAttribute('value', $buttonText);
         $this->add($button);
 
@@ -95,7 +95,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
      * @return string
      * @throws WireException
      */
-    public function render(): string
+    public function render():string
     {
 
         if ($this->isValid()) {
@@ -104,7 +104,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
             $this->user->fl_recoverylogindata = ''; // delete the recovery code
             $this->user->fl_recoverylogindatadatetimeDateTime = ''; // delete the recovery code time stamp
             // save username only if value is present
-            if (($this->input_selectlogin == 'username') && ($this->getValue('username'))) {
+            if (($this->loginregisterConfig['input_selectlogin'] == 'username') && ($this->getValue('username'))) {
                 $this->user->name = $this->getValue('username');
             }
             $this->user->pass = $this->getValue('password');
@@ -113,7 +113,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         }
 
         // render the form on the frontend
-        $content =  $this->wire('page')->body;
+        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
