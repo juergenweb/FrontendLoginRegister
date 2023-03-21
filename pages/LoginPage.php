@@ -256,7 +256,7 @@ class LoginPage extends FrontendLoginRegisterPages
             }
 
             // add info about how long the code will be valid
-            $expireTime = $module->codeExpire - time();
+            $expireTime = $this->wire('modules')->get('TfaEmail')->codeExpire;
             if (($expireTime) && $this->wire('user')->isGuest()) {
                 // show info only if it will be submitted in time and user is not logged in
                 $msg .= '<br>' . sprintf($this->_('This code is still valid for %s seconds.'),
@@ -641,7 +641,7 @@ class LoginPage extends FrontendLoginRegisterPages
         // get user email, code and expiration time
         $email = $event->arguments[0];
         $code = $event->arguments[1];
-        $expire = $this->tfa->getModule()->codeExpire;
+        $expire = $this->wire('modules')->get('TfaEmail')->codeExpire;
 
         // set placeholders for code and expiration time
         // 1) tfa code
