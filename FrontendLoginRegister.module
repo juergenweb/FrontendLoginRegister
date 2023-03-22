@@ -1093,6 +1093,23 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     }
 
     /**
+     * Create an array containing all roles ids by given names
+     * @param array $fieldproperties
+     * @return array
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function createRolesArray(array $fieldproperties): array
+    {
+        $roles = [];
+        foreach($fieldproperties as $name){
+                $role = $this->wire('roles')->get('name='.$name);
+                $roles[] = $role->id;
+        }
+        return $roles;
+    }
+
+    /**
      * Method who runs during the installation process
      * @return void
      * @throws WireException
@@ -1188,7 +1205,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $fieldgroup->save();
             }
             $template->useRoles = 1;
-            $template->setRoles($fieldproperties['roles']);
+            $template->setRoles($this->createRolesArray($fieldproperties['roles']));
             $template->save();
             //open the file and write the content to it
             $class = $fieldproperties['className'];
