@@ -93,7 +93,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'version' => '1.0.0',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.16', 'LazyCron'],
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.23', 'LazyCron'],
         ];
     }
 
