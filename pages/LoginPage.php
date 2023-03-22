@@ -614,11 +614,13 @@ class LoginPage extends FrontendLoginRegisterPages
         if ($times[0] == '00') {
             unset($times[0]);
         } else {
-            $unit = $this->_n($this->_('hour'), $this->_('hours'), (int)$times[0]);
+            $unit = $this->_n($this->_('hour'),
+                $this->_('hours'), (int)$times[0]);
         }
         if (!isset($times[0])) {
             if ($times[1] != '00') {
-                $unit = $this->_n($this->_('minute'), $this->_('minutes'), (int)$times[1]);
+                $unit = $this->_n($this->_('minute'),
+                    $this->_('minutes'), (int)$times[1]);
             } else {
                 unset($times[1]);
             }
