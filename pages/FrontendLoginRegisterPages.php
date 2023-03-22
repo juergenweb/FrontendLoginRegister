@@ -96,7 +96,6 @@ class FrontendLoginRegisterPages extends Form
             ];
             if(($field->getAttribute('name')) && (!in_array($field->getAttribute('name'), $exclude_fields))){
                 $field_name = $field->getAttribute('name');
-                bd($field_name);
                 $cleaned_field_name = str_replace($this->getID().'-', '', $field_name);
                 // username has to be changed to name as stored inside the database
                 if($cleaned_field_name == 'username'){
