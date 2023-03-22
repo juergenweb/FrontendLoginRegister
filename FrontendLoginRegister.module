@@ -1187,6 +1187,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $fieldgroup->add($seo->name);
                 $fieldgroup->save();
             }
+            $template->useRoles = 1;
             $template->setRoles($fieldproperties['roles']);
             $template->save();
             //open the file and write the content to it
