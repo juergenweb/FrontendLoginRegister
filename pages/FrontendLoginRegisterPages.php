@@ -423,6 +423,17 @@ class FrontendLoginRegisterPages extends Form
         $this->add($email);
     }
 
+    protected function createUsername():void
+    {
+        // add the username field
+        $username = new Username('username');
+        if ($this->wire('user')->isLoggedIn()) {
+            $username->setAttribute('value', $this->wire('user')->name);
+        }
+        $this->add($username);
+    }
+
+
     /** CREATE SYSTEM FIELDS */
 
     /**
@@ -471,17 +482,20 @@ class FrontendLoginRegisterPages extends Form
     {
 
         $fields = $this->getFormFieldsSelected($needle);
+        bd($fields);
 
         // These fields should not be created with the createFormField method because we create them manually
-        $noCreation = ['pass', 'email', 'language', 'tfa'];
-
-        // add username field on top
-        if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
-            $form->add($this->createName());
-        }
+        $noCreation = ['pass', 'email', 'language', 'tfa', 'username'];
+        
         foreach ($fields as $field) {
-            if (in_array($field->name, $noCreation)) {
-                $methodName = 'create' . ucfirst($field->name);
+            if($field->name == 'title'){
+                $name ='username';
+            } else {
+               $name = $field->name;
+            }
+            bd($name);
+            if (in_array($name, $noCreation)) {
+                $methodName = 'create' . ucfirst($name);
                 $this->$methodName($needle);
             } else {
                 $form->add($this->createFormField($field));
