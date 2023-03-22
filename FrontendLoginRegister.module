@@ -747,6 +747,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         //grab user fields from user template
         $fields = wire('templates')->get('user')->fieldgroup;
+        // add title field to the fields, if username is chosen
+        if($this->input_selectlogin == 'username'){
+            $fields[] = 'title';
+        }
 
         // Registration settings
         $registrationfieldset = $modules->get('InputfieldFieldset');
@@ -1067,13 +1071,19 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // get array of all editable user template field
         $profile = $this->wire('modules')->get('ProcessProfile');
         $userfields = $profile->data['profileFields'];
+        // if username and password was chosen for login - add username field
+
+        if($this->input_selectlogin == 'username'){
+            $userfields[] = 'title';
+        }
 
         // create asm select options for form fields
-        foreach ($fields as $inputname => $v) {
+        foreach ($fields as $id => $v) {
             if (!in_array($v->name, $exclude)) {
                 // allow only fields which are editable by the user
                 if (in_array($v->name, $userfields)) {
-                    $f->addOption($inputname, $v->label);
+                    $label = ($v->name == 'title') ? $this->_('Username') : $v->label;
+                    $f->addOption($id, $label);
                 }
             }
         }
