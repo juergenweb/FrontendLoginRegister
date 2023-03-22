@@ -81,6 +81,33 @@ class FrontendLoginRegisterPages extends Form
     }
 
     /**
+     * Set all user data entered inside a form to a user object
+     * Will be saved later on to the user
+     * @param User $user
+     * @return void
+     */
+    protected function setFormFieldValues(User $user):void
+    {
+        foreach($this->formElements as $field){
+            // exclude password-confirm field if present
+            $exclude_fields = [
+                $this->getID().'-pass-confirm',
+                $this->getID().'-oldpass'
+            ];
+            if(($field->getAttribute('name')) && (!in_array($field->getAttribute('name'), $exclude_fields))){
+                $field_name = $field->getAttribute('name');
+                bd($field_name);
+                $cleaned_field_name = str_replace($this->getID().'-', '', $field_name);
+                // username has to be changed to name as stored inside the database
+                if($cleaned_field_name == 'username'){
+                    $cleaned_field_name == 'name';
+                }
+                $user->$cleaned_field_name = $this->getValue($field_name);
+            }
+        }
+    }
+
+    /**
      * link the ProcessWire Fieldtype classes to the FrontendForms classes
      * This is necessary to create form fields which are set in the user template on the frontend with the appropriate FrontendForms classes
      */
