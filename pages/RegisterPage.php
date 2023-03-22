@@ -15,6 +15,7 @@ namespace FrontendLoginRegister;
  */
 
 use FrontendForms\Button as Button;
+use FrontendForms\Form as Form;
 use FrontendForms\Privacy as Privacy;
 use ProcessWire\TfaEmail;
 use ProcessWire\User as User;
@@ -127,19 +128,23 @@ class RegisterPage extends FrontendLoginRegisterPages
             $newUser = new User();
             $newUser->of(false);
 
+            // set values for all field in the form
+            $this->setFormFieldValues($newUser);
+
+            // TODO delete afterwards
+            /*
             // save username if login with username and password is selected
             if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
                 $newUser->name = $this->wire('sanitizer')->pageName($this->getValue('username'));
             }
 
-            $newUser->email = $email; // save user email
-            $newUser->pass = $pass; // save password
 
             // save user language only on multi-language site
             if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                 $language = $this->wire('input')->post('register-form-language') !== null ? $this->wire('input')->post('register-form-language') : $this->wire('user')->language->id;
                 $newUser->language = $language; // save user language
             }
+            */
 
             $newUser->fl_activation = $activationCode; // save the activation code
 
