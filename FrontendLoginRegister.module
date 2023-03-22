@@ -748,9 +748,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         //grab user fields from user template
         $fields = wire('templates')->get('user')->fieldgroup;
         // add title field to the fields, if username is chosen
-        if($this->input_selectlogin == 'username'){
-            $fields[] = 'title';
-        }
+        $fields[] = 'title';
 
         // Registration settings
         $registrationfieldset = $modules->get('InputfieldFieldset');
