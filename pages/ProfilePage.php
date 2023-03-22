@@ -124,25 +124,10 @@ class ProfilePage extends FrontendLoginRegisterPages
 
             // save the user values to the database
             $this->user->of(false);
-            foreach ($this->getValues() as $name => $value) {
 
-                $name = str_replace($this->getID() . '-', '', $name);
-                if ($this->user->hasField($name)) {
-                    if ($name == 'pass') {
-                        if ($value) {
-                            $this->user->pass = $value;
-                        }
-                    } else {
+            // set the form field values to the user object
+            $this->setFormFieldValues($this->user);
 
-                        $this->user->$name = $value;
-                    }
-                } else {
-                    // username has to be changed to name as stored inside the database
-                    if ($name == 'username') {
-                        $this->user->name = $value;
-                    }
-                }
-            }
             if ($this->user->save()) {
                 // check if site is multi-lingual
                 if ($this->wire('languages') && count($this->wire('languages')) > 1) {
