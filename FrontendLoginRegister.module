@@ -1109,7 +1109,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $hiddenTemplates = [
             'fl_deleteaccountpage'
         ];
-        
+
         // Check if role "registered" exists for newly registered users - otherwise create it
         if (!wire('roles')->get('registered')->id) {
             $role = wire('roles')->add('registered');
@@ -1168,6 +1168,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             // not allowed to have children
             $template->noParents = -1;
             $template->noChangeTemplate = 1;
+
             // not allowed to change template
             $template->fieldgroup = $fieldgroup;
             // add the fieldgroup
@@ -1186,7 +1187,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $fieldgroup->add($seo->name);
                 $fieldgroup->save();
             }
-
+            $template->setRoles($fieldproperties['roles']);
             $template->save();
             //open the file and write the content to it
             $class = $fieldproperties['className'];
