@@ -21,7 +21,7 @@ $this->templatePages = [
         'sitemap' => 1,
         'noFollow' => 1,
         'noIndex' => 1,
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_registerpage']
     ],
     'fl_loginpage' => [
@@ -32,7 +32,7 @@ $this->templatePages = [
         'sitemap' => 1,
         'noFollow' => 1,
         'noIndex' => 1,
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_loginpage']
     ],
     'fl_logoutpage' => [
@@ -43,7 +43,7 @@ $this->templatePages = [
         'sitemap' => 0,
         'noFollow' => 1,
         'noIndex' => 1,
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_logoutpage']
     ],
     'fl_profilepage' => [
@@ -54,7 +54,7 @@ $this->templatePages = [
         'sitemap' => 0,
         'noFollow' => 1,
         'noIndex' => 1,
-        'roles' => ['1020'],
+        'roles' => ['registered'],
         'className' => $this->getAllClasses()['fl_profilepage']
     ],
     'fl_forgotlogindatapage' => [
@@ -66,7 +66,7 @@ $this->templatePages = [
         'noFollow' => 1,
         'noIndex' => 1,
         'status' => 'hidden',
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_forgotlogindatapage']
     ],
     'fl_recoverylogindatapage' => [
@@ -78,7 +78,7 @@ $this->templatePages = [
         'noFollow' => 1,
         'noIndex' => 1,
         'status' => 'hidden',
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_recoverylogindatapage']
     ],
     'fl_activationpage' => [
@@ -90,7 +90,7 @@ $this->templatePages = [
         'noFollow' => 1,
         'noIndex' => 1,
         'status' => 'hidden',
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_activationpage']
     ],
     'fl_deleterequestpage' => [
@@ -101,7 +101,7 @@ $this->templatePages = [
         'sitemap' => 0,
         'noFollow' => 1,
         'noIndex' => 1,
-        'roles' => ['1020'],
+        'roles' => ['registered'],
         'className' => $this->getAllClasses()['fl_deleterequestpage']
     ],
     'fl_deleteaccountpage' => [
@@ -113,7 +113,7 @@ $this->templatePages = [
         'noFollow' => 1,
         'noIndex' => 1,
         'status' => 'hidden',
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_deleteaccountpage']
     ],
     'fl_unlockaccountpage' => [
@@ -125,7 +125,7 @@ $this->templatePages = [
         'noFollow' => 1,
         'noIndex' => 1,
         'status' => 'hidden',
-        'roles' => ['37','1020'],
+        'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_unlockaccountpage']
     ]
 ];
