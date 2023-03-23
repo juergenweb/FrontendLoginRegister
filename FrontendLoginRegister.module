@@ -1085,15 +1085,20 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         if ($nameAttribute == 'input_registration') {
             $f->attr('value', $this->input_registration);
             $f->label = $this->_('Fields of the registration form');
+            $f->notes = $this->_('Email and password field are mandatory and have to be included in the form fields. All other fields are optional.');
+            if ($this->input_selectlogin == 'username') {
+                $f->notes = $this->_('Email, username and password field are mandatory and have to be included in the form fields. All other fields are optional.');
+            }
         } else {
             $f->attr('value', $this->input_profile);
             $f->label = $this->_('Fields of the profile form');
+            $f->notes = $this->_('It is recommended to include at least email and password field.');
+            if ($this->input_selectlogin == 'username') {
+                $f->notes = $this->_('It is recommended to include at least email, username and password field.');
+            }
         }
 
-        $f->notes = $this->_('Email and password field are mandatory and have to be included in the form fields.');
-        if ($this->input_selectlogin == 'username') {
-            $f->notes = $this->_('Email, username and password field are mandatory and have to be included in the form fields.');
-        }
+
         return $f;
     }
 
