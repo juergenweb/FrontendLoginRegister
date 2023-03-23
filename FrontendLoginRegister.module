@@ -151,6 +151,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->addHookAfter('Modules::saveConfig', $this, 'setEmailUnique');
         // set email to unique in the email field settings
         $this->addHookAfter('Modules::saveConfig', $this, 'setDeletePagesStatus');
+        // validate fields  to check if the neccessary fields are included
+        $this->addHookAfter('InputfieldAsmSelect::processInput', $this, 'validateFormFields');
         // add the label "hours" next to the inputfield
         $this->addHookAfter('InputfieldInteger::render', $this, 'addDaysLabel');
         // allow HTML tags inside the description of the inputfield_delete
@@ -192,10 +194,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 if (!$user->fl_reminderdatetime) {
 
                     $activation_date = $user->getUnformatted('created');
-
                     $diff_time = $this->input_remind * 60 * 60 * 24;
-                    // TODO rückgängig
-                    $diff_time = $this->input_remind * 60 * 60;
 
                     if ((int)$activation_date + $diff_time < time()) {
                         // send reminder email to the user
@@ -242,8 +241,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                 }
                 $diff_time = $this->input_delete * 60 * 60 * 24;
-                // TODO rückgängig
-                $diff_time = $this->input_delete * 60 * 60;
 
                 if ((int)$reminder_date + $diff_time < time()) {
                     // send deletion confirmation email to the user
@@ -1071,7 +1068,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $userfields = $profile->data['profileFields'];
         // if username and password was chosen for login - add username field
 
-        if($this->input_selectlogin == 'username'){
+        if ($this->input_selectlogin == 'username') {
             $userfields[] = 'title';
         }
 
@@ -1107,12 +1104,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function createRolesArray(array $fieldproperties): array
+    protected function createRolesArray(array $fieldproperties):array
     {
         $roles = [];
-        foreach($fieldproperties as $name){
-                $role = $this->wire('roles')->get('name='.$name);
-                $roles[] = $role->id;
+        foreach ($fieldproperties as $name) {
+            $role = $this->wire('roles')->get('name=' . $name);
+            $roles[] = $role->id;
         }
         return $roles;
     }
@@ -1468,6 +1465,88 @@ EOT;
             $deleteAccountPage->addStatus(Page::statusUnpublished);
             $deleteRequestPage->addStatus(Page::statusUnpublished);
         }
+    }
+
+    /**
+     * Get array of fieldnames from fields that are missing
+     * @param Inputfield $field
+     * @param array $mandatory_fields
+     * @param array $fields_values
+     * @return array
+     */
+    private function getMissingFields(Module|Wire|WireArray|WireData $field, array $mandatory_fields, array $fields_values):array
+    {
+        $keys = array_keys($mandatory_fields);
+        $result = array_diff($keys, $fields_values);
+        $filtered = [];
+        if ($result) {
+            $filtered = array_intersect_key($mandatory_fields, array_flip($result));
+        }
+        return $filtered;
+    }
+
+    /**
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function validateFormFields(HookEvent $event):void
+    {
+        $field = $event->object;
+
+        if (($field->name == 'input_registration') || ($field->name == 'input_profile')) {
+            $login_type = $this->input_selectlogin;
+            $values = $event->arguments(0);
+            $registration_values = $values->input_registration;
+            $profile_values = $values->input_profile;
+            $required_text = $this->_('The following fields have to be added to the form field "%s": %s');
+            $recommended_text = $this->_('It is not required, but recommended to include the following fields to the form field "%s" too: %s');
+            // get ids of username, email and password fields
+            $username_id = $this->wire('fields')->get('name=title');
+            $email_id = $this->wire('fields')->get('name=email');
+            $password_id = $this->wire('fields')->get('name=pass');
+
+            if ($login_type == 'username') {
+                $mandatory_fields = [
+                    $username_id->id => $this->_('Username'),
+                    $password_id->id => $password_id->label,
+                    $email_id->id => $email_id->label
+                ];
+                if ($field->name == 'input_registration') {
+                    // registration form fields input -> error
+                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $registration_values);
+                    if ($missing_fields) {
+                        $field->error(sprintf($required_text, $field->label, implode(', ', $missing_fields)));
+                    }
+                } else {
+                    // profile form fields input -> warning
+                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
+                    if ($missing_fields) {
+                        $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
+                    }
+                }
+            } else {
+                $mandatory_fields = [
+                    $password_id->id => $password_id->name,
+                    $email_id->id => $email_id->name
+                ];
+                if ($field->name == 'input_registration') {
+                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $registration_values);
+                    if ($missing_fields) {
+                        $field->error(sprintf($required_text, $field->label, implode(', ', $missing_fields)));
+                    }
+                } else {
+                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
+                    // profile form fields input -> warning
+                    if ($missing_fields) {
+                        $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
+                    }
+                }
+            }
+
+        }
+        $event->return = $event;
     }
 
     /**
