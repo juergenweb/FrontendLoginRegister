@@ -1501,7 +1501,7 @@ EOT;
         $field = $event->object;
 
         if (($field->name == 'input_registration') || ($field->name == 'input_profile')) {
-            $login_type = $this->input_selectlogin;
+            $login_type = $_POST['input_selectlogin'];
             $values = $event->arguments(0);
             $registration_values = $values->input_registration;
             $profile_values = $values->input_profile;
