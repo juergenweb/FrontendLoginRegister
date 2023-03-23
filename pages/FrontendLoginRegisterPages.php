@@ -99,8 +99,9 @@ class FrontendLoginRegisterPages extends Form
                 $cleaned_field_name = str_replace($this->getID().'-', '', $field_name);
                 // username has to be changed to name as stored inside the database
                 if($cleaned_field_name == 'username'){
-                    $cleaned_field_name == 'name';
+                    $cleaned_field_name = 'name';
                 }
+                bd($cleaned_field_name);
                 $user->$cleaned_field_name = $this->getValue($field_name);
             }
         }
@@ -486,7 +487,7 @@ class FrontendLoginRegisterPages extends Form
 
         // These fields should not be created with the createFormField method because we create them manually
         $noCreation = ['pass', 'email', 'language', 'tfa', 'username'];
-        
+
         foreach ($fields as $field) {
             if($field->name == 'title'){
                 $name ='username';
@@ -527,13 +528,14 @@ class FrontendLoginRegisterPages extends Form
      * Create input field for the usernameSyntax
      * @return Username
      */
+    /*
     protected function createName():Username
     {
         // add the field
         $name = new Username('username');
         $name->setRule('uniqueUsername');
         return $name;
-    }
+    }*/
 
     /**
      * Method to create a form field according to the settings in the backend
