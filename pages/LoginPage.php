@@ -355,7 +355,6 @@ class LoginPage extends FrontendLoginRegisterPages
                     }
                 }
             } else {
-
                 // grab the first field name: could be username or email
                 $user_field_name = $this->getAttribute('id') . '-' . $this->loginregisterConfig['input_selectlogin'];
 
@@ -376,7 +375,8 @@ class LoginPage extends FrontendLoginRegisterPages
                         if (array_unique($keys)) {
                             // always the same email or username was used for the login attempts
                             // so check if a user exists with this username or email in the database
-                            $checkuser = $this->wire('users')->get($this->loginregisterConfig['input_selectlogin'] . '=' . $_POST[$this->getID().'-'.$this->loginregisterConfig['input_selectlogin']]);
+                            $type = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
+                            $checkuser = $this->wire('users')->get($type . '=' . $_POST[$this->getID().'-'.$this->loginregisterConfig['input_selectlogin']]);
                             if ($checkuser->id != 0) {
                                 $this->user = $checkuser;
                                 // user was found
@@ -544,12 +544,10 @@ class LoginPage extends FrontendLoginRegisterPages
         // replace the original start method completely
         $event->replace = true;
 
-        // change the field "username" to "name" because this is the name in the DB
-        $dbFieldName = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
-        // grab the user
-        if ($dbFieldName != 'name') {
+        // grab the user by email or username
+        if ($this->loginregisterConfig['input_selectlogin'] = 'email') {
             // get user by email
-            $user = $this->wire('users')->get($dbFieldName . '=' . $this->getValue($dbFieldName));
+            $user = $this->wire('users')->get('email=' . $this->getValue('email'));
         } else {
             // get user by username
             $user = $this->wire('users')->get('name=' . $this->wire('input')->post('login-form-username'));
