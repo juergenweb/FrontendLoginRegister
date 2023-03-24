@@ -65,7 +65,6 @@ $this->templatePages = [
         'sitemap' => 1,
         'noFollow' => 1,
         'noIndex' => 1,
-        'status' => 'hidden',
         'roles' => ['guest','registered'],
         'className' => $this->getAllClasses()['fl_forgotlogindatapage']
     ],
