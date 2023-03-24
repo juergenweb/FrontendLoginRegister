@@ -66,7 +66,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $this->$key = $value;
         }
 
-
         // grab FrontendForms module
         $this->frontendForms = wire('modules')->get('FrontendForms');
 
@@ -1424,28 +1423,45 @@ EOT;
      */
     protected function setPageStatus(HookEvent $e):void
     {
-        $pages = wire('pages')->find('template=fl_registerpage|fl_activationpage|fl_deleteaccountpage',
+        $pages = wire('pages')->find('template=fl_registerpage|fl_activationpage|fl_deleteaccountpage|fl_deleterequestpage',
             ['findAll' => true]);
         foreach ($pages as $p) {
             $p->setOutputFormatting(false);
-            // set status on registration and activation page depending on settings
-            if ($p->template->name != 'fl_deleteaccountpage') {
+            switch($p->template->name){
+                // show/hide registration and activation page
+                case('fl_registerpage'):
+                case('fl_activationpage'):
                 if (isset($e->arguments(1)['input_selectloginregister'])) {
                     if ($e->arguments(1)['input_selectloginregister'] == 'login') {
-                        $p->addStatus(Page::statusHidden);
+                        $p->addStatus(Page::statusUnpublished);
+                        if($p->template->name == 'fl_registerpage'){
+                            $p->addStatus(Page::statusHidden);
+                        }
                     } else {
-                        $p->removeStatus(Page::statusHidden);
+                        $p->removeStatus(Page::statusUnpublished);
+                        if($p->template->name == 'fl_registerpage') {
+                            $p->removeStatus(Page::statusHidden);
+                        }
                     }
                 }
-            } else {
-                if (isset($e->arguments(1)['input_deleteProfile'])) {
-                    // set status on delete account page depending on settings
-                    if ($e->arguments(1)['input_deleteProfile'] == '1') {
-                        $p->removeStatus(Page::statusHidden);
-                    } else {
-                        $p->addStatus(Page::statusHidden);
+                break;
+                case('fl_deleteaccountpage'):
+                case('fl_deleterequestpage'):
+
+                    if (isset($e->arguments(1)['input_deleteProfile'])) {
+                        if ($e->arguments(1)['input_deleteProfile']) {
+                            $p->removeStatus(Page::statusUnpublished);
+                            if($p->template->name == 'fl_deleterequestpage') {
+                                $p->removeStatus(Page::statusHidden);
+                            }
+                        } else {
+                            bd($p->template->name);
+                            $p->addStatus(Page::statusUnpublished);
+                            $p->addStatus(Page::statusHidden);
+
+                        }
                     }
-                }
+                    break;
             }
             $p->save();
         }
