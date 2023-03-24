@@ -101,7 +101,14 @@ class FrontendLoginRegisterPages extends Form
                 if($cleaned_field_name == 'username'){
                     $cleaned_field_name = 'name';
                 }
-                $user->$cleaned_field_name = $this->getValue($field_name);
+                // do not overwrite empty password fields on profile form
+                if($cleaned_field_name != 'pass') {
+                    $user->$cleaned_field_name = $this->getValue($field_name);
+                } else {
+                    if($this->getValue($field_name)){
+                        $user->$cleaned_field_name = $this->getValue($field_name);
+                    }
+                }
             }
         }
     }
