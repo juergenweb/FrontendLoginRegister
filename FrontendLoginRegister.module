@@ -22,12 +22,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     /* Declaration  of properties */
     protected array $input_registration = ['3', '92']; // Fields that should be displayed on the registration form
     protected array $input_profile = ['3', '92']; // Fields that should be displayed on the profile form
-    protected array $userFields = []; // Array of all user fields
-    protected array $templatePages = []; // Array of all template pages
-    protected array $userSettings = []; // Holds the data for the specific user
     protected string|int $input_delete = 3; // The time in days after which the user will be deleted
     protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
-    protected string|int $input_prevent_send_deletion_email = ''; // prevent sending of email after user account has been deleted
+    protected string|int|null $input_prevent_send_deletion_email = ''; // prevent sending of email after user account has been deleted
     protected string $input_selectlogin = 'email'; // Select between log in with username or email
     protected string $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
     protected string $input_selectloginregister = 'loginregister'; // Select if login only or login and register
@@ -35,8 +32,21 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string $input_email = ''; // The email for this page, that will be used to send emails (fe. noreplay@mycompany.com)
     protected string $input_sender = ''; // The name of the sender for the emails (fe MyCompany)
     protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
-    protected string|int $input_tfa = 0; // Use Tfa by default
+    protected string|int $input_tfa = ''; // Use Tfa by default
+    protected string|int|null $input_deleteProfile = null; // allow users to delete their profile
+    protected string $input_activationtext = ''; // the text for the activation email
+    protected string $input_remindertext = ''; // the text for the reminder email
+    protected string $input_tfatext = ''; // the text for the TFA code email
+    protected string $input_passwordforgottentext = ''; // the text for the password forgotten email
+    protected string $input_deleteaccounttext = ''; // the text for the delete account email
+    protected $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
+    protected $input_unlock_account = ''; // the text for the unlock account email
     protected array $input_roles = []; // IDs of all roles a new user will get
+
+
+    protected array $userFields = []; // Array of all user fields
+    protected array $templatePages = []; // Array of all template pages
+    protected array $userSettings = []; // Holds the data for the specific user
 
     /* Class objects */
     protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
@@ -53,7 +63,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         //  set the property values from the configuration settings from DB
         foreach ($this->wire('modules')->getConfig($this) as $key => $value) {
-
             $this->$key = $value;
         }
 
