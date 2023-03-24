@@ -839,7 +839,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $profilefieldset = $modules->get('InputfieldFieldset');
         $profilefieldset->label = $this->_('Account settings');
         $profilefieldset->icon = 'fa-user-circle-o';
-        $profilefieldset->showIf = "input_selectloginregister=loginregister";
         $profilefieldset->collapsed = 1;
         $deleteProfile = $this->modules->get('InputfieldCheckbox');
         $deleteProfile->label = $this->_('Account deletion');
