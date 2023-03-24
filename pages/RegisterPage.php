@@ -188,7 +188,7 @@ class RegisterPage extends FrontendLoginRegisterPages
             if (array_key_exists($email_field_name, $this->formErrors)) {
                 $email = $this->getValue($email_field_name);
                 // run only if an email address was entered
-                if ($this->getActivationCode($email)) {
+                if (($email) && ($this->getActivationCode($email))) {
                     // send reminder mail
                     if ($this->sendReminderMail($this->wire('users')->get('email=' . $email))) {
                         // overwrite alert message
