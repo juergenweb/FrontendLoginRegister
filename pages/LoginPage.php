@@ -311,12 +311,14 @@ class LoginPage extends FrontendLoginRegisterPages
 
                 $fieldname = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
 
-                if ($fieldname != 'name') {
+                if ($fieldname == 'email') {
                     // login with email
-                    $user = $this->wire('users')->get($fieldname . '=' . $this->getValue($this->loginregisterConfig['input_selectlogin']));
+                    $sanitized_value = $this->wire('sanitizer')->email($this->getValue('email'));
+                    $user = $this->wire('users')->get($fieldname . '=' . $sanitized_value);
                 } else {
                     // login with username
-                    $user = $this->wire('users')->get('name=' . $this->wire('input')->post('login-form-username'));
+                    $sanitized_value = $this->wire('sanitizer')->pageName($this->getValue('email'));
+                    $user = $this->wire('users')->get('name=' . $sanitized_value);
                 }
 
                 if ($this->checkIfAccountLocked($user)) {
@@ -376,7 +378,15 @@ class LoginPage extends FrontendLoginRegisterPages
                             // always the same email or username was used for the login attempts
                             // so check if a user exists with this username or email in the database
                             $type = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
-                            $checkuser = $this->wire('users')->get($type . '=' . $_POST[$this->getID().'-'.$this->loginregisterConfig['input_selectlogin']]);
+
+                            // sanitize the values before database call
+                            $value = $_POST[$this->getID().'-'.$this->loginregisterConfig['input_selectlogin']];
+                            if($type == 'email'){
+                                $sanitized_value = $this->wire('sanitizer')->email($value);
+                            } else {
+                                $sanitized_value = $this->wire('sanitizer')->pageName($value);
+                            }
+                            $checkuser = $this->wire('users')->get($type . '=' . $sanitized_value);
                             if ($checkuser->id != 0) {
                                 $this->user = $checkuser;
                                 // user was found
@@ -547,10 +557,10 @@ class LoginPage extends FrontendLoginRegisterPages
         // grab the user by email or username
         if ($this->loginregisterConfig['input_selectlogin'] = 'email') {
             // get user by email
-            $user = $this->wire('users')->get('email=' . $this->getValue('email'));
+            $user = $this->wire('users')->get('email=' . $this->wire('sanitizer')->email($this->getValue('email')));
         } else {
             // get user by username
-            $user = $this->wire('users')->get('name=' . $this->wire('input')->post('login-form-username'));
+            $user = $this->wire('users')->get('name=' . $this->wire('sanitizer')->pageName($this->wire('input')->post('login-form-username')));
         }
 
         // check if user is not allowed to log in
