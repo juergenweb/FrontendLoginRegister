@@ -103,7 +103,16 @@ class FrontendLoginRegisterPages extends Form
                 }
                 // do not overwrite empty password fields on profile form
                 if($cleaned_field_name != 'pass') {
-                    $user->$cleaned_field_name = $this->getValue($field_name);
+                    $value = $this->getValue($field_name);
+                    // add sanitizer for email and username for security reasons
+                    // all other fields will be sanitized with text by default
+                    if($cleaned_field_name == 'email'){
+                        $value = $this->wire('sanitizer')->email($value);
+                    }
+                    if($cleaned_field_name == 'username'){
+                        $value = $this->wire('sanitizer')->pageName($value);
+                    }
+                    $user->$cleaned_field_name = $value;
                 } else {
                     if($this->getValue($field_name)){
                         $user->$cleaned_field_name = $this->getValue($field_name);
