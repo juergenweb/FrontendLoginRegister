@@ -130,23 +130,8 @@ class RegisterPage extends FrontendLoginRegisterPages
 
             // set values for all field in the form
             $this->setFormFieldValues($newUser);
-
-            // TODO delete afterwards
-            /*
-            // save username if login with username and password is selected
-            if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
-                $newUser->name = $this->wire('sanitizer')->pageName($this->getValue('username'));
-            }
-
-
-            // save user language only on multi-language site
-            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
-                $language = $this->wire('input')->post('register-form-language') !== null ? $this->wire('input')->post('register-form-language') : $this->wire('user')->language->id;
-                $newUser->language = $language; // save user language
-            }
-            */
-
-            $newUser->fl_activation = $activationCode; // save the activation code
+            // save the activation code
+            $newUser->fl_activation = $activationCode;
 
             // add all roles depending on configuration settings to the new user
             foreach ($this->loginregisterConfig['input_roles'] as $role) {
