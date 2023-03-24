@@ -223,7 +223,7 @@ Profile,"Meine Profil-Seite",,site/modules/FrontendLoginRegister/config/template
 "Please enter your password to unlock your account.","Bitte geben Sie Ihr Passwort ein, um Ihr Konto zu entsperren.",,site/modules/FrontendLoginRegister/config/templatePages.php,49a1ebd568e287ce93c4f9693f81236b
 "Unlock your account after it was locked due to multiple unsuccessful attempts to login.","Entsperren Sie Ihr Konto, nachdem es aufgrund mehrerer erfolgloser Anmeldeversuche gesperrt wurde.",,site/modules/FrontendLoginRegister/config/templatePages.php,dd234a82889475fb18d0c8ce2fa10050
 en,de,description,file,hash
-"Your account is now unlocked.","Ihr Benutzer-Konto is nun gesperrt.",,site/modules/FrontendLoginRegister/pages/UnlockAccountPage.php,c42b700b5da2c2880998a156692e30fa
+"Your account is now unlocked.","Ihr Benutzer-Konto is nun entsperrt.",,site/modules/FrontendLoginRegister/pages/UnlockAccountPage.php,c42b700b5da2c2880998a156692e30fa
 "Unlock your account","Entsperren Sie Ihr Benutzer-Konto",,site/modules/FrontendLoginRegister/pages/UnlockAccountPage.php,6a5e2245a59fa1823aee98c980fc2567
 en,de,description,file,hash
 "Activation code",Aktivierungs-Code,,site/modules/FrontendLoginRegister/config/userFields.php,008aeca484f4370679310037e98baa88
