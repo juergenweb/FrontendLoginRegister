@@ -43,7 +43,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected $input_unlock_account = ''; // the text for the unlock account email
     protected array $input_roles = []; // IDs of all roles a new user will get
 
-
     protected array $userFields = []; // Array of all user fields
     protected array $templatePages = []; // Array of all template pages
     protected array $userSettings = []; // Holds the data for the specific user
@@ -181,6 +180,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
 
     }
+
 
     /**
      * Send a reminder mail to the user if the account is not activated
@@ -677,6 +677,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      */
     public function getModuleConfigInputfields(InputfieldWrapper $inputfields):void
     {
+
         $modules = $this->wire()->modules;
 
         // General settings
@@ -684,6 +685,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $generalfieldset->icon = 'fa-cog';
         $generalfieldset->label = $this->_('General settings');
         $generalfieldset->collapsed = 1;
+
         // select if you want to create login only or login and registration
         $loginSelect = $modules->get('InputfieldSelect');
         $loginSelect->label = $this->_('Login/registration');
@@ -775,6 +777,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $registrationfieldset->showIf = "input_selectloginregister=loginregister";
         $registrationfieldset->collapsed = 1;
 
+
         // select after which time should the user be remembered to activate his account
         $remember = $modules->get('InputfieldInteger');
         $remember->label = $this->_('Sending reminder email');
@@ -840,6 +843,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $profilefieldset->label = $this->_('Account settings');
         $profilefieldset->icon = 'fa-user-circle-o';
         $profilefieldset->collapsed = 1;
+
         $deleteProfile = $this->modules->get('InputfieldCheckbox');
         $deleteProfile->label = $this->_('Account deletion');
         $deleteProfile->checkboxLabel = $this->_('Allow users to delete their account');
@@ -848,6 +852,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $deleteProfile->columnWidth = 50;
         $deleteProfile->attr('checked', $this->input_deleteProfile == '1' ? 'checked' : '');
         $profilefieldset->add($deleteProfile);
+
+
         $profileFields = $this->createFrontendFields('profile', $fields, 50);
         $profileFields->description = $this->_('Please select which fields should be displayed on the frontend profile form.');
         $profilefieldset->add($profileFields);
@@ -1062,10 +1068,20 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         $inputfields->add($emailfieldset);
 
+        // open fieldset on error
+        foreach ($inputfields->getErrorInputfields() as $inputfield) {
+            $inputfield->collapsed = Inputfield::collapsedNo;
+            $parents = $inputfield->getParents();
+
+            foreach ($parents as $parent) {
+                $parent->collapsed = Inputfield::collapsedNo;
+            }
+        }
+
     }
 
     /**
-     * Create list of checkboxes for template fields
+     * Create list of Asm-Select for template fields
      * @param string $name
      * @param Fieldgroup $fields
      * @param int $colWidth
@@ -1117,8 +1133,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $f->notes = $this->_('It is recommended to include at least email, username and password field.');
             }
         }
-
-
         return $f;
     }
 
@@ -1454,7 +1468,6 @@ EOT;
                                 $p->removeStatus(Page::statusHidden);
                             }
                         } else {
-                            bd($p->template->name);
                             $p->addStatus(Page::statusUnpublished);
                             $p->addStatus(Page::statusHidden);
 
@@ -1527,6 +1540,7 @@ EOT;
         return $filtered;
     }
 
+
     /**
      * @param HookEvent $event
      * @return void
@@ -1566,6 +1580,10 @@ EOT;
                     $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
                     if ($missing_fields) {
                         $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
+                        // TODO open on warning
+                        $this->wire('session')->set('fieldset_profile','input_profile');
+                    } else {
+                        $this->wire('session')->remove('fieldset_profile');
                     }
                 }
             } else {
@@ -1583,6 +1601,9 @@ EOT;
                     // profile form fields input -> warning
                     if ($missing_fields) {
                         $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
+                        $this->wire('session')->set('fieldset_profile','input_profile');
+                    } else {
+                        $this->wire('session')->remove('fieldset_profile');
                     }
                 }
             }
