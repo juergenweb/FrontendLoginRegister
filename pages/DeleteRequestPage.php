@@ -40,8 +40,15 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
         $this->disableCaptcha(); // disable Captcha
 
         // password field
+        // sanitizers added: text
+        // validation rules added: required, checkPasswordOfUser
         $pass = new Password('pass');
         $pass->setRule('checkPasswordOfUser', $this->user);
+        // remove unnecessary validation rules
+        $pass->removeRule('safePassword');
+        $pass->removeRule('meetsPasswordConditions');
+        bd($pass->getSanitizers());
+        bd($pass->getRules());
         $this->add($pass);
 
         // button object
