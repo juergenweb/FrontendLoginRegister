@@ -494,7 +494,6 @@ class FrontendLoginRegisterPages extends Form
             } else {
                $name = $field->name;
             }
-            bd($name);
             if (in_array($name, $noCreation)) {
                 $methodName = 'create' . ucfirst($name);
                 $this->$methodName($needle);
