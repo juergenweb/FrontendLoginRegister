@@ -308,6 +308,26 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     }
 
     /**
+     * Make better page paths by beautifying the slug by replacing non allowed characters
+     * @param string $text
+     * @return string
+     */
+    protected function convertUmlauts(string $text): string
+    {
+        // convert all to lowercase first
+        $text = strtolower($text);
+
+        // Replace German umlauts first
+        $text = str_replace("ä", "ae",$text);
+        $text = str_replace("ü", "ue",$text);
+        $text = str_replace("ö", "oe",$text);
+        $text = str_replace("ß", "ss",$text);
+
+        // Replace all others and output it
+        return iconv("utf-8","ASCII//TRANSLIT",$text);
+    }
+
+    /**
      * Method to save title, name and description in other language(s)
      * Method is included in the hooked addMultilangData() method
      * Takes account of SeoMaestro field values if installed
@@ -325,14 +345,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
             $language = $event->arguments(1);
 
-            // get the current user language
-            //$current = $this->wire('user')->language;
-
-            // set the user language to the language of the csv file
-            //$this->wire('user')->language = $language;
-
             //instantiate Language translator class
-
             $translation = new LanguageTranslator($language);
 
             // The nested array to hold all the arrays
@@ -390,8 +403,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     // multi-language site
                     if (!$p->getLanguageValue($language->id, 'title')) {
                         $p->setLanguageValue($language->id, 'title', $title); // title
-                        $p->setLanguageValue($language->id, 'name', wire('sanitizer')->pageName($title)); // name
-
+                        $title_slug = $this->convertUmlauts($title);
+                        $p->setLanguageValue($language->id, 'name', wire('sanitizer')->pageName($title_slug)); // name
                     }
                     if (!$p->getLanguageValue($language->id, 'body')) {
                         $p->setLanguageValue($language->id, 'body', $body); // body
@@ -1050,7 +1063,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @param Fieldgroup $fields
      * @param int $colWidth
      * @return _Module|Module|string
-     * @throws WirePermissionException
+     * @throws WirePermissionException|WireException
      */
     private function createFrontendFields(string $name, Fieldgroup $fields, int $colWidth = 100):_Module|Module|string
     {
