@@ -57,19 +57,24 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         // username (show only if username and password are selected as login data)
         if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
             $usernameText = '<p>' . $this->_('If you have forgotten your username too, you can enter a new one here. Otherwise, let this field empty and fill out only the password fields.') . '</p>';
+            // sanitizers added: pageName, text
+            // validation rules added: required, usernamesyntax, uniqueusername
             $username = new Username('username');
-            $username->removeRule('required');
             $username->getFieldWrapper()->prepend($usernameText);
             $this->add($username);
         }
 
         //pass
+        // sanitizers added: text
+        // validation rules added: meetsPasswordConditions, required, safePassword
         $pass = new Password('password');
         $pass->showPasswordToggle(); // add a checkbox below the input field to toggle show/hide the password in plain text
         $pass->showPasswordRequirements(); // show the conditions for the password
         $this->add($pass);
 
         //password confirmation
+        // sanitizers added: text
+        // validation rules added: meetsPasswordConditions, required, equals
         $passwordConfirm = new PasswordConfirmation('password-confirm', $this->getID() . '-password');
         $passwordConfirm->showPasswordToggle()->setLabel($this->_('Show password confirmation'));
         $this->add($passwordConfirm);
