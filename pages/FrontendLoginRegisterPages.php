@@ -482,7 +482,6 @@ class FrontendLoginRegisterPages extends Form
     {
 
         $fields = $this->getFormFieldsSelected($needle);
-        bd($fields);
 
         // These fields should not be created with the createFormField method because we create them manually
         $noCreation = ['pass', 'email', 'language', 'tfa', 'username'];
