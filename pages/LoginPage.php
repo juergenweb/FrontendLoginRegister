@@ -56,7 +56,6 @@ class LoginPage extends FrontendLoginRegisterPages
         $this->rl = new Link('registerLink'); // instantiate a new instance for a link
         $this->pfl = new Link('passwordforgottenLink'); // instantiate a new instance for a link
 
-
         // Hook to replace start method entirely
         $this->addHookBefore('Tfa::start', $this, 'start');
 
@@ -273,15 +272,21 @@ class LoginPage extends FrontendLoginRegisterPages
 
             if ($this->loginregisterConfig['input_selectlogin'] === 'email') {
                 // add the email field
+                // sanitizers added: text
+                // validation rules added: email, emailDNS, required
                 $email = new Email('email');
                 $this->add($email);
             } else {
                 // username
+                // sanitizers added: pageName, text
+                // validation rules added: required, usernamesyntax, uniqueusername
                 $username = new Username('username');
                 $this->add($username);
             }
 
             // pass
+            // sanitizers added: text
+            // validation rules added: meetsPasswordConditions, required, safePassword, matchEmail/matchUsername
             $password = new Password('password');
             if ($this->loginregisterConfig['input_selectlogin'] === 'email') {
                 $password->setRule('matchEmail', 'email');
