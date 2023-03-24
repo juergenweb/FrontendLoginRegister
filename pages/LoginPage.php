@@ -309,17 +309,17 @@ class LoginPage extends FrontendLoginRegisterPages
 
             if ($this->isValid()) {
 
-                $fieldname = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
-
-                if ($fieldname == 'email') {
+                if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
                     // login with email
                     $sanitized_value = $this->wire('sanitizer')->email($this->getValue('email'));
-                    $user = $this->wire('users')->get($fieldname . '=' . $sanitized_value);
+                    $user = $this->wire('users')->get('email=' . $sanitized_value);
                 } else {
                     // login with username
-                    $sanitized_value = $this->wire('sanitizer')->pageName($this->getValue('email'));
+                    $sanitized_value = $this->wire('sanitizer')->pageName($this->getValue('username'));
                     $user = $this->wire('users')->get('name=' . $sanitized_value);
                 }
+
+                bd($user);
 
                 if ($this->checkIfAccountLocked($user)) {
                     // user account is locked - send mail with unlock code once more and change alert text
