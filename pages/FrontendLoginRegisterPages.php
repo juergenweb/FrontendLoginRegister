@@ -101,7 +101,6 @@ class FrontendLoginRegisterPages extends Form
                 if($cleaned_field_name == 'username'){
                     $cleaned_field_name = 'name';
                 }
-                bd($cleaned_field_name);
                 $user->$cleaned_field_name = $this->getValue($field_name);
             }
         }
