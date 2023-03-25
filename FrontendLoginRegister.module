@@ -19,7 +19,7 @@ use ReflectionException;
 class FrontendLoginRegister extends WireData implements Module, ConfigurableModule
 {
 
-    /* Declaration  of properties */
+    // Declaration  of configuration properties
     protected array $input_registration = ['3', '92']; // Fields that should be displayed on the registration form
     protected array $input_profile = ['3', '92']; // Fields that should be displayed on the profile form
     protected string|int $input_delete = 3; // The time in days after which the user will be deleted
@@ -43,14 +43,24 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected $input_unlock_account = ''; // the text for the unlock account email
     protected array $input_roles = []; // IDs of all roles a new user will get
 
+    // Declaration of configuration properties for templates and user fields
     protected array $userFields = []; // Array of all user fields
     protected array $templatePages = []; // Array of all template pages
     protected array $userSettings = []; // Holds the data for the specific user
 
-    /* Class objects */
+    // Declaration of class objects used
     protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
 
-    protected array $frontendLoginConfig = []; // property that holds all configuration values of the module config
+    // Declaration of all user field properties
+    protected array $userfields = []; // array that contains all userfields
+    protected array $fl_activation = []; // userfield for the activation code
+    protected array $fl_activationdatetime = []; // userfield for storing date and time of the activation
+    protected array $fl_reminderdatetime = []; // userfield containing date and time when the reminder mail was sent
+    protected array $fl_recoverylogindata = []; // userfield for that contains the password recovery code
+    protected array $fl_recoverylogindatadatetime = []; // userfield containing date and time when the recovery code mail was sent
+    protected array $fl_deleteaccount = []; // userfield for that contains the deletion code
+    protected array $fl_deleteaccountdatetime = []; // userfield containing date and time when the deletion code mail was sent
+    protected array $fl_unlockaccount = [];
 
     /**
      * @throws WireException
@@ -60,17 +70,37 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     {
         parent::__construct();
 
-        //  set the property values from the configuration settings from DB
-        foreach ($this->wire('modules')->getConfig($this) as $key => $value) {
-            $this->$key = $value;
-        }
+        // set configuration values from the database
+        $config = $this->wire('modules')->getConfig($this); // get the module config values from the db
 
-        // grab FrontendForms module
+        $this->input_registration = $config['input_registration'];
+        $this->input_profile = $config['input_profile'];
+        $this->input_delete = $config['input_delete'];
+        $this->input_remind = $config['input_remind'];
+        $this->input_prevent_send_deletion_email = $config['input_prevent_send_deletion_email'];
+        $this->input_selectlogin = $config['input_selectlogin'];
+        $this->input_removeJS = $config['input_removeJS'];
+        $this->input_selectloginregister = $config['input_selectloginregister'];
+        $this->input_emailTemplate = $config['input_emailTemplate'];
+        $this->input_email = $config['input_email'];
+        $this->input_sender = $config['input_sender'];
+        $this->input_redirectSuccess = $config['input_redirectSuccess'];
+        $this->input_tfa = $config['input_tfa'];
+        $this->input_deleteProfile = $config['input_deleteProfile'];
+        $this->input_activationtext = $config['input_activationtext'];
+        $this->input_remindertext = $config['input_remindertext'];
+        $this->input_tfatext = $config['input_tfatext'];
+        $this->input_passwordforgottentext = $config['input_passwordforgottentext'];
+        $this->input_deleteaccounttext = $config['input_deleteaccounttext'];
+        $this->input_deletion_confirmation = $config['input_deletion_confirmation'];
+        $this->input_unlock_account = $config['input_unlock_account'];
+        $this->input_roles = $config['input_roles'];
+
+        // Get FrontendForms module
         $this->frontendForms = wire('modules')->get('FrontendForms');
 
-        // additional user fields for FrontendLoginRegister
+        // include configuration file for additional user fields for FrontendLoginRegister
         include('config/userFields.php');
-
         // create property of each user field
         foreach ($this->userFields as $key => $value) {
             $this->$key = $value;
@@ -1076,6 +1106,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             foreach ($parents as $parent) {
                 $parent->collapsed = Inputfield::collapsedNo;
             }
+        }
+
+        // open fieldset profile on warning and add warning color to the given inputfield
+        if($this->wire('session')->get('fieldset_profile') == 'input_profile'){
+            $profilefieldset->collapsed = Inputfield::collapsedNo; // open fieldset profile
+            $profileFields->themeColor = 'warning';
         }
 
     }
