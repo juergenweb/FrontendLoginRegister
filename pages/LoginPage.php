@@ -281,6 +281,7 @@ class LoginPage extends FrontendLoginRegisterPages
                 // sanitizers added: pageName, text
                 // validation rules added: required, usernamesyntax, uniqueusername
                 $username = new Username('username');
+                $username->removeRule(('uniqueUsername'));
                 $this->add($username);
             }
 
