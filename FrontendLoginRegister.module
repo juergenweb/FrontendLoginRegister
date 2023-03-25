@@ -1112,6 +1112,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         if($this->wire('session')->get('fieldset_profile') == 'input_profile'){
             $profilefieldset->collapsed = Inputfield::collapsedNo; // open fieldset profile
             $profileFields->themeColor = 'warning';
+            $text = $this->_('You have chosen the login with username and password. Therefore, it is not necessary, but recommended to include the username field in the profile form as well.');
+            $warning_text = '<p class="InputfieldError ui-state-highlight"><i class="fa fa-fw fa-exclamation"></i><span>'.$text.'</span></p>';
+            $profileFields->prependMarkup = $warning_text;
+
             $this->wire('session')->remove('fieldset_profile');
         }
 
