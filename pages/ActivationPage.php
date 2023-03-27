@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
-
+// checked 27.3
 /*
  * Class for activating a user via an activation code sent with a query string
  * If the user clicks on the link inside the activation email he will be redirected to this page,
@@ -16,13 +16,10 @@ namespace FrontendLoginRegister;
 
 
 use FrontendForms\Alert;
-use ProcessWire\TfaEmail as TfaEmail;
 use ProcessWire\WireException;
 
 class ActivationPage extends FrontendLoginRegisterPages
 {
-
-    use checkUser;
 
     protected Alert $alert; // the alert object
     protected bool $verify = false; // verify the account (true) or delete the user (false)
@@ -39,20 +36,20 @@ class ActivationPage extends FrontendLoginRegisterPages
         $activation_code = $this->checkForQueryString('activationcode', false);
         $not_registered_code = $this->checkForQueryString('notregisteredcode', false);
 
-        if ($not_registered_code != '') {
+        // no query string present at all, so redirect to the homepage
+        if ((!$not_registered_code) && (!$activation_code)) {
+            $url = $this->wire('pages')->get('/')->url;
+            $this->wire('session')->redirect($url);
+        }
+
+        if ($not_registered_code) {
             // delete the user from the database
             $this->queryString = $not_registered_code;
             $this->verify = false;
         } else {
-            if ($activation_code != '') {
-                // verify the user account
-                $this->queryString = $activation_code;
-                $this->verify = true;
-            } else {
-                // no query string present, so redirect to the homepage
-                $url = $this->wire('pages')->get('/')->url;
-                $this->wire('session')->redirect($url);
-            }
+            // verify the user account
+            $this->queryString = $activation_code;
+            $this->verify = true;
         }
 
         $this->alert = new Alert();
@@ -76,14 +73,6 @@ class ActivationPage extends FrontendLoginRegisterPages
                 $this->user->setOutputFormatting(false);
                 $this->user->fl_activation = ''; // delete the activation code
                 $this->user->fl_activationdatetime = time(); // set the activation code time stamp
-
-                // check if TfaEmail is installed and enable it for the user automatically
-                if ($this->wire('modules')->isInstalled('TfaEmail')) {
-                    $tfa = new TfaEmail();
-                    if ($tfa->autoEnableSupported($this->user)) {
-                        $tfa->autoEnableUser($this->user);
-                    }
-                }
                 if ($this->user->save()) {
                     // output success message
                     $this->alert->setText(sprintf($this->_('Your account has been successfully activated. %s'),
