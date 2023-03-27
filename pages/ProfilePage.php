@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
+//checked 27.3
 
 /*
  * Class for creating showing a profile form in the members' area
@@ -19,8 +20,6 @@ use ProcessWire\WireException;
 
 class ProfilePage extends FrontendLoginRegisterPages
 {
-
-    // properties
 
     // objects
     protected Link $deleteAccountLink;  // link object for the delete link
