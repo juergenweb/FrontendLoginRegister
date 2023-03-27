@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
+// checked 27.3
 
 /*
  * Form to request your login data, if you have forgotten it
@@ -22,8 +23,6 @@ use ProcessWire\WirePermissionException;
 
 class ForgotLogindataPage extends FrontendLoginRegisterPages
 {
-
-    use activation;
 
     /**
      * @throws WireException
@@ -75,28 +74,43 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
     public function render():string
     {
         if ($this->isValid()) {
+            $content = '';
 
             // create the recovery code
             $recoveryCode = $this->createQueryCode();
 
-            // get the user
+            // get the user by email
             $user = $this->wire('users')->get('email=' . $this->getValue('email')); // get the user object
 
             // send only an email if the email address is stored in the database
             if ($user->id != 0) {
 
+                // get the id of the user language as stored inside the db
+                $this->stored_user_lang = $this->getSavedUserLanguage($user);
+
+                // change user language to the stored user language placeholder in the stored user language
+                $this->user->setLanguage($this->stored_user_lang);
+
+                // add placeholders !!important!!
+                $this->createGeneralPlaceholders();
+
                 //check if account was activated or not
                 if ($user->fl_activation) {
                     // user has not activated his account til now - lets send a reminder email to activate the account
-                    if ($this->sendReminderMail($user)) {
+
+                    // send the email with the stored user language
+                    $reminder_mail_sent = $this->sendReminderMail($user);
+
+                    if ($reminder_mail_sent) {
                         // overwrite alert message
                         $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('It seems that you have already registered for an account,  but your account is still pending approval. To activate your account, please follow the instructions inside the mail that have been sent to you. After that you can create your new login data.'));
                     }
 
                 } else {
-                    // send an email to the user, which contains a link to set new login data
+                    // email the user in his stored user language, which contains a link to set new login data
 
-                    // create request text depending on login settings
+                    // create re
+                    //quest text depending on login settings
                     if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
                         $requestText = $this->_('login data (password and/or username)');
                     } else {
@@ -109,7 +123,6 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                     $this->setMailPlaceholder('resettext', $resetText);
                     $this->setMailPlaceholder('recoverPasswordlink',
                         $this->createCodeLink('fl_recoverylogindatapage', $recoveryCode));
-                    $this->setMailPlaceholder('donotreplaytext', $this->doNotReply);
 
                     $m = new WireMail();
                     $m->to($user->email);
@@ -118,11 +131,15 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                     $m->subject(sprintf($this->_('Action required to reset your %s'), $resetText));
                     $m->title(sprintf($this->_('Create a new %s'), $requestText));
                     $m->bodyHTML($this->getLangValueOfConfigField('input_passwordforgottentext',
-                        $this->loginregisterConfig));
+                        $this->loginregisterConfig, $this->stored_user_lang->id));
                     $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
+                    $mail_sent = $m->send();
+
+                    // set back the language to the site language
+                    $this->user->setLanguage($this->site_language_id);
 
                     // save user data only if mail was sent successfully
-                    if ($m->send()) {
+                    if ($mail_sent) {
                         // grab the user and store the random string inside the recovery code input
                         $user->of(false);
                         $user->fl_recoverylogindata = $recoveryCode; // save the code in the db
@@ -136,11 +153,13 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                         // output an error message that the mail could not be sent
                         $this->generateEmailSentErrorAlert();
                     }
+
                 }
             }
+        } else {
+            $content = $this->wire('page')->body;
         }
         // render the form on the frontend
-        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
