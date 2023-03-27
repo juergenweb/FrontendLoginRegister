@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FrontendLoginRegister;
 
+// checked 27.3
 /*
  * Class for logging out a user if he is logged in
  * Returns an alert message that the user has been logged out successfully
