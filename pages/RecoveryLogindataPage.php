@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FrontendLoginRegister;
 
+// checked 27.3
 /*
  * Class for a form to change the password if you have forgotten it
  *
@@ -23,8 +24,6 @@ use function ProcessWire\_n;
 class RecoveryLogindataPage extends FrontendLoginRegisterPages
 {
 
-    use checkUser;
-
     /**
      * Every form must have an id, so let's add it via the constructor
      * @throws WireException
@@ -40,7 +39,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         // check if recovery get parameter exists
         $this->checkForQueryString('recoverylogindatacode');
 
-        // check if user with this recovery code exists in the database
+        // check if user with this recovery code exists in the database - sets the user property
         $this->checkForUser('recoverylogindatacode');
 
         // default settings
@@ -48,21 +47,22 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         $this->setMinTime(3); // 3 seconds
         $this->setMaxTime(600); // 10 minutes
         $this->setAttribute('action', $this->wire('page')->url . '?recoverylogindatacode=' . $this->queryString);
-        $quty = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 2 : 1;
-        $pwtext = $this->_('Your new password has been saved, and you can log in into your account now.');
-        $usernametext = $this->_('Your new login data have been saved. You can now log into your account.');
-        $successMsg = _n($pwtext, $usernametext, $quty);
-        $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
 
-        // username (show only if username and password are selected as login data)
-        if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
+        // create success message and add username field depending on login type (username/password or email/password)
+        if($this->loginregisterConfig['input_selectlogin'] == 'username') {
+            $successMsg = $this->_('Your new login data have been saved. You can now log into your account.');
+
+            // username (show only if username and password are selected as login data)
             $usernameText = '<p>' . $this->_('If you have forgotten your username too, you can enter a new one here. Otherwise, let this field empty and fill out only the password fields.') . '</p>';
             // sanitizers added: pageName, text
             // validation rules added: required, usernamesyntax, uniqueusername
             $username = new Username('username');
             $username->getFieldWrapper()->prepend($usernameText);
             $this->add($username);
+        } else {
+            $successMsg = $this->_('Your new password has been saved, and you can log in into your account now.');
         }
+        $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
 
         //pass
         // sanitizers added: text
@@ -104,6 +104,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
     {
 
         if ($this->isValid()) {
+            $content = '';
             // grab the user and store the new password
             $this->user->setOutputFormatting(false);
             $this->user->fl_recoverylogindata = ''; // delete the recovery code
@@ -115,10 +116,11 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
             $this->user->pass = $this->getValue('password');
             $this->user->save();
             $this->user->setOutputFormatting();
+        } else {
+            $content = $this->wire('page')->body;
         }
 
         // render the form on the frontend
-        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
