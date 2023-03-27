@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
-
+//checked 27.3
 /*
  * Class to create a login form
  * Supports TfaEmail too if enabled in the configuration settings
@@ -32,7 +32,6 @@ use function ProcessWire\wireMail;
 
 class LoginPage extends FrontendLoginRegisterPages
 {
-    use activation;
 
     protected Tfa $tfa; // Tfa object
     protected Link $cl; // cancel link object
@@ -61,7 +60,6 @@ class LoginPage extends FrontendLoginRegisterPages
 
         // Hook to replace emailCode method entirely
         $this->addHookBefore('TfaEmail::emailCode', $this, 'emailCode');
-
     }
 
     /**
@@ -119,6 +117,16 @@ class LoginPage extends FrontendLoginRegisterPages
      */
     protected function sendAccountLockedMail(User $user, string $code):bool
     {
+
+        // get the user language object as stored inside the db
+        $this->stored_user_lang = $this->getSavedUserLanguage($user);
+
+        // change user language to the stored user language placeholder in the stored user language
+        $this->user->setLanguage($this->stored_user_lang);
+
+        // add placeholders !!important!!
+        $this->createGeneralPlaceholders();
+
         // create placeholder for the email body
         $this->setMailPlaceholder('unlockaccountlink', $this->createCodeLink('fl_unlockaccountpage', $code));
         // set text for the placeholder login type
@@ -135,16 +143,15 @@ class LoginPage extends FrontendLoginRegisterPages
         $this->setSenderName($m);
         $m->subject($this->_('We have detected suspicious activity on your user account'));
         $m->title($this->_('Action required to unlock your account'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig));
+        $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig,
+            $this->stored_user_lang->id));
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
-        if ($m->send()) {
-            return true;
-        } else {
-            // output an error message that the mail could not be sent
-            $this->generateEmailSentErrorAlert();
-            return false;
-        }
+        // set back the language to the site language
+        $this->user->setLanguage($this->site_language_id);
+
+        return (bool)$m->send();
+
     }
 
     /**
@@ -230,6 +237,7 @@ class LoginPage extends FrontendLoginRegisterPages
             $button = new Button('tfa_submit');
             $button->setAttribute('value', $this->_('Send'));
             $form->add($button);
+
             // show or hide the cancel link depending on settings
             if ($this->tfa->showCancel) {
                 $form->add($this->___cancelLink());
@@ -315,55 +323,57 @@ class LoginPage extends FrontendLoginRegisterPages
 
             if ($this->isValid()) {
 
+                $content = '';
+
                 if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
                     // login with email
-                    $sanitized_value = $this->wire('sanitizer')->email($this->getValue('email'));
-                    $user = $this->wire('users')->get('email=' . $sanitized_value);
+                    $user = $this->wire('users')->get('email=' . $this->getValue('email'));
                 } else {
                     // login with username
-                    $sanitized_value = $this->wire('sanitizer')->pageName($this->getValue('username'));
-                    $user = $this->wire('users')->get('name=' . $sanitized_value);
+                    $user = $this->wire('users')->get('name=' . $this->getValue('username'));
                 }
 
-                bd($user);
-
                 if ($this->checkIfAccountLocked($user)) {
-                    // user account is locked - send mail with unlock code once more and change alert text
+                    // user account is locked - send the mail with the unlock account code in the stored user language
                     if ($this->sendAccountLockedMail($user, $user->fl_unlockaccount)) {
                         $this->getAlert()->removeCSSClass('alert_successClass')->setCSSClass('alert_dangerClass')->setText($this->_('Dear user! Your account is still blocked! An email with a link to unlock your account has been sent once more to your email address. Please follow the instructions inside the email to unlock your account again.'));
+                    } else {
+                        $this->getAlert()->removeCSSClass('alert_successClass')->setCSSClass('alert_warningClass')->setText($this->_('Dear user! Your account is still blocked! Due to technical problems an email with the unlock code could not be sent to you. Please try again a little later or contact the webmaster of this site.'));
                     }
                 } else {
                     //an activation code is present -> user has not activated his account till now
                     // send a reminder mail to activate the account
                     if ($user->fl_activation) {
-                        // send reminder email to the user that he must activate his account
+                        // send the reminder email in the stored user language
                         if ($this->sendReminderMail($user)) {
-                            $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('You have not verified your account yet. To activate your account, please follow the instructions inside the mail we have sent to you. Afterwards, you will be able to log in to the site.'));
+                            $this->getAlert()->removeCSSClass('alert_successClass')->setCSSClass('alert_warningClass')->setText($this->_('You have not verified your account yet. To activate your account, please follow the instructions inside the mail we have sent to you. Afterwards, you will be able to log in to the site.'));
+                        } else {
+                            $this->getAlert()->removeCSSClass('alert_successClass')->setCSSClass('alert_warningClass')->setText($this->_('You have not verified your account yet. Due to technical problems an email with an activation code could not be sent to you. Please try again a little later or contact the webmaster of this site.'));
                         }
                     } else {
-
                         // check if TFA is enabled in the settings
                         if ($this->loginregisterConfig['input_tfa']) {
 
                             $this->wire('session')->set('type',
                                 'TfaEmail'); // set session for outputting message that a code was sent by email
                             $this->tfa->start($user->name, $this->getValue('pass')); // redirects
-                        }
-                        // try to log in the user
-                        if ($this->wire('session')->login($user->name, $this->getValue('password'))) {
-                            // login if tfa is not enabled
-                            $this->redirectAfterLogin();// redirect after login
                         } else {
-                            // for the rare use case that something went wrong during the session login
-                            $alert = $this->getAlert();
-                            $alert->setCSSClass('alert_dangerClass');
-                            $alert->removeCSSClass('alert_successClass');
-                            $alert->setText($this->_('We are sorry, but an unexpected error occurred. Please try it once more and if the problem persists, please inform the webmaster of this site.'));
+                            // try to log in the user
+                            if ($this->wire('session')->login($user->name, $this->getValue('password'))) {
+                                // login if tfa is not enabled
+                                $this->redirectAfterLogin();// redirect after login
+                            } else {
+                                // for the rare use case that something went wrong during the session login
+                                $alert = $this->getAlert();
+                                $alert->setCSSClass('alert_dangerClass');
+                                $alert->removeCSSClass('alert_successClass');
+                                $alert->setText($this->_('We are sorry, but an unexpected error occurred. Please try it once more and if the problem persists, please inform the webmaster of this site.'));
+                            }
                         }
                     }
                 }
             } else {
-                // grab the first field name: could be username or email
+                // grab the  username or email field: depends on the login type set
                 $user_field_name = $this->getAttribute('id') . '-' . $this->loginregisterConfig['input_selectlogin'];
 
                 if ($this->wire('session')->get($user_field_name)) {
@@ -386,19 +396,19 @@ class LoginPage extends FrontendLoginRegisterPages
                             $type = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? 'name' : $this->loginregisterConfig['input_selectlogin'];
 
                             // sanitize the values before database call
-                            $value = $_POST[$this->getID().'-'.$this->loginregisterConfig['input_selectlogin']];
-                            if($type == 'email'){
+                            $value = $_POST[$this->getID() . '-' . $this->loginregisterConfig['input_selectlogin']];
+                            if ($type == 'email') {
                                 $sanitized_value = $this->wire('sanitizer')->email($value);
                             } else {
                                 $sanitized_value = $this->wire('sanitizer')->pageName($value);
                             }
                             $checkuser = $this->wire('users')->get($type . '=' . $sanitized_value);
                             if ($checkuser->id != 0) {
-                                $this->user = $checkuser;
+                                $user = $checkuser;
                                 // user was found
                                 // for the rare case that the form will be submitted again to prevent creation of new code
                                 // do not create and send a code once more
-                                $lock_account = (!$this->user->fl_unlockaccount);
+                                $lock_account = (!$user->fl_unlockaccount);
                             }
                         }
 
@@ -409,26 +419,28 @@ class LoginPage extends FrontendLoginRegisterPages
                             $lockCode = $this->createQueryCode(); // create the lock code
 
                             // send the email with the code to unlock the account and store the code inside the db
-                            if ($this->sendAccountLockedMail($this->user, $lockCode)) {
+                            if ($this->sendAccountLockedMail($user, $lockCode)) {
                                 // remove session blocked if present because the account has been locked
                                 $this->wire('session')->remove('blocked');
                                 // remove the attempts session
                                 $this->wire('session')->remove('attempts');
 
                                 // save the lock code inside the database
-                                $this->user->setOutputFormatting(false);
-                                $this->user->fl_unlockaccount = $lockCode; // code
-                                $this->user->save();
-                                $this->user->setOutputFormatting();
+                                $user->setOutputFormatting(false);
+                                $user->fl_unlockaccount = $lockCode; // code
+                                $user->save();
+                                $user->setOutputFormatting();
 
                                 // output alert message that the account is locked now
                                 $alert = $this->getAlert();
                                 $alert->setCSSClass('alert_dangerClass');
                                 $alert->removeCSSClass('alert_successClass');
-                                $alert_text = $this->_('Unfortunately, too many unsuccessful login attempts were made, so this user account has now been blocked for security reasons.');
-                                $alert_text .= '<br>' . $this->_('An email with a link to unlock your account has been sent to your email address.');
-                                $alert_text .= '<br>' . $this->_('Please follow the instructions inside the email to unlock your account.');
-                                $alert->setText($alert_text);
+                                $alert_text = [
+                                    $this->_('Unfortunately, too many unsuccessful login attempts were made, so this user account has now been blocked for security reasons.'),
+                                    $this->_('An email with a link to unlock your account has been sent to your email address.'),
+                                    $this->_('Please follow the instructions inside the email to unlock your account.')
+                                ];
+                                $alert->setText(implode('<br>', $alert_text));
 
                                 // do not display the form after account is locked
                                 $this->showForm = false;
@@ -436,6 +448,7 @@ class LoginPage extends FrontendLoginRegisterPages
                         }
                     }
                 }
+                $content = $this->wire('page')->body;
             }
 
             // create error messages from session if present
@@ -450,7 +463,6 @@ class LoginPage extends FrontendLoginRegisterPages
             }
 
             // render the form on the frontend
-            $content = $this->wire('page')->body;
             $content .= parent::render();
             return $content;
         }
@@ -476,11 +488,11 @@ class LoginPage extends FrontendLoginRegisterPages
 
         // filter out all numeric values
         $keys = array_filter($keys, function ($item) {
-            // return animal whose name is more than 3 characters
             if (!is_int($item)) {
                 return $item;
             }
         });
+
         return array_values($keys);
     }
 
@@ -561,7 +573,7 @@ class LoginPage extends FrontendLoginRegisterPages
         $event->replace = true;
 
         // grab the user by email or username
-        if ($this->loginregisterConfig['input_selectlogin'] = 'email') {
+        if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
             // get user by email
             $user = $this->wire('users')->get('email=' . $this->wire('sanitizer')->email($this->getValue('email')));
         } else {
@@ -628,13 +640,11 @@ class LoginPage extends FrontendLoginRegisterPages
         if ($times[0] == '00') {
             unset($times[0]);
         } else {
-            $unit = $this->_n($this->_('hour'),
-                $this->_('hours'), (int)$times[0]);
+            $unit = $this->_n($this->_('hour'), $this->_('hours'), (int)$times[0]);
         }
         if (!isset($times[0])) {
             if ($times[1] != '00') {
-                $unit = $this->_n($this->_('minute'),
-                    $this->_('minutes'), (int)$times[1]);
+                $unit = $this->_n($this->_('minute'), $this->_('minutes'), (int)$times[1]);
             } else {
                 unset($times[1]);
             }
@@ -651,6 +661,7 @@ class LoginPage extends FrontendLoginRegisterPages
      */
     protected function emailCode(HookEvent $event):void
     {
+
         // replace the original emailCode method entirely
         $event->replace = true;
 
@@ -658,6 +669,18 @@ class LoginPage extends FrontendLoginRegisterPages
         $email = $event->arguments[0];
         $code = $event->arguments[1];
         $expire = $this->wire('modules')->get('TfaEmail')->codeExpire;
+
+        // get the current user
+        $user = $this->wire('users')->get('email=' . $email);
+
+        // get the user language object as stored inside the db
+        $this->stored_user_lang = $this->getSavedUserLanguage($user);
+
+        // change user language to the stored user language placeholder in the stored user language
+        $this->user->setLanguage($this->stored_user_lang);
+
+        // add placeholders !!important!!
+        $this->createGeneralPlaceholders();
 
         // set placeholders for code and expiration time
         // 1) tfa code
@@ -673,10 +696,15 @@ class LoginPage extends FrontendLoginRegisterPages
         $m->to($email);
         $m->from($this->loginregisterConfig['input_email']);
         $this->setSenderName($m);
-        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregisterConfig));
+        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregisterConfig,
+            $this->stored_user_lang->id));
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
+        $code_sent = $m->send();
 
-        if ($m->send()) {
+        // set back the language to the site language
+        $this->user->setLanguage($this->site_language_id);
+
+        if ($code_sent) {
             // create alert text to enter the code on the screen
             $alert = $this->getAlert();
             $alert->setCSSClass('alert_warningClass');
