@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
-
+// checked 27.3
 /*
  * Class for requesting a deletion link for the user account
  *
@@ -20,13 +20,12 @@ use function ProcessWire\wireMail;
 class DeleteRequestPage extends FrontendLoginRegisterPages
 {
 
-    use activation;
-
     /**
      * @throws WireException
      */
     public function __construct(string $id = 'deleteaccount-form')
     {
+
         parent::__construct($id);
 
         // if user is guest -> not allowed to be here -> lets redirect to the homepage
@@ -47,8 +46,6 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
         // remove unnecessary validation rules
         $pass->removeRule('safePassword');
         $pass->removeRule('meetsPasswordConditions');
-        bd($pass->getSanitizers());
-        bd($pass->getRules());
         $this->add($pass);
 
         // button object
@@ -79,21 +76,34 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
 
             $content = '';
 
+            // get the id of the user language as stored inside the db
+            $this->stored_user_lang = $this->getSavedUserLanguage($this->user);
+
+            // change user language to the stored user language placeholder in the stored user language
+            $this->user->setLanguage($this->stored_user_lang);
+
+            // add placeholders !!important!!
+            $this->createGeneralPlaceholders();
+
             // generate a random code
             $deleteCode = $this->createQueryCode(); // create the deletion code
 
             // create placeholder
             $this->setMailPlaceholder('deleteaccountlink', $this->createCodeLink('fl_deleteaccountpage', $deleteCode));
 
-            // send an email with the deletion link to the user
+            // send an email with the deletion link to the user in the stored user language, not the site language
             $m = wireMail();
             $m->to($this->user->email);
             $m->from($this->loginregisterConfig['input_email']);
             $this->setSenderName($m);
             $m->subject($this->_('Action required to delete your account'));
             $m->title($this->_('Please click the link inside the mail'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext', $this->loginregisterConfig));
+            $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext', $this->loginregisterConfig,
+                $this->stored_user_lang->id));
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
+
+            // set back the language to the site language
+            $this->user->setLanguage($this->site_language_id);
 
             // save user data only if mail was sent successfully
             if ($m->send()) {
