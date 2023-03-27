@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
-
+// checked 27.3
 /*
  * Class for deleting a user via a deletion link and his password
  * Shows a form for entering the password, afterwards the user will be deleted
@@ -22,8 +22,6 @@ use ProcessWire\WireException;
 
 class DeleteAccountPage extends FrontendLoginRegisterPages
 {
-
-    use checkUser;
 
     /**
      * Every form must have an id, so let's add it via the constructor
@@ -147,11 +145,17 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
     public function render():string
     {
         if ($this->isValid()) {
+            $content = '';
             // delete the user
-            $this->wire('users')->delete($this->user);
+            if(!$this->wire('users')->delete($this->user)){
+               // problem deleting the user - set an alert to inform the user
+                $this->getAlert()->setCSSClass('alert_dangerClass')->setText(
+                    $this->_('Unfortunately there was a technical problem deleting your account. Please try it once more or contact the webmaster of the site.'));
+            }
+        } else {
+            $content = $this->wire('page')->body;
         }
         // render the form on the frontend
-        $content = $this->wire('page')->body;
         $content .= parent::render();
         return $content;
     }
