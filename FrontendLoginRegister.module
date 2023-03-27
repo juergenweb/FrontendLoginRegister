@@ -233,10 +233,16 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
                     $activation_date = $user->getUnformatted('created');
                     $diff_time = $this->input_remind * 60 * 60 * 24;
+                    // TODO remove
+                    $diff_time = $this->input_remind * 60;
 
                     if ((int)$activation_date + $diff_time < time()) {
                         // send reminder email to the user
                         $reminder = new FrontendLoginRegisterPages('test');
+                        //set user language if languages
+                        if($this->wire('languages')){
+                            $this->wire('languages')->setLanguage($user->language);
+                        }
                         if ($reminder->sendReminderMail($user)) {
                             if ($this->input_delete > 0) {
                                 $user->setOutputFormatting(false);
@@ -279,7 +285,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                 }
                 $diff_time = $this->input_delete * 60 * 60 * 24;
-
+                // TODO delete
+                $diff_time = $this->input_delete * 60;
                 if ((int)$reminder_date + $diff_time < time()) {
                     // send deletion confirmation email to the user
                     $deletionconfirmation = new FrontendLoginRegisterPages('test');
@@ -611,13 +618,19 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         return <<<HEREA
         <p>Dear user</p>
         <p>You will receive this email, because you have registered for an account at [[DOMAINVALUE]] on [[REGISTRATIONDATE]].<br>
-        Unfortunately you do not have activated your account until now.<br>
-        Without activation your account will be deleted in [[DAYSTODELETE]] on [[DELETEDATE]].<br>
+        Unfortunately, you have not activated your account until today.<br>
+        However you have [[DAYSTODELETE]] left to activate your account before it will be deleted on [[DELETEDATE]].<br>
         To activate your account, please click the following link to complete your registration:</p>
         <p>[[VERIFICATIONLINK]]</p>
         <p>If you did not register for an account, please ignore this email or click the following link to delete the user account and to prevent getting further emails.</p>
         <p>[[NOTREGISTEREDLINK]]</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="text-align: center;border-top: 1px solid #ddd;padding-top: 15px">
+                [[DONOTREPLAYVALUE]]
+            </td>
+        </tr>
+        </table>
         HEREA;
     }
 
