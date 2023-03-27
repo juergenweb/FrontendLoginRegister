@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+namespace FrontendLoginRegister;
+
+// checked:27.3
 /*
  * Page to unlock user account after account was locked due to multiple attempts to log in with same email/username
  * and different password combinations
@@ -14,16 +17,12 @@ declare(strict_types=1);
  */
 
 
-namespace FrontendLoginRegister;
-
 use FrontendForms\Button as Button;
 use FrontendForms\Password as Password;
 use ProcessWire\WireException;
 
 class UnlockAccountPage extends FrontendLoginRegisterPages
 {
-
-    use checkUser;
 
     /**
      * Every form must have an id, so let's add it via the constructor
@@ -80,15 +79,15 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
      */
     public function render():string
     {
-        $content = '';
         if ($this->isValid()) {
+            $content = '';
             // grab the user and remove the lock code from the database
             $this->user->setOutputFormatting(false);
             $this->user->fl_unlockaccount = ''; // delete the lock code in the database
             $this->user->save();
             $this->user->setOutputFormatting();
         } else {
-            $content .= $this->wire('page')->body;
+            $content = $this->wire('page')->body;
         }
         $content .= parent::render();
         return $content;
