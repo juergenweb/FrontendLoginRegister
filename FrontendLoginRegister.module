@@ -390,16 +390,22 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @return array
      * @throws WireException
      */
-    protected function writeMailTexts(Language $language, array $data):array
+    protected function writeMailTexts(Language|null $language, array $data):array
     {
-        // check if language is default
-        if($language->name != 'default'){
-           $lang_name = $language->name;
-           $lang_id = $language->id;
-        } else {
+        if(is_null($language)){
             $lang_name = 'en';
             $lang_id = '';
+        } else {
+            // check if language is default
+            if($language->name != 'default'){
+                $lang_name = $language->name;
+                $lang_id = $language->id;
+            } else {
+                $lang_name = 'en';
+                $lang_id = '';
+            }
         }
+
         // check if appropriate email texts in the given language exists
         $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
         if($this->wire('files')->exists($path_to_mailtexts.$lang_name.'.php')){
@@ -407,9 +413,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             // get all input field textareas for mail texts
             foreach($this->textareas as $inputfield){
                 $inputfield_name = $inputfield;
-                if($language->name != 'default'){
-                    $inputfield = $inputfield.'__'.$lang_id;
+                if($lang_id != ''){
+                    $lang_id = '__'.$lang_id;
                 }
+                $inputfield = $inputfield.$lang_id;
                 if((!array_key_exists($inputfield, $data) || $data[$inputfield] == '')){
                     // check if appropriate text for this textarea exists in the language file
                     if(isset(${$inputfield_name})){
@@ -1165,10 +1172,15 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // save the texts for the mails in the default language (en) if languages are installed
 
-        if($this->wire('languages')){
-            $language = $this->wire('languages')->getDefault();
+            if($this->wire('languages')){
+                // languages are installed
+                $language = $this->wire('languages')->getDefault();
+            } else {
+                // no languages
+                $language = NULL;
+            }
             $data = $this->writeMailTexts($language, $data);
-        }
+
         wire('modules')->saveConfig($this, $data);
 
         // Create fields and add them to the user template
