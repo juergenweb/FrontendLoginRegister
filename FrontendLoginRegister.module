@@ -39,13 +39,14 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string $input_tfatext = ''; // the text for the TFA code email
     protected string $input_passwordforgottentext = ''; // the text for the password forgotten email
     protected string $input_deleteaccounttext = ''; // the text for the delete account email
-    protected $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
-    protected $input_unlock_account = ''; // the text for the unlock account email
+    protected string $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
+    protected string $input_unlock_account = ''; // the text for the unlock account email
     protected array $input_roles = []; // IDs of all roles a new user will get
 
     // Declaration of configuration properties for templates and user fields
     protected array $userFields = []; // Array of all user fields
     protected array $templatePages = []; // Array of all template pages
+    protected array $textareas = []; // array of all textarea input fields for the mail textes
     protected array $userSettings = []; // Holds the data for the specific user
 
     // Declaration of class objects used
@@ -61,6 +62,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected array $fl_deleteaccount = []; // userfield for that contains the deletion code
     protected array $fl_deleteaccountdatetime = []; // userfield containing date and time when the deletion code mail was sent
     protected array $fl_unlockaccount = [];
+    protected array $config = []; // array containing the module configuration values
 
     /**
      * @throws WireException
@@ -71,30 +73,44 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         parent::__construct();
 
         // set configuration values from the database
-        $config = $this->wire('modules')->getConfig($this); // get the module config values from the db
+        $this->config = $this->wire('modules')->getConfig($this); // get the module config values from the db
 
-        $this->input_registration = $config['input_registration'];
-        $this->input_profile = $config['input_profile'];
-        $this->input_delete = $config['input_delete'];
-        $this->input_remind = $config['input_remind'];
-        $this->input_prevent_send_deletion_email = $config['input_prevent_send_deletion_email'];
-        $this->input_selectlogin = $config['input_selectlogin'];
-        $this->input_removeJS = $config['input_removeJS'];
-        $this->input_selectloginregister = $config['input_selectloginregister'];
-        $this->input_emailTemplate = $config['input_emailTemplate'];
-        $this->input_email = $config['input_email'];
-        $this->input_sender = $config['input_sender'];
-        $this->input_redirectSuccess = $config['input_redirectSuccess'];
-        $this->input_tfa = $config['input_tfa'];
-        $this->input_deleteProfile = $config['input_deleteProfile'];
-        $this->input_activationtext = $config['input_activationtext'];
-        $this->input_remindertext = $config['input_remindertext'];
-        $this->input_tfatext = $config['input_tfatext'];
-        $this->input_passwordforgottentext = $config['input_passwordforgottentext'];
-        $this->input_deleteaccounttext = $config['input_deleteaccounttext'];
-        $this->input_deletion_confirmation = $config['input_deletion_confirmation'];
-        $this->input_unlock_account = $config['input_unlock_account'];
-        $this->input_roles = $config['input_roles'];
+        // run only if configuration data exists (after module install!)
+        if($this->config){
+            $this->input_registration = $this->config['input_registration'];
+            $this->input_profile = $this->config['input_profile'];
+            $this->input_delete = $this->config['input_delete'];
+            $this->input_remind = $this->config['input_remind'];
+            $this->input_prevent_send_deletion_email = $this->config['input_prevent_send_deletion_email'];
+            $this->input_selectlogin = $this->config['input_selectlogin'];
+            $this->input_removeJS = $this->config['input_removeJS'];
+            $this->input_selectloginregister = $this->config['input_selectloginregister'];
+            $this->input_emailTemplate = $this->config['input_emailTemplate'];
+            $this->input_email = $this->config['input_email'];
+            $this->input_sender = $this->config['input_sender'];
+            $this->input_redirectSuccess = $this->config['input_redirectSuccess'];
+            $this->input_tfa = $this->config['input_tfa'];
+            $this->input_deleteProfile = $this->config['input_deleteProfile'];
+            $this->input_activationtext = $this->config['input_activationtext'];
+            $this->input_remindertext = $this->config['input_remindertext'];
+            $this->input_tfatext = $this->config['input_tfatext'];
+            $this->input_passwordforgottentext = $this->config['input_passwordforgottentext'];
+            $this->input_deleteaccounttext = $this->config['input_deleteaccounttext'];
+            $this->input_deletion_confirmation = $this->config['input_deletion_confirmation'];
+            $this->input_unlock_account = $this->config['input_unlock_account'];
+            $this->input_roles = $this->config['input_roles'];
+        }
+
+        // array of the names of all mail text input fields
+        $this->textareas = [
+            'input_activationtext',
+            'input_tfatext',
+            'input_remindertext',
+            'input_passwordforgottentext',
+            'input_deleteaccounttext',
+            'input_deletion_confirmation',
+            'input_unlock_account'
+        ];
 
         // Get FrontendForms module
         $this->frontendForms = wire('modules')->get('FrontendForms');
@@ -159,14 +175,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_sender' => '',
             'input_redirectSuccess' => '-1',
             'input_tfa' => 0,
-            'input_deleteProfile' => 0,
-            'input_activationtext' => self::activationText(),
-            'input_remindertext' => self::reminderText(),
-            'input_tfatext' => self::tfaText(),
-            'input_passwordforgottentext' => self::passwordforgottenText(),
-            'input_deleteaccounttext' => self::deleteaccountText(),
-            'input_deletion_confirmation' => self::deletionConfirmation(),
-            'input_unlock_account' => self::unlockaccountText(),
+            'input_deleteProfile' => 0
         ];
     }
 
@@ -177,11 +186,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      */
     public function init():void
     {
-
         // send email to remind the user to activate the account
-        $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
+        // TODO change to everyHour
+        $this->addHookAfter('LazyCron::everyMinute', $this, 'remindAccount');
         // delete inactive accounts after a certain time
-        $this->addHookAfter('LazyCron::everyHour', $this, 'deleteAccount');
+        // TODO change to everyHour
+        $this->addHookAfter('LazyCron::everyMinute', $this, 'deleteAccount');
         // set pages status to hidden on certain pages
         $this->addHookAfter('Modules::saveConfig', $this, 'setPageStatus');
         // set email to unique in the email field settings
@@ -373,6 +383,45 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     }
 
     /**
+     * Save the texts for a given language to the module configuration
+     * @param Language $language -> the language object
+     * @param array $data -> array of configuration data for the module
+     * @return array
+     * @throws WireException
+     */
+    protected function writeMailTexts(Language $language, array $data):array
+    {
+        // check if language is default
+        if($language->name != 'default'){
+           $lang_name = $language->name;
+           $lang_id = $language->id;
+        } else {
+            $lang_name = 'en';
+            $lang_id = '';
+        }
+        // check if appropriate email texts in the given language exists
+        $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
+        if($this->wire('files')->exists($path_to_mailtexts.$lang_name.'.php')){
+            include($path_to_mailtexts.$lang_name.'.php');
+            // get all input field textareas for mail texts
+            foreach($this->textareas as $inputfield){
+                $inputfield_name = $inputfield;
+                if($language->name != 'default'){
+                    $inputfield = $inputfield.'__'.$lang_id;
+                }
+                if((!array_key_exists($inputfield, $data) || $data[$inputfield] == '')){
+                    // check if appropriate text for this textarea exists in the language file
+                    if(isset(${$inputfield_name})){
+                        // save the text of the variable to the database
+                        $data[$inputfield] = ${$inputfield_name};
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
      * Method to save title, name and description in other language(s)
      * Method is included in the hooked addMultilangData() method
      * Takes account of SeoMaestro field values if installed
@@ -384,6 +433,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     {
 
         $csvFile_path = $event->arguments(0);
+
 
         // run only if translation file of this module is processed (contains FrontendLoginRegister in path)
         if (str_contains($csvFile_path, $this->className)) {
@@ -499,9 +549,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $p->save();
                 $p->of(true);
             }
-
-            // set the user language back
-            //$this->wire('user')->language = $current;
+            // save the texts for the mails in the given language if present
+            $data = $this->writeMailTexts($language, $this->config);
+            wire('modules')->saveConfig($this, $data);
         }
     }
 
@@ -589,126 +639,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // Populate back return value, if you have modified it
         $event->return = $return;
-    }
-
-    /**
-     * Text for the account activation email
-     * @return string
-     */
-    public static function activationText():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>You will receive this email, because you have registered for an account at [[DOMAINVALUE]] on [[CURRENTDATETIMEVALUE]].<br>
-        To confirm that you are the person who registered on this site, please click the link below to activate your account.</p>
-        <p>[[VERIFICATIONLINK]]</p>
-        <p>After verification, your account is activated, and you can log in with your credentials.</p>
-        <p>If you did not register for an account, please ignore this email or click the following link to delete the user account and to prevent getting further emails.</p>
-        <p>[[NOTREGISTEREDLINK]]</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
-        HEREA;
-    }
-
-    /**
-     * Text for the reminder email
-     * @return string
-     */
-    public static function reminderText():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>You will receive this email, because you have registered for an account at [[DOMAINVALUE]] on [[REGISTRATIONDATE]].<br>
-        Unfortunately, you have not activated your account until today.<br>
-        However you have [[DAYSTODELETE]] left to activate your account before it will be deleted on [[DELETEDATE]].<br>
-        To activate your account, please click the following link to complete your registration:</p>
-        <p>[[VERIFICATIONLINK]]</p>
-        <p>If you did not register for an account, please ignore this email or click the following link to delete the user account and to prevent getting further emails.</p>
-        <p>[[NOTREGISTEREDLINK]]</p>
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-            <td style="text-align: center;border-top: 1px solid #ddd;padding-top: 15px">
-                [[DONOTREPLAYVALUE]]
-            </td>
-        </tr>
-        </table>
-        HEREA;
-    }
-
-    /**
-     * Text for the password forgotten email
-     * @return string
-     */
-    public static function passwordforgottenText():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>You will receive this email, because someone has requested the [[LOGINDATA]] for your account at [[DOMAINVALUE]].<br>
-        For security reasons, we do not send the [[LOGINDATA]], so you have to create the new [[RESETTEXT]] by clicking the following link:</p>
-        <p>[[RECOVERPASSWORDLINK]]</p>
-        <p>If you did not request a login data reset, please ignore this email.</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
-        HEREA;
-    }
-
-    /**
-     * Text for the request a deletion link mail
-     * @return string
-     */
-    public static function deleteaccountText():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>You will receive this email, because you have requested a deletion link for your account at [[DOMAINVALUE]].<br>
-        Please click the link to delete your account, but please note that this link is only valid for 5 minutes, and it only works if you are logged in.</p>
-        <p>[[DELETEACCOUNTLINK]]</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
-        HEREA;
-    }
-
-    /**
-     * Text for the deletion confirmation mail
-     * @return string
-     */
-    public static function deletionConfirmation():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>We want to inform you that your account at [[DOMAINVALUE]] has now been deleted on [[CURRENTDATETIMEVALUE]].<br>
-        The reason for the deletion is that your account has not been activated  since your registration on [[REGISTRATIONDATE]].<br>
-        To prevent inactive accounts, every account not verified will be deleted after a certain time automatically.<br>
-        If you want to register again, please visit [[REGISTERURL]] and register once more.</p>
-        <p>We wish you a nice day!</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p> 
-        HEREA;
-    }
-
-    /**
-     * Text for the TFA code mail
-     * @return string
-     */
-    public static function tfaText():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>Please enter the code below on the screen to login into your account.</p>
-        <p>[[TFACODE]]</p>
-        <p>Please note: This code is only valid for [[EXPIRATIONTIME]].</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top:15px;">[[DONOTREPLAYVALUE]]</p>
-        HEREA;
-    }
-
-    public static function unlockaccountText():string
-    {
-        return <<<HEREA
-        <p>Dear user</p>
-        <p>You will receive this email, because we have detected suspicious activity on your user account account at [[DOMAINVALUE]].<br>
-        Someone has tried unsuccessfully to login into your account by using your [[LOGINTYPE]] in combination with various passwords.<br>
-        For security reasons we have locked your account now.<br>
-        Please click the link and follow the instructions on the redirected page to unlock your account.<br>
-        After that you can log in normally again.</p> 
-        <p>[[UNLOCKACCOUNTLINK]]</p>
-        <p style="text-align:center; border-top: 1px solid #ddd;padding-top: 15px">[[DONOTREPLAYVALUE]]</p>
-        HEREA;
     }
 
     /**
@@ -921,7 +851,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
             '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
             '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $activation_notes = $this->_('You can adapt the text to your needs, but the placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
         $activation_notes .= '<br>' . $this->_('All other placeholders are optional.');
@@ -940,8 +869,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $tfamail->description = $this->_('Enter the text for the email which contains the TFA code if TFA is enabled.');
         $tfamail->info = [
             '[[TFACODE]]' => $this->_('The TFA-code, that has to be entered on the login form to log.'),
-            '[[EXPIRATIONTIME]]' => $this->_('The time the code is valid including the unit (fe 5 minutes).'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
+            '[[EXPIRATIONTIME]]' => $this->_('The time the code is valid including the unit (fe 5 minutes).')
         ];
         $tfamail_notes = $this->_('The placeholder [[TFACODE]] must be present inside the text, because it contains the TFA code.');
         $tfamail_notes .= '<br>' . $this->_('All other placeholders are optional.');
@@ -958,11 +886,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $reminderemail->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
-            '[[DAYSTODELETE]]' => $this->_('The number of days until an unverified account will be deleted (fe 5).'),
             '[[DELETEDATE]]' => $this->_('The date where an unverified account will be deleted.'),
             '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
-            '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
+            '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.')
         ];
         $reminderemail_notes = $this->_('The placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
         $reminderemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
@@ -981,8 +907,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[LOGINDATA]]' => $this->_('Text used depends on your settings: could be either password  or username and password.'),
             '[[RESETTEXT]]' => $this->_('Text used depends on your settings: could be either password  or username and password.'),
-            '[[RECOVERPASSWORDLINK]]' => $this->_('Link which contains the recover code to create new login data for the account.'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
+            '[[RECOVERPASSWORDLINK]]' => $this->_('Link which contains the recover code to create new login data for the account.')
         ];
         $passwordforgottenemail_notes = $this->_('The placeholder [[RECOVERPASSWORDLINK]] must be present inside the text, because it contains the link to create a new password.');
         $passwordforgottenemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
@@ -1000,7 +925,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $deleteaccountemail->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[DELETEACCOUNTLINK]]' => $this->_('Link which contains the deletion code to delete the account permanently.'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
         ];
         $deleteaccountemail_notes = $this->_('The placeholder [[DELETEACCOUNTLINK]] must be present inside the text, because it contains the link to delete the account.');
         $deleteaccountemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
@@ -1019,8 +943,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
             '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
-            '[[REGISTERURL]]' => $this->_('The URL to the registration page.'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
+            '[[REGISTERURL]]' => $this->_('The URL to the registration page.')
         ];
         $deletion_confirmation->useLanguages = true;
         $deletion_confirmation->required = 1;
@@ -1035,8 +958,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $unlock_account->info = [
             '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
             '[[LOGINTYPE]] ' => $this->_('Depends on your settings: could be either email or username.'),
-            '[[UNLOCKACCOUNTLINK]]' => $this->_('Link which contains the unlock code to unlock the account if it was locked after to much failed login attempts.'),
-            '[[DONOTREPLAYVALUE]]' => $this->_('Hint text that this is an autogenerated email.')
+            '[[UNLOCKACCOUNTLINK]]' => $this->_('Link which contains the unlock code to unlock the account if it was locked after to much failed login attempts.')
         ];
         $unlock_account_notes = $this->_('The placeholder [[UNLOCKACCOUNTLINK]] must be present inside the text, because it contains the link unlock the account.');
         $unlock_account_notes .= '<br>' . $this->_('All other placeholders are optional.');
@@ -1239,6 +1161,13 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $data = self::getDefaultData();
         $data['input_roles'] = [$registered_role];
         $data['input_email'] = 'noreply@' . wire('config')->httpHost;
+
+        // save the texts for the mails in the default language (en) if languages are installed
+
+        if($this->wire('languages')){
+            $language = $this->wire('languages')->getDefault();
+            $data = $this->writeMailTexts($language, $data);
+        }
         wire('modules')->saveConfig($this, $data);
 
         // Create fields and add them to the user template
@@ -1365,7 +1294,7 @@ EOT;
             }
 
 
-            // last but not least: check if SeoMaestro module is installed and if yes add some page data to it
+            // check if SeoMaestro module is installed and if yes add some page data to it
             if (($seo) && ($seo->name)) {
                 $seoField = $seo->name;
                 // Set Meta values
@@ -1382,6 +1311,10 @@ EOT;
                 $p->$seoField->robots->noFollow = $fieldproperties['noFollow'];
             }
             $p->save();
+
+            // save the email texts in English to the default language
+            // TODO add the mail text
+
         }
 
         // remove the backup directory from the module
