@@ -36,7 +36,7 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
         $this->setMinTime(2);
         $this->setMaxTime(3600);
         $this->setSuccessMsg($this->_('A link to complete your account deletion has been sent to your email address.'));
-        if(!$this->input_enable_captcha_loggedin) {
+        if(!$this->loginregisterConfig['input_enable_captcha_loggedin']) {
             $this->disableCaptcha(); // disable Captcha
         }
 
