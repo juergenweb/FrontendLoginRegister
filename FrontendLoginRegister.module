@@ -216,6 +216,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->addHookBefore('Inputfield::render', $this, 'allowHTML');
         // add description of used placeholders after the input field
         $this->addHookAfter('Inputfield::render', $this, 'addPlaceholderInfo');
+        // add additional checkbox after import languages select
+        $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
+
         // add CSS and JS to the backend
         $version = $this->getModuleInfo()['version'];
         //$this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.css?v=' . $version);
@@ -412,7 +415,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // set path to the language files
         $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
         // extract language name and according filename
+
         foreach($languages_added as $lang_name => $file_name) {
+            $select_name = $lang_name;
             // remove the prefix "language_" from the language name
             $lang_name = str_replace('language_', '', $lang_name);
 
@@ -432,10 +437,13 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $textarea_name = $inputfield;
 
                     $inputfield = $inputfield.$suffix;
-                    if((!array_key_exists($inputfield, $data) || $data[$inputfield] == '')){
+
+                    if((isset($_POST['mail_'.$select_name])) && ($_POST['mail_'.$select_name])){
 
                         // check if appropriate text for this textarea exists in the language file
                         if(isset(${$textarea_name})){
+                            bd($inputfield);
+                            bd(${$textarea_name});
                             // save the text of the variable to the database
                             $data[$inputfield] = ${$textarea_name};
                         }
@@ -664,6 +672,40 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // Populate back return value, if you have modified it
         $event->return = $return;
+    }
+
+    /**
+     * Add an additional checkbox to the language import form
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    protected function addCheckbox(HookEvent $event):void
+    {
+
+        $qstring = $this->wire('input')->queryStringClean(['validNames' => ['name']]);
+        $name = explode('=',$qstring)[1];
+
+        $form = $event->return;
+
+        // run only on this module
+        if($name == 'FrontendLoginRegister'){
+
+            // name of the parent select
+            if (preg_match('/name="([^"]+)"/', $form, $m)) {
+                $select_name = $m[1];
+            }
+            // create and add additional checkbox
+            $f = $event->wire('modules')->InputfieldCheckbox;
+            $f->name = 'mail_'.$select_name;
+            $f->attr('style', 'margin-right: 15px');
+            $f->label = $this->_('Import the text for the emails too (be careful, this will overwrite your all your texts in the given language).');
+            $replacement = '<div style="margin-top: 40px;">'.$f->render().'</div>';
+
+            $form = str_replace('</select></div>', '</select>'.$replacement.'</div>', $form);
+        }
+
+        $event->return = $form;
     }
 
     /**
