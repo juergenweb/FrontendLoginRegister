@@ -28,7 +28,7 @@ HEREA;
 $input_tfatext = <<<HEREA
 <p>Lieber Nutzer</p>
 <p>Bitte geben Sie den folgenden Code auf dem Bildschirm ein, um sich bei Ihrem Konto anzumelden.</p>
-<p>[[TFACODE]]</p>
+<p><b>[[TFACODE]]</b></p>
 <p>Bitte beachten Sie: Dieser Code ist nur für [[EXPIRATIONTIME]] gültig.</p>
 HEREA;
 
