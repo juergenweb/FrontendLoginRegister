@@ -236,6 +236,29 @@ class FrontendLoginRegisterPages extends Form
     }
 
     /**
+     * Create a centered do not replay info at the footer of the email body
+     * @return string
+     */
+    protected function ___generateNoReplyText():string
+    {
+        return '<br><table class="footer" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-top: 1px solid #ddd;">
+                  <tr>
+                    <td class="center" align="center" valign="top">
+                      <center>
+                        <table class="container">
+                            <tr>
+                              <td><br>
+                                [[DONOTREPLAYVALUE]]
+                              </td>
+                          </tr>
+                        </table>
+                      </center>
+                    </td>
+                  </tr>
+                </table>';
+    }
+
+    /**
      * Send a reminder mail to the user if account is not activated
      * @param User $user
      * @return bool
@@ -263,19 +286,14 @@ class FrontendLoginRegisterPages extends Form
         $this->setMailPlaceholder('registrationdate',
             $this->wire('datetime')->date($this->getDateFormat($user), $user->created));
 
-        // 2) number of days to deletion
-        $daystodelete_text = $this->_n($this->_('day'),
-            $this->_('days'), $days_to_delete);
-        $this->setMailPlaceholder('daystodelete', $days_to_delete . ' ' . $daystodelete_text);
-
-        // 3) deletion date
+        // 2) deletion date
         $this->setMailPlaceholder('deletedate',
             $this->wire('datetime')->date($this->getDateFormat($user), $date_to_delete_ts));
 
-        // 4) verification link
+        // 3) verification link
         $this->setMailPlaceholder('verificationlink', $this->createActivationLink($user));
 
-        // 5) not registered link
+        // 4) not registered link
         $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($user));
 
         $m = new WireMail();
@@ -284,7 +302,7 @@ class FrontendLoginRegisterPages extends Form
         $this->setSenderName($m);
         $m->subject($this->_('Action required to activate your account'));
         $m->title($this->_('Have you forgotten to verify your account?'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig, $this->stored_user_lang->id));
+        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText());
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
         // set back the language to the site language
@@ -323,7 +341,7 @@ class FrontendLoginRegisterPages extends Form
             $this->setSenderName($m);
             $m->subject($this->_('Your account has been deleted'));
             $m->title($this->_('Good bye!'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig, $this->stored_user_lang->id));
+            $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText());
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
             // set back the language to the site language
