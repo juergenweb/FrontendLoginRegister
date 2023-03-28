@@ -131,7 +131,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                     $m->subject(sprintf($this->_('Action required to reset your %s'), $resetText));
                     $m->title(sprintf($this->_('Create a new %s'), $requestText));
                     $m->bodyHTML($this->getLangValueOfConfigField('input_passwordforgottentext',
-                        $this->loginregisterConfig, $this->stored_user_lang->id));
+                        $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText());
                     $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
                     $mail_sent = $m->send();
 
