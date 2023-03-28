@@ -418,7 +418,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
             // check if a language file exists
             if ($this->wire('files')->exists($path_to_mailtexts . $file_name . '.php')) {
-                bd($file_name);
                 include($path_to_mailtexts . $file_name . '.php');
                 if ($lang_name == 'default') {
                     $suffix = '';
