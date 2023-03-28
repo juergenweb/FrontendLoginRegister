@@ -43,6 +43,7 @@ class FrontendLoginRegisterPages extends Form
     protected string $redirectSuccess = '';
     protected string $queryString = ''; // The get parameter of the querystring
     protected string $input_preventIPs = ''; // String of forbidden IP addresses
+    protected int|bool|string $enable_captcha_loggedin = false; // should the captcha be enabled if user is logged in or not
 
     protected array $loginregisterConfig = []; // array that holds all module configuration properties
     protected array $frontendformsConfig = []; // array that holds all module configuration properties from FrontendForms
