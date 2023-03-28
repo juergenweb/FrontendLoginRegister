@@ -1145,11 +1145,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // get array of all editable user template field
         $profile = $this->wire('modules')->get('ProcessProfile');
         $userfields = $profile->data['profileFields'];
-        // if username and password was chosen for login - add username field
+        //add username field
+        $userfields[] = 'title';
 
-        if ($this->input_selectlogin == 'username') {
-            $userfields[] = 'title';
-        }
 
         // create asm select options for form fields
         foreach ($fields as $id => $v) {
