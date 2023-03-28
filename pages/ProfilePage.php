@@ -45,7 +45,9 @@ class ProfilePage extends FrontendLoginRegisterPages
         $this->setMinTime(3);
         $this->setMaxTime(3600);
         $this->useDoubleFormSubmissionCheck(false); // allow multiple submissions to change profile data
-        $this->disableCaptcha(); // disable Captcha
+        if(!$this->enable_captcha_loggedin){
+            $this->disableCaptcha(); // disable Captcha
+        }
 
         // create all form fields depending on the settings in the backend
         $this->createFormFields('input_profile', $this);
