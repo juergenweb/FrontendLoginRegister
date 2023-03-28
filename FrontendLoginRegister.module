@@ -175,7 +175,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_sender' => '',
             'input_redirectSuccess' => '-1',
             'input_tfa' => 0,
-            'input_deleteProfile' => 0
+            'input_deleteProfile' => 0,
+            'input_enable_captcha_loggedin' => 0
         ];
     }
 
