@@ -144,7 +144,7 @@ class LoginPage extends FrontendLoginRegisterPages
         $m->subject($this->_('We have detected suspicious activity on your user account'));
         $m->title($this->_('Action required to unlock your account'));
         $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig,
-            $this->stored_user_lang->id));
+            $this->stored_user_lang->id).$this->___generateNoReplyText());
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
         // set back the language to the site language
@@ -640,11 +640,13 @@ class LoginPage extends FrontendLoginRegisterPages
         if ($times[0] == '00') {
             unset($times[0]);
         } else {
-            $unit = $this->_n($this->_('hour'), $this->_('hours'), (int)$times[0]);
+            $unit = $this->_n($this->_('hour'),
+                $this->_('hours'), (int)$times[0]);
         }
         if (!isset($times[0])) {
             if ($times[1] != '00') {
-                $unit = $this->_n($this->_('minute'), $this->_('minutes'), (int)$times[1]);
+                $unit = $this->_n($this->_('minute'),
+                    $this->_('minutes'), (int)$times[1]);
             } else {
                 unset($times[1]);
             }
@@ -697,7 +699,7 @@ class LoginPage extends FrontendLoginRegisterPages
         $m->from($this->loginregisterConfig['input_email']);
         $this->setSenderName($m);
         $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregisterConfig,
-            $this->stored_user_lang->id));
+            $this->stored_user_lang->id).$this->___generateNoReplyText());
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
         $code_sent = $m->send();
 
