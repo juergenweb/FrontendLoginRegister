@@ -10,7 +10,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 ## Requirements
 - ProcessWire 3.0.195 or newer
 - PHP 8.0 or newer
-- FrontendForms 2.1.15 or newer: Please download and install it from https://github.com/juergenweb/FrontendForms first.
+- FrontendForms 2.1.25 or newer: Please download and install it from https://github.com/juergenweb/FrontendForms first.
 - CronJob: Will be installed automatically, if not installed
 - TfaEmail: Only if you want to use 2-factor-authentication with email and code
 
