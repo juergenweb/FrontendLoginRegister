@@ -369,8 +369,11 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @param string $text
      * @return string
      */
-    protected function convertUmlauts(string $text): string
+    protected function convertUmlauts(string|null $text): string
     {
+        if(is_null($text)){
+            return '';
+        }
         // convert all to lowercase first
         $text = strtolower($text);
 
@@ -391,43 +394,52 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @return array
      * @throws WireException
      */
-    protected function writeMailTexts(Language|null $language, array $data):array
+    protected function writeMailTexts(array $data):array
     {
-        if(is_null($language)){
-            $lang_name = 'en';
-            $lang_id = '';
-        } else {
-            // check if language is default
-            if($language->name != 'default'){
-                $lang_name = $language->name;
-                if(count($this->wire('languages'))>1){
-                    $lang_id = $language->id;
-                } else {
-                    $lang_id = '';
-                }
-            } else {
-                $lang_name = 'en';
-                $lang_id = '';
-            }
-        }
+        /* get all languages imported with their value
+        fe  'language_default' => ''
+            'language_de' => 'de'
+            'language_fi' => ''
+        */
+        $language_keys = array_filter($_POST, function($key) {
+            return strpos($key, 'language_') === 0;
+        }, ARRAY_FILTER_USE_KEY);
+        /* filter out all empty values
+           fe 'language_de' => 'de'
+        */
+       $languages_added = array_filter($language_keys);
 
-        // check if appropriate email texts in the given language exists
+        // set path to the language files
         $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
-        if($this->wire('files')->exists($path_to_mailtexts.$lang_name.'.php')){
-            include($path_to_mailtexts.$lang_name.'.php');
-            // get all input field textareas for mail texts
-            if($lang_id != ''){
-                $lang_id = '__'.$lang_id;
-            }
-            foreach($this->textareas as $inputfield){
-                $inputfield_name = $inputfield;
-                $inputfield = $inputfield.$lang_id;
-                if((!array_key_exists($inputfield, $data) || $data[$inputfield] == '')){
+        // extract language name and according filename
+        foreach($languages_added as $lang_name => $file_name) {
+            // remove the prefix "language_" from the language name
+            $lang_name = str_replace('language_', '', $lang_name);
 
-                    // check if appropriate text for this textarea exists in the language file
-                    if(isset(${$inputfield_name})){
-                        // save the text of the variable to the database
-                        $data[$inputfield] = ${$inputfield_name};
+            // check if a language file exists
+            if ($this->wire('files')->exists($path_to_mailtexts . $file_name . '.php')) {
+                bd($file_name);
+                include($path_to_mailtexts . $file_name . '.php');
+                if ($lang_name == 'default') {
+                    $suffix = '';
+                } else {
+                    // get the suffix for the language with the name
+                    $lang = $this->wire('languages')->get('name=' . $lang_name);
+                    $suffix = '__' . $lang->id;
+                }
+
+                // run for each textarea field
+                foreach($this->textareas as $inputfield){
+                    $textarea_name = $inputfield;
+
+                    $inputfield = $inputfield.$suffix;
+                    if((!array_key_exists($inputfield, $data) || $data[$inputfield] == '')){
+
+                        // check if appropriate text for this textarea exists in the language file
+                        if(isset(${$textarea_name})){
+                            // save the text of the variable to the database
+                            $data[$inputfield] = ${$textarea_name};
+                        }
                     }
                 }
             }
@@ -564,7 +576,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $p->of(true);
             }
             // save the texts for the mails in the given language if present
-            $data = $this->writeMailTexts($language, $this->config);
+            $data = $this->writeMailTexts($this->config);
             wire('modules')->saveConfig($this, $data);
         }
     }
@@ -1176,17 +1188,14 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $data['input_roles'] = [$registered_role];
         $data['input_email'] = 'noreply@' . wire('config')->httpHost;
 
-        // save the texts for the mails in the default language (en) if languages are installed
+        // add the texts for the mails in the default language (en) if languages are installed
+        include($this->wire('config')->paths->$this . 'mailtexts/en.php');
+        // write mail texts in english to each textarea field in default language
+        foreach($this->textareas as $inputfield){
+            $data[$inputfield] = ${$inputfield};
+        }
 
-            if($this->wire('languages')){
-                // languages are installed
-                $language = $this->wire('languages')->getDefault();
-            } else {
-                // no languages
-                $language = NULL;
-            }
-            $data = $this->writeMailTexts($language, $data);
-
+        // save the module configuration
         wire('modules')->saveConfig($this, $data);
 
         // Create fields and add them to the user template
@@ -1450,20 +1459,20 @@ EOT;
                 // show/hide registration and activation page
                 case('fl_registerpage'):
                 case('fl_activationpage'):
-                if (isset($e->arguments(1)['input_selectloginregister'])) {
-                    if ($e->arguments(1)['input_selectloginregister'] == 'login') {
-                        $p->addStatus(Page::statusUnpublished);
-                        if($p->template->name == 'fl_registerpage'){
-                            $p->addStatus(Page::statusHidden);
-                        }
-                    } else {
-                        $p->removeStatus(Page::statusUnpublished);
-                        if($p->template->name == 'fl_registerpage') {
-                            $p->removeStatus(Page::statusHidden);
+                    if (isset($e->arguments(1)['input_selectloginregister'])) {
+                        if ($e->arguments(1)['input_selectloginregister'] == 'login') {
+                            $p->addStatus(Page::statusUnpublished);
+                            if($p->template->name == 'fl_registerpage'){
+                                $p->addStatus(Page::statusHidden);
+                            }
+                        } else {
+                            $p->removeStatus(Page::statusUnpublished);
+                            if($p->template->name == 'fl_registerpage') {
+                                $p->removeStatus(Page::statusHidden);
+                            }
                         }
                     }
-                }
-                break;
+                    break;
                 case('fl_deleteaccountpage'):
                 case('fl_deleterequestpage'):
 
