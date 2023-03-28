@@ -99,7 +99,7 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
             $m->subject($this->_('Action required to delete your account'));
             $m->title($this->_('Please click the link inside the mail'));
             $m->bodyHTML($this->getLangValueOfConfigField('input_deleteaccounttext', $this->loginregisterConfig,
-                $this->stored_user_lang->id));
+                $this->stored_user_lang->id).$this->___generateNoReplyText());
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
             // set back the language to the site language
