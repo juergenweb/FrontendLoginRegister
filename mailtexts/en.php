@@ -35,7 +35,7 @@ HEREA;
 $input_remindertext = <<<HEREA
 <p>Dear user</p>
 <p>You are receiving this email because you registered for an account at [[DOMAINVALUE]] on [[REGISTRATIONDATE]].</p>
-<p>Unfortunately, you have not activated your account until today. However you have [[DAYSTODELETE]] left to activate your account before it will be deleted on [[DELETEDATE]].</p>
+<p>Unfortunately, you have not activated your account until today. However, you have [[DAYSTODELETE]] left to activate your account before it will be deleted on [[DELETEDATE]].</p>
 <p>To activate your account, please click on the following link to complete your registration:</p>
 <p>[[VERIFICATIONLINK]]</p>
 <p>If you have not registered for an account, please ignore this email or click the following link to delete the account and stop receiving emails.</p>
