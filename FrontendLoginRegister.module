@@ -400,7 +400,11 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             // check if language is default
             if($language->name != 'default'){
                 $lang_name = $language->name;
-                $lang_id = $language->id;
+                if(count($this->wire('languages'))>1){
+                    $lang_id = $language->id;
+                } else {
+                    $lang_id = '';
+                }
             } else {
                 $lang_name = 'en';
                 $lang_id = '';
@@ -412,13 +416,14 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         if($this->wire('files')->exists($path_to_mailtexts.$lang_name.'.php')){
             include($path_to_mailtexts.$lang_name.'.php');
             // get all input field textareas for mail texts
+            if($lang_id != ''){
+                $lang_id = '__'.$lang_id;
+            }
             foreach($this->textareas as $inputfield){
                 $inputfield_name = $inputfield;
-                if($lang_id != ''){
-                    $lang_id = '__'.$lang_id;
-                }
                 $inputfield = $inputfield.$lang_id;
                 if((!array_key_exists($inputfield, $data) || $data[$inputfield] == '')){
+
                     // check if appropriate text for this textarea exists in the language file
                     if(isset(${$inputfield_name})){
                         // save the text of the variable to the database
