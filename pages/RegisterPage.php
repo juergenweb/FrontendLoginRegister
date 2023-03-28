@@ -151,8 +151,7 @@ class RegisterPage extends FrontendLoginRegisterPages
                 }
 
                 // create placeholders
-                $this->setMailPlaceholder('daystodelete', (string)$this->loginregisterConfig['input_delete']);
-                $this->setMailPlaceholder('deletedate',
+                $this->setMailPlaceholder('currentdatetimevalue',
                     $this->wire('datetime')->date($this->getDateFormat($newUser), $newUser->fl_activationdatetime));
                 $this->setMailPlaceholder('verificationlink', $this->createActivationLink($newUser));
                 $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($newUser));
@@ -165,7 +164,7 @@ class RegisterPage extends FrontendLoginRegisterPages
                 $m->subject($this->_('Action required to activate your account'));
                 $m->title($this->_('Please click the link to verify your registration'));
                 $m->bodyHTML($this->getLangValueOfConfigField('input_activationtext', $this->loginregisterConfig,
-                    $this->stored_user_lang->id));
+                    $this->stored_user_lang->id).$this->___generateNoReplyText());
                 $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
                 $activation_mail_sent = $m->send();
