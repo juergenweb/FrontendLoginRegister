@@ -223,6 +223,16 @@ There is only one restriction: Only Processwire inputfields of the follwing type
 
 All other field types will be ignored and cannot be selected.
 
+In this case first name and surname were added to the user template:
+
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true)
+
+And in the configuration setting of the registration or profile form these fields can be added as well.
+
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/customfields.png?raw=true)
+
+You can change the order of the fields by dragging them to the prefered position.
+
 Just to mention: Only fields, which are editable by an user will be displayed. Fields which are added to the user template, but the user has not the right to edit it will not be displayed. So if you are adding custom fields to the user template take care that you set the status to editable. 
 
 ## Multi-language
