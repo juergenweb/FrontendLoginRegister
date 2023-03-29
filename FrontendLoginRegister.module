@@ -685,12 +685,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     {
 
         $qstring = $this->wire('input')->queryStringClean(['validNames' => ['name']]);
-        $name = explode('=',$qstring)[1];
+        $name = explode('=', $qstring)[1];
 
         $form = $event->return;
 
         // run only on this module
-        if($name == 'FrontendLoginRegister'){
+        if ($name == 'FrontendLoginRegister') {
 
             // get all language select
             $selects = [];
@@ -702,19 +702,19 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
                 // get the name attribute
                 $name = $tag->getAttribute('name');
-                
+
                 // create the checkbox
                 $f = $event->wire('modules')->InputfieldCheckbox;
-                $f->name = 'mail_'.$name;
+                $f->name = 'mail_' . $name;
                 $f->attr('style', 'margin-right: 15px');
-                $f->label = $this->_('Import the text for the emails too if they are available in the given language.').' ';
+                $f->label = $this->_('Import the text for the emails too if they are available in the given language.') . ' ';
                 $field = $f->render();
 
                 $wrapper = $dom->createElement('div', '');
                 $wrapper->setAttribute('style', 'margin-top: 15px');
                 $tag->parentNode->insertBefore($wrapper, $tag);
 
-                if($tag->nextSibling === null) {
+                if ($tag->nextSibling === null) {
                     $tag->parentNode->appendChild($wrapper);
                 } else {
                     $tag->parentNode->insertBefore($wrapper, $tag->nextSibling);
@@ -729,39 +729,20 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $wrapper->append($field_div);
 
                 // add notes
-                $notes = $dom->createElement('p', $this->_('Please note: This will overwrite all of your previous entered texts for the emails in the given language'));
+                $notes = $dom->createElement('p',
+                    $this->_('Please note: This will overwrite all of your previous entered texts for the emails in the given language.'));
                 $notes->setAttribute('class', 'notes');
 
-                if($wrapper->nextSibling === null) {
+                if ($wrapper->nextSibling === null) {
                     $wrapper->parentNode->appendChild($notes);
                 } else {
                     $wrapper->parentNode->insertBefore($notes, $tag->nextSibling);
                 }
 
             }
-            $form =  $dom->saveHTML();
+            $form = $dom->saveHTML();
 
-
-
-
-
-
-/*
-            // name of the parent select
-            if (preg_match('/name="([^"]+)"/', $form, $m)) {
-                $select_name = $m[1];
-
-            }
-            // create and add additional checkbox
-            $f = $event->wire('modules')->InputfieldCheckbox;
-            $f->name = 'mail_'.$select_name;
-            $f->attr('style', 'margin-right: 15px');
-            $f->label = $this->_('Import the text for the emails too (be careful, this will overwrite your all your texts in the given language).');
-            $replacement = '<div style="margin-top: 40px;">'.$f->render().'</div>';
-
-            $form = str_replace('</select></div>', '</select>'.$replacement.'</div>', $form);
-        */
-}
+        }
 
         $event->return = $form;
     }
