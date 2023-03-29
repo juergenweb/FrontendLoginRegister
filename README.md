@@ -33,7 +33,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 
 ##Table of contents
 
-Installation
+[https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](Installation)
 
 ## Installation
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
