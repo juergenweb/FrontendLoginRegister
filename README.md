@@ -204,6 +204,42 @@ By default, the number of max. attempts is set to 5. So after the 5th attempt, t
 If a user has an entry with the lock code inside the database, it is no longer possible to login to the account until the lock code will be removed by using the unlock link.
 This measure is intended to protect access to user data.
 
+## Sending emails
+This module sends a lot of emails for the communication with the user.
+
+### Activation email
+This mail will be send if a new user has registered. It contains an activation link to verify the registration. 
+
+### TFA email
+If TFA is enabled, this email sends the TFA code for the login. The user has to enter this code inside the login form.
+
+### Reminder email
+Optional you can send a reminder email to an user with an unverified account. This mail should remind him to activate his account. It includes the link for the activation (same as the activation email)
+
+### Password forgotten email
+This mail sends a link to create new login data if the user has forgotten them. The user has to enter his email address inside the form
+
+### Deletion email
+If you allow your users, that the can delete their account, this mail sends an deletion link to the user after the user has entered his password inside a form.
+
+### Deletion confirmation email
+If an unverified account has been deleted, the user will get an email that his account is deleted now.
+
+## Unlock account email
+If suspicious actions were detected at the login section, then the affected user account will be locked via a code inside the database. This mail contains a link to unlock the account again. The user has to click the link inside the mail and has to enter his password on the page.
+
+## Customizing the email texts
+This module adds pre-defined texts for the email, but you are able to change them to your needs. To include activation links, codes and so on, you have to use placeholders inside your texts. Take a look at the following example:
+
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true)
+
+In the image above you can see how to use the placeholders. You will find an explanation of the placeholders used under the input field.
+
+There are also some other placeholder that can be used:
+
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true)
+
+
 
 ## Support for custom user fields
 If you have added additional input fields to the user template (fe name, surname,...), they will also be selectable for the registration and profile form on the frontend. 
