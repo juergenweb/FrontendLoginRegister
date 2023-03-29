@@ -229,6 +229,15 @@ Just to mention: Only fields, which are editable by an user will be displayed. F
 The module will be shipped with the German translations (default is English).
 After installing a language file all titles and descriptions in that language will be added to the pages (and to SeoMaestro fields if installed).
 
+As an extra addition I have added a checkbox to each language import field. This is only the case with this module. This checkbox is for importing the texts for the emails too. 
+
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/language-import-fields.png?raw=true)
+
+If you are select fe de for the German language and you will mark the checkbox beside this input too, then the German texts for the emails will be saved to the appropriate textareas too. But be careful, because this will overwrite all of your texts written before, but this is a real time saver. 
+
+
+At the moment there is unfortunately only one file for the German texts and not for other languages, but maybe other users send me some translations that I can add in the future.
+
 ## ToDo
 Testing, testing, testing....
 
