@@ -239,7 +239,7 @@ In the image above you can see how to use the placeholders. They are surrounded 
 
 There are also some other placeholder that can be used:
 
-![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/placeholders.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/generalplaceholders.png?raw=true)
 
 You will find this list at the bottom of the configuration page.
 
