@@ -231,13 +231,13 @@ If suspicious actions were detected at the login section, then the affected user
 ## Customizing the email texts
 This module adds pre-defined texts for the email, but you are able to change them to your needs. To include activation links, codes and so on, you have to use placeholders inside your texts. Take a look at the following example:
 
-![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/deletion-mail-example.png?raw=true)
 
 In the image above you can see how to use the placeholders. You will find an explanation of the placeholders used under the input field.
 
 There are also some other placeholder that can be used:
 
-![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/placeholders.png?raw=true)
 
 
 
