@@ -12,6 +12,7 @@ namespace ProcessWire;
  * Created: 06.07.2022
  */
 
+use DOMDocument;
 use FrontendForms\Form;
 use FrontendLoginRegister\FrontendLoginRegisterPages;
 use ReflectionException;
@@ -415,7 +416,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // set path to the language files
         $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
         // extract language name and according filename
-
         foreach($languages_added as $lang_name => $file_name) {
             $select_name = $lang_name;
             // remove the prefix "language_" from the language name
@@ -438,12 +438,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
                     $inputfield = $inputfield.$suffix;
 
+
+
                     if((isset($_POST['mail_'.$select_name])) && ($_POST['mail_'.$select_name])){
 
                         // check if appropriate text for this textarea exists in the language file
                         if(isset(${$textarea_name})){
-                            bd($inputfield);
-                            bd(${$textarea_name});
                             // save the text of the variable to the database
                             $data[$inputfield] = ${$textarea_name};
                         }
@@ -674,6 +674,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $event->return = $return;
     }
 
+
     /**
      * Add an additional checkbox to the language import form
      * @param HookEvent $event
@@ -691,9 +692,55 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // run only on this module
         if($name == 'FrontendLoginRegister'){
 
+            // get all language select
+            $selects = [];
+
+            $dom = new DOMDocument;
+            $dom->loadHTML($form);
+
+            foreach ($dom->getElementsByTagName('select') as $tag) {
+
+                // get the name attribute
+                $name = $tag->getAttribute('name');
+
+                // create the checkbox
+                $f = $event->wire('modules')->InputfieldCheckbox;
+                $f->name = 'mail_'.$name;
+                $f->attr('style', 'margin-right: 15px');
+                $f->label = $this->_('Import the text for the emails too (be careful, this will overwrite all of your previous entered texts for the emails in the given language).');
+                $field = $f->render();
+
+                $wrapper = $dom->createElement('div', '');
+                $wrapper->setAttribute('style', 'margin-top: 15px');
+                $tag->parentNode->insertBefore($wrapper, $tag);
+
+                if($tag->nextSibling === null) {
+                    $tag->parentNode->appendChild($wrapper);
+                } else {
+                    $tag->parentNode->insertBefore($wrapper, $tag->nextSibling);
+                }
+
+                // add the checkbox
+                $field_html = $dom->createDocumentFragment(); // create fragment
+                $field_html->appendXML($field);
+                $field_div = $dom->createElement('div');
+                $field_div->appendChild($field_html);
+
+                $wrapper->append($field_div);
+
+            }
+            $form =  $dom->saveHTML();
+
+
+
+
+
+
+/*
             // name of the parent select
             if (preg_match('/name="([^"]+)"/', $form, $m)) {
                 $select_name = $m[1];
+
             }
             // create and add additional checkbox
             $f = $event->wire('modules')->InputfieldCheckbox;
@@ -703,7 +750,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $replacement = '<div style="margin-top: 40px;">'.$f->render().'</div>';
 
             $form = str_replace('</select></div>', '</select>'.$replacement.'</div>', $form);
-        }
+        */
+}
 
         $event->return = $form;
     }
