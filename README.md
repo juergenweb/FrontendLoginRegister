@@ -18,18 +18,22 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - "One-click" integration of an user login/registration system without the hazzle of creating all pages and forms by hand
 - "One-click" switch between login or login and registration option
 - Double opt-in with activation link on new registrations
-- Automatic sending of reminder mails, if account has not been activated after a certain time
-- Automatic deletion of unverified accounts after a certain time to prevent unused accounts (user will be warned via email before deletion)
+- Option for automatic sending of reminder mails, if account activation is still pending
+- Option for automatic deletion of unverified accounts after a certain time to prevent unused accounts
 - Option to use TFA-Email if installed for higher security on login
 - Mutli-language
 - Select if you want to login with username and password or email and password
 - Select the desired roles for newly created users
-- Select, which fields of the user template should be displayed on the registration and profile form (beside the mandatory fields)
-- Offer users the possibility to delete their account in the members area using a deletion link with time expiration. If enabled, 2 pages for account deletion will get that status published, otherwise the status published will be removed from this pages.
-- Customize the texts of the emails send by this modules
-- Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights)
+- Select, which fields of the user template should be displayed on the registration and profile form (beside the mandatory fields). Fields and order can be changed via drag and drop functionality
+- Offer users the possibility to delete their account in the members area using a deletion link with time expiration
+- Customize the texts of the emails which will be send by this module
+- Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights) (fe. CAPTCHA, various security settings,...)
 - Support for SeoMaestro if installed
-- Lock accounts via code inside the database if someone tries to log in with same username or email and different password variations
+- Lock accounts if suspicious login attempts were made
+
+##Table of contents
+
+Installation
 
 ## Installation
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
@@ -58,18 +62,17 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`Sender name`** Enter the name, which should be displayed as sender of the emails
 * **`Email Texts`** You can customize the text of each email, that will be send by this module, using a CKEditor field
 
-Some settings will be taken from the FrontendForms module settings (fe enable/disable Captcha, logging failed attempts)
+Some settings will be taken from the FrontendForms module settings (fe enable/disable Captcha, logging failed attempts,...)
 and cannot be set individually in the module configuration of this module globally, but you can always change form
 parameters on each template by using the FrontendForms API.
 
-## Changing parameters of each form via API
-During the installation of this module a template for each module page will be created and this will look like
+## Changing parameters of each form via API inside the template
+During the installation of this module a template for each page will be created and this will look like
 this:
 
 ```php
 // This is the code of the fl_registerpage.php which includes the registration form
             echo '<div id="content">';
-            echo $page->body;
             echo $modules->get('FrontendLoginRegister')->RegisterPage();
             echo '</div>';
 ```
@@ -78,7 +81,6 @@ If you want to change some parameters of a form, you can use the FrontendForms A
 ```php
 // This is the code of the fl_registerpage.php which includes the registration form
             echo '<div id="content">';
-            echo $page->body;
             $form = $modules->get('FrontendLoginRegister')->RegisterPage();
             $form->setErrorMsg('OMG, there are errors!'); // set a new error message
             $form->disableCaptcha(); // disable the CAPTCHA if it is globally enabled
@@ -103,9 +105,7 @@ changes will be deleted too.
 
 ### Creation of 8 new user fields which will be added to the user template
 
-Creation of 10 templates (one for each page) seems to be a little bit of overload at the first sight. But this makes it all very flexible and customizable. 
-
-During the installation process of this module 5 new fields will be created:
+During the installation process of this module 8 new fields will be created:
 
 - fl_activation: Stores the activation code if a new account was created
 - fl_activationdatetime: Holds the date and time when the user has verified his account
@@ -122,8 +122,9 @@ These fields fe contain activation codes, timestamps and so on... nothing you wi
 
 ### Creation of 10 new templates
 
-In addition 10 new templates will be created. These templates are needed for the pages, that will be created by this
+In addition 10 new templates will be created. These templates are needed for the pages, that will be created later on by this
 module.
+Creation of 10 templates (one for each page) seems to be a little bit of overload at the first sight. But this makes it all very flexible and customizable. 
 
 - fl_activationpage: Template which checks the activation code sent by the user to activate the account
 - fl_deleteaccountpage: Template, which contains a form to enter the password to delete the account
@@ -151,6 +152,8 @@ the workflow to let users register, login, logout, change their profile data and
 - Login data forgotten page
 - Create new login data page
 - Unlock account page
+
+Which pages are published and which are not depends on your module settings. If you decide to offer only a login functionality without the option to register, the registration and activation page will not be published.
 
 ## Double opt-in for newly registered users
 To prevent fake registration, every new registered user will get a confirmation email which contains an activiation link to verify his account. After the user has acitvated his account by clicking on the link, the status of this account will change to "confirmed" and the user will be able to login.
