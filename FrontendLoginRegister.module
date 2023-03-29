@@ -190,11 +190,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     public function init():void
     {
         // send email to remind the user to activate the account
-        // TODO change to everyHour
-        $this->addHookAfter('LazyCron::everyMinute', $this, 'remindAccount');
+        $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
         // delete inactive accounts after a certain time
-        // TODO change to everyHour
-        $this->addHookAfter('LazyCron::everyMinute', $this, 'deleteAccount');
+        $this->addHookAfter('LazyCron::everyHour', $this, 'deleteAccount');
         // set pages status to hidden on certain pages
         $this->addHookAfter('Modules::saveConfig', $this, 'setPageStatus');
         // set email to unique in the email field settings
@@ -249,8 +247,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
                     $activation_date = $user->getUnformatted('created');
                     $diff_time = $this->input_remind * 60 * 60 * 24;
-                    // TODO remove
-                    $diff_time = $this->input_remind * 60;
 
                     if ((int)$activation_date + $diff_time < time()) {
                         // send reminder email to the user
@@ -301,8 +297,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                 }
                 $diff_time = $this->input_delete * 60 * 60 * 24;
-                // TODO delete
-                $diff_time = $this->input_delete * 60;
+
                 if ((int)$reminder_date + $diff_time < time()) {
                     // send deletion confirmation email to the user
                     $deletionconfirmation = new FrontendLoginRegisterPages('test');
@@ -1418,9 +1413,6 @@ EOT;
             }
             $p->save();
 
-            // save the email texts in English to the default language
-            // TODO add the mail text
-
         }
 
         // remove the backup directory from the module
@@ -1673,7 +1665,6 @@ EOT;
                     $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
                     if ($missing_fields) {
                         $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
-                        // TODO open on warning
                         $this->wire('session')->set('fieldset_profile','input_profile');
                     } else {
                         $this->wire('session')->remove('fieldset_profile');
