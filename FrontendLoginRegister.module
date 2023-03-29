@@ -221,7 +221,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
 
         // add CSS and JS to the backend
-        $version = $this->getModuleInfo()['version'];
+        $version = $this->getModuleInfo()['version'] . '-' . time();
         //$this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.css?v=' . $version);
         $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
 
@@ -707,7 +707,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $f = $event->wire('modules')->InputfieldCheckbox;
                 $f->name = 'mail_'.$name;
                 $f->attr('style', 'margin-right: 15px');
-                $f->label = $this->_('Import the text for the emails too (be careful, this will overwrite all of your previous entered texts for the emails in the given language).');
+                $text = $this->_('Import the text for the emails too if they are available in the given language.').'<br>';
+                $text .= $this->_('be careful, this will overwrite all of your previous entered texts for the emails in the given language');
+                $f->label = $text;
                 $field = $f->render();
 
                 $wrapper = $dom->createElement('div', '');
