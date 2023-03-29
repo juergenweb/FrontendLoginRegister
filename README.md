@@ -31,7 +31,7 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - Support for SeoMaestro if installed
 - Lock accounts if suspicious login attempts were made
 
-##Table of contents
+## Table of contents
 
 - [Installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
 - [Configuration](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#configuration)
