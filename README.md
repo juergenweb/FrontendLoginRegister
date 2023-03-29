@@ -207,7 +207,7 @@ If a user has an entry with the lock code inside the database, it is no longer p
 This measure is intended to protect access to user data.
 
 ## Sending emails
-This module sends a lot of emails for the communication with the user.
+This module sends a lot of emails for the communication with the user. Just to mention: if you are running a multilanguage site, the emails will always be send in the stored user language and not in the site language. So this guarantee that the user will always get the email in his own language.
 
 ### Activation email
 This mail will be send if a new user has registered. It contains an activation link to verify the registration. 
