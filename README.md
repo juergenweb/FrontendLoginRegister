@@ -225,11 +225,11 @@ All other field types will be ignored and cannot be selected.
 
 In this case first name and surname were added to the user template:
 
-![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile.png?raw=true  | width=600)
 
 And in the configuration setting of the registration or profile form these fields can be added as well.
 
-![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/customfields.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/customfields.png?raw=true  | width=600)
 
 You can change the order of the fields by dragging them to the prefered position.
 
