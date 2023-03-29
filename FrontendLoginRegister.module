@@ -702,14 +702,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
                 // get the name attribute
                 $name = $tag->getAttribute('name');
-
+                
                 // create the checkbox
                 $f = $event->wire('modules')->InputfieldCheckbox;
                 $f->name = 'mail_'.$name;
                 $f->attr('style', 'margin-right: 15px');
-                $text = $this->_('Import the text for the emails too if they are available in the given language.').'<br>';
-                $text .= $this->_('be careful, this will overwrite all of your previous entered texts for the emails in the given language');
-                $f->label = $text;
+                $f->label = $this->_('Import the text for the emails too if they are available in the given language.').' ';
                 $field = $f->render();
 
                 $wrapper = $dom->createElement('div', '');
@@ -729,6 +727,16 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $field_div->appendChild($field_html);
 
                 $wrapper->append($field_div);
+
+                // add notes
+                $notes = $dom->createElement('p', $this->_('Please note: This will overwrite all of your previous entered texts for the emails in the given language'));
+                $notes->setAttribute('class', 'notes');
+
+                if($wrapper->nextSibling === null) {
+                    $wrapper->parentNode->appendChild($notes);
+                } else {
+                    $wrapper->parentNode->insertBefore($notes, $tag->nextSibling);
+                }
 
             }
             $form =  $dom->saveHTML();
