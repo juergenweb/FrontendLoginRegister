@@ -579,13 +579,10 @@ class FrontendLoginRegisterPages extends Form
     {
         $language = new Language('language');
 
-            //set stored user language as default value
-            // TODO default language bleibt nicht
-            $user_language = $this->getSavedUserLanguage($this->user);
-            $language->setFixedLanguageID($user_language->id);
-            //$language->setDefaultValue($user_language->id);
-
-            $this->add($language);
+        //set stored user language as default value
+        $user_language = $this->getSavedUserLanguage($this->user);
+        $language->setFixedLanguageID($user_language->id);
+        $this->add($language);
     }
 
     /**
