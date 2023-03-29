@@ -34,11 +34,11 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 ##Table of contents
 
 - [Installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
-- [Configuration]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#configuration))
-- [What happens during the installation process?]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#what-happens-during-the-installation-process))
-- [Security features]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#security-features))
-- [Support for custom user fields]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#support-for-custom-user-fields))
-- [Multi-language]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#multi-language))
+- [Configuration]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#configuration)
+- [What happens during the installation process?]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#what-happens-during-the-installation-process)
+- [Security features]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#security-features)
+- [Support for custom user fields]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#support-for-custom-user-fields)
+- [Multi-language]([https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#multi-language)
 
 ## Installation
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
