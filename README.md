@@ -222,7 +222,7 @@ Optional you can send a reminder email to an user with an unverified account. Th
 This mail sends a link to create new login data if the user has forgotten them. The user has to enter his email address inside the form
 
 ### Deletion email
-If you allow your users, that the can delete their account, this mail sends an deletion link to the user after the user has entered his password inside a form.
+If you allow your users, that they can delete their account, this mail sends an deletion link to the user after the user has entered his password inside a form.
 
 ### Deletion confirmation email
 If an unverified account has been deleted, the user will get an email that his account is deleted now.
