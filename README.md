@@ -231,16 +231,17 @@ If an unverified account has been deleted, the user will get an email that his a
 If suspicious actions were detected at the login section, then the affected user account will be locked via a code inside the database. This mail contains a link to unlock the account again. The user has to click the link inside the mail and has to enter his password on the page.
 
 ## Customizing the email texts
-This module adds pre-defined texts for the email, but you are able to change them to your needs. To include activation links, codes and so on, you have to use placeholders inside your texts. Take a look at the following example:
+This module adds pre-defined texts for the emails, but you are able to change them to your needs. To include activation links, codes and so on, you have to use placeholders inside your texts. Take a look at the following example:
 
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/deletion-mail-example.png?raw=true)
 
-In the image above you can see how to use the placeholders. You will find an explanation of the placeholders used under the input field.
+In the image above you can see how to use the placeholders. They are surrounded by double brackets. You will find an explanation of the placeholders used under each input field.
 
 There are also some other placeholder that can be used:
 
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/placeholders.png?raw=true)
 
+You will find this list at the bottom of the configuration page.
 
 
 ## Support for custom user fields
