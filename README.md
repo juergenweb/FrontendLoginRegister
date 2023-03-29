@@ -33,7 +33,11 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 
 ##Table of contents
 
-[https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation](Installation)
+[Installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
+[What happens during the installation process?](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
+[Security features](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
+[Support for custom user fields](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
+[Multi-language](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
 
 ## Installation
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
@@ -155,7 +159,25 @@ the workflow to let users register, login, logout, change their profile data and
 
 Which pages are published and which are not depends on your module settings. If you decide to offer only a login functionality without the option to register, the registration and activation page will not be published.
 
-## Double opt-in for newly registered users
+#### Support for SeoMaestro
+If you have installed the fabulous SeoMaestro module by Wanze, this module set some default values for all pages,
+that were created by this module to the seo field too. This is very comfortable, because you do not have to take care
+of it until you want to change some values. The following values will be set automatically to all pages during the
+installation process of this module and during the installation of a module translation file:
+
+- title: The title will be added to the seo field (multilingual)
+- description: The description will be added to the seo field (multilingual)
+- priority: The priority for indexing of the page will be set
+- sitemap: If the page should be included in the sitemap or not will be set
+- noFollow: NoFollow attribute will be set or not
+- noIndex: NoIndex attribute will be set or not
+
+Please note: All the default values that will be set during the installation of this module or during the installation
+process of a language file are my own preferences - you can change them whenever you want later on.
+
+## Security features
+
+### Double opt-in for newly registered users
 To prevent fake registration, every new registered user will get a confirmation email which contains an activiation link to verify his account. After the user has acitvated his account by clicking on the link, the status of this account will change to "confirmed" and the user will be able to login.
 At the backend you can see the account confirmation inside the user table.
 If an account is confirmed, than the date and time of the confirmation will be displayed in the table.
@@ -164,7 +186,7 @@ If an account is confirmed, than the date and time of the confirmation will be d
 
 Just to mention: The verification date will only be added to users which verified their account via email, not at users created in the backend.
 
-## Completely lock accounts by suspicious behavior
+### Completely lock accounts by suspicious behavior
 This is for the case if someone tries to login with same username or email (depending on your settings) and different variations of passwords.
 
 Example: A user tries to login with the following credentials using email and password:
@@ -181,22 +203,6 @@ By default, the number of max. attempts is set to 5. So after the 5th attempt, t
 If a user has an entry with the lock code inside the database, it is no longer possible to login to the account until the lock code will be removed by using the unlock link.
 This measure is intended to protect access to user data.
 
-
-## Support for SeoMaestro
-If you have installed the fabulous SeoMaestro module by Wanze, this module set some default values for all pages,
-that will be created by this module to the seo field too. This is very comfortable, because you do not have to take care
-of it until you want to change some values. The following values will be set automatically to all pages during the
-installation process of this module and during the installation of a module translation file:
-
-- title: The title will be added to the seo field (multilingual)
-- description: The description will be added to the seo field (multilingual)
-- priority: The priority for indexing of the page will be set
-- sitemap: If the page should be included in the sitemap or not will be set
-- noFollow: NoFollow attribute will be set or not
-- noIndex: NoIndex attribute will be set or not
-
-Please note: All the default values that will be set during the installation of this module or during the installation
-process of a language file are my own preferences - you can change them whenever you want later on.
 
 ## Support for custom user fields
 If you have added additional input fields to the user template (fe name, surname,...), they will also be selectable for the registration and profile form on the frontend. 
