@@ -245,7 +245,7 @@ As an extra addition I have added a checkbox to each language import field. This
 
 If you are select fe de for the German language and you will mark the checkbox beside this input too, then the German texts for the emails will be saved to the appropriate textareas too. But be careful, because this will overwrite all of your texts written before, but this is a real time saver. 
 
-![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/textarea.png?raw=true)
+![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/customfields.png?raw=true)
 
 At the moment there is unfortunately only one file for the German texts and not for other languages, but maybe other users send me some translations that I can add in the future.
 
