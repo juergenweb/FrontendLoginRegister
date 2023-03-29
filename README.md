@@ -36,6 +36,8 @@ A module for ProcessWire CMS to integrate a user registration/login functionalit
 - [Installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
 - [Configuration](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#configuration)
 - [What happens during the installation process?](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#what-happens-during-the-installation-process)
+- [Sending emails](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#sending-emails)
+- [Customizing email texts](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#customizing-the-email-texts)
 - [Security features](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#security-features)
 - [Support for custom user fields](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#support-for-custom-user-fields)
 - [Multi-language](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#multi-language)
