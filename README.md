@@ -44,7 +44,7 @@ This module creates pages and templates during the installation for faster devel
 - [Multi-language](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#multi-language)
 
 ## Installation
-Please download and install FrontendForms first. You do not have to make configuration setting in FrontendForms to run this module. Only install it. Later on you can change some parameters to your needs, but it is not necessary.
+Please download and install FrontendForms first. You do not have to change configuration settings in FrontendForms to run this module. Only install it. Later on you can change some parameters to your needs, but it is not necessary.
 
 Download the module, rename the module folder from FrontendLoginRegister-main to FrontendLoginRegister and add it inside the
 site/modules folder. Refresh your modules in the backend and install the module as usual.
