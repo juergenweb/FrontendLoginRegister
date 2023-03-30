@@ -220,7 +220,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // add CSS and JS to the backend
         $version = $this->getModuleInfo()['version'] . '-' . time();
-        //$this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.css?v=' . $version);
         $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
 
     }
@@ -610,7 +609,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     public function addAssets(HookEvent $event):void
     {
         $page = $event->object;
-        if ($page->template->name == 'fl_loginpage') {
             $assets = wire('config')->urls->siteModules . $this->className() . '/';
             $js = '';
             // load only on frontend
@@ -620,7 +618,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 }
             }
             $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
-        }
     }
 
     /**
