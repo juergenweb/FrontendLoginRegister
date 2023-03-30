@@ -135,7 +135,7 @@ module.
 
 *Please note*: You do not have to use the pages for login and registration form created by this module to keep the module working. You can also copy the code of these 2 templates to another template - so it is up to you. All other templates/pages should remain untouched.
 
-But take care that some settings do not take effect when you use your own pages for registration and login. Fe. if you switch from login and registration to login only in the backend and you do not use the built in template for the registration form, it will not have an effect, because this configuration setting takes care of the pages created by this module and not on your custom pages. So the registration form will be still visible in this case.
+> ⚠ But take care that some settings do not take effect when you use your own pages for registration and login. Fe. if you switch from login and registration to login only in the backend and you do not use the built in template for the registration form, it will not have an effect, because this configuration setting takes care of the pages created by this module and not on your custom pages. So the registration form will be still visible in this case.
 
 Creation of 10 templates (one for each page) seems to be a little bit of overload at the first sight. But this makes it all very flexible and customizable. 
 
