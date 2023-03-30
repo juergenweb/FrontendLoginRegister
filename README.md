@@ -212,6 +212,10 @@ By default, the number of max. attempts is set to 5. So after the 5th attempt, t
 If a user has an entry with the lock code inside the database, it is no longer possible to login to the account until the lock code will be removed by using the unlock link.
 This measure is intended to protect access to user data.
 
+### No unsanitized values
+By default, every value entered inside a form will be sanitized with sanitizer text or array (depending on which type of input field). These sanitizers will be applied to each input unless you remove them manually. So it is guaranteed that no unsanitized value will be used.
+
+
 ## Sending emails
 This module sends a lot of emails for the communication with the user. Just to mention: if you are running a multilanguage site, the emails will always be send in the stored user language and not in the site language. So this guarantee that the user will always get the email in his own language.
 
