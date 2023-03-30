@@ -226,21 +226,21 @@ This mail will be send if a new user has registered. It contains an activation l
 If TFA is enabled, this email sends the TFA code for the login. The user has to enter this code inside the login form.
 
 ### Reminder email
-Optional you can send a reminder email to an user with an unverified account. This mail should remind him to activate his account. It includes the link for the activation (same as the activation email)
+Optional you can send a reminder email to an user with an unverified account. This mail should remind him to activate his account. It includes the link for the activation (same as the activation email). The sending of the email will be triggered by a Hook. You can configure the time in days after which a reminder email should be sent or you can disable the sending of the reminder email.
 
 ### Password forgotten email
-This mail sends a link to create new login data if the user has forgotten them. The user has to enter his email address inside the form
+This mail sends a link to create new login data if the user has forgotten them. The user has to enter his email address inside the form. Then the link for entering new user data will be sent to the user. 
 
-### Deletion email
-If you allow your users, that they can delete their account, this mail sends an deletion link to the user after the user has entered his password inside a form.
+### Deletion request email
+If you allow your users, that they can delete their account, this mail sends an deletion link to the user. The user has to enter his password, to get the deletion link. After clicking the link in the email the user will be redirected to a page, where he has to enter his password again to delete the account permanently.
 
 ### Deletion confirmation email
-If an unverified account has been deleted, the user will get an email that his account is deleted now.
+This email has nothing to do with the deletion request described before. This mail will be send after deletion of unverified accounts. The deletion of these accounts will be triggered by a Hook. So if an account has been deleted, the user gets the information about the deletion via email. The sending of this email can be disabled inside the module configuration.
 
 ## Unlock account email
-If suspicious actions were detected at the login section, then the affected user account will be locked via a code inside the database. This mail contains a link to unlock the account again. The user has to click the link inside the mail and has to enter his password on the page.
+If suspicious actions were detected at the login section, then the affected user account will be locked via a code inside the database. This mail contains a link to unlock the account again. The user has to click the link inside the mail, will be redirected to a page where he has to enter his password to unlock his account again. After that the account is unlocked and the user can login as usual.
 
-## Customizing the email texts
+## Customizing the email texts for higher flexibility
 This module adds pre-defined texts for the emails, but you are able to change them to your needs. To include activation links, codes and so on, you have to use placeholders inside your texts. Take a look at the following example:
 
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/deletion-mail-example.png?raw=true)
