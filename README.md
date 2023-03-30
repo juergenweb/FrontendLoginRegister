@@ -3,6 +3,7 @@
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
 
 A module for ProcessWire CMS to integrate a user registration/login functionality based on the FrontendForms module.
+This module creates pages and templates during the installation for faster development.
 
 > ⚠ This module is very Alpha stage - so be aware of using it on live sites!
 
@@ -131,6 +132,11 @@ These fields fe contain activation codes, timestamps and so on... nothing you wi
 
 In addition 10 new templates will be created. These templates are needed for the pages, that will be created later on by this
 module.
+
+*Please note*: You do not have to use the pages for login and registration form created by this module to keep the module working. You can also copy the code of these 2 templates to another template - so it is up to you. All other templates/pages should remain untouched.
+
+But take care that some settings do not take effect when you use your own pages for registration and login. Fe. if you switch from login and registration to login only in the backend and you do not use the built in template for the registration form, it will not have an effect, because this configuration setting takes care of the pages created by this module and not on your custom pages. So the registration form will be still visible in this case.
+
 Creation of 10 templates (one for each page) seems to be a little bit of overload at the first sight. But this makes it all very flexible and customizable. 
 
 - fl_activationpage: Template which checks the activation code sent by the user to activate the account
