@@ -294,6 +294,13 @@ If you are select fe de for the German language and you will mark the checkbox b
 
 At the moment there is unfortunately only one file for the German texts and not for other languages, but maybe other users send me some translations that I can add in the future.
 
+## Restrictions
+
+- Only TfaEmail can be used for the TFA 
+- Mails will only be send with WireMail class
+- Remember me function not implemented due to possible security issues
+
+
 ## ToDo
 Testing, testing, testing....
 
