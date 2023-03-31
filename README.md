@@ -195,7 +195,7 @@ If an account is confirmed, than the date and time of the confirmation will be d
 
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/usertable.png?raw=true)
 
-Just to mention: The verification date will only be added to users which verified their account via email, not at users created in the backend.
+Just to mention: The verification date will only be added to users which have verified their account via activation link, not to users who were created in the backend.
 
 ### Completely lock accounts by suspicious behavior
 This is for the case if someone tries to login with same username or email (depending on your settings) and different variations of passwords.
