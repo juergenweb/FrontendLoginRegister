@@ -240,7 +240,7 @@ If you allow your users, that they can delete their account, this mail sends an 
 ### Deletion confirmation email
 This email has nothing to do with the deletion request described before. This mail will be send after deletion of unverified accounts. The deletion of these accounts will be triggered by a Hook. So if an account has been deleted, the user gets the information about the deletion via email. The sending of this email can be disabled inside the module configuration.
 
-## Unlock account email
+### Unlock account email
 If suspicious actions were detected at the login section, then the affected user account will be locked via a code inside the database. This mail contains a link to unlock the account again. The user has to click the link inside the mail, will be redirected to a page where he has to enter his password to unlock his account again. After that the account is unlocked and the user can login as usual.
 
 ## Customizing the email texts for higher flexibility
