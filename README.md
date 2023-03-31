@@ -220,6 +220,7 @@ By default, every value entered inside a form will be sanitized with sanitizer t
 
 ## Sending emails
 This module sends a lot of emails for the communication with the user. Just to mention: if you are running a multilanguage site, the emails will always be send in the stored user language and not in the site language. So this guarantee that the user will always get the email in his own language.
+If you offer a language input field inside the forms (fe registration form or profile form), the user can set his prefered language individually. If there is no language input field added, then the user language will be taken and stored from the site language used at the time of the user registration.
 
 ### Activation email
 This mail will be send if a new user has registered. It contains an activation link to verify the registration. 
