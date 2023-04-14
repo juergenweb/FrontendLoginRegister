@@ -285,7 +285,7 @@ And in the configuration setting of the registration or profile form these field
 
 You can change the order of the fields by dragging them to the prefered position.
 
-Just to mention: Only fields, which are editable by an user will be displayed. Fields which are added to the user template, but the user has not the right to edit it will not be displayed. So if you are adding custom fields to the user template take care that you set the status to editable. 
+Just to mention: Only fields, which are editable by an user will be displayed. Fields which are added to the user template, but the user has not the permission to edit this field will not be displayed. So if you are adding custom fields to the user template take care that you set the status to editable. 
 
 ## Multi-language
 The module will be shipped with the German translations (default is English).
