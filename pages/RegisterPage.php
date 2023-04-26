@@ -149,10 +149,9 @@ class RegisterPage extends FrontendLoginRegisterPages
                     $tfa = new TfaEmail();
                     $tfa->autoEnableUser($newUser);
                 }
-
                 // create placeholders
                 $this->setMailPlaceholder('currentdatetimevalue',
-                    $this->wire('datetime')->date($this->getDateFormat($newUser), $newUser->fl_activationdatetime));
+                    $this->wire('datetime')->date($this->getDateFormat($newUser), time()));
                 $this->setMailPlaceholder('verificationlink', $this->createActivationLink($newUser));
                 $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($newUser));
 
