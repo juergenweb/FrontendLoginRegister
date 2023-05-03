@@ -247,8 +247,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
                     $activation_date = $user->getUnformatted('created');
                     $diff_time = $this->input_remind * 60 * 60 * 24;
-                    // TODO
-                    $diff_time = 60;
 
                     if ((int)$activation_date + $diff_time < time()) {
                         // send reminder email to the user
@@ -299,8 +297,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                     $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                 }
                 $diff_time = $this->input_delete * 60 * 60 * 24;
-                // TODO
-                $diff_time = 120;
 
                 if ((int)$reminder_date + $diff_time < time()) {
                     // send deletion confirmation email to the user
