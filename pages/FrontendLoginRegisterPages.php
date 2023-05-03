@@ -34,6 +34,7 @@ use ProcessWire\WireMail;
 use ProcessWire\WirePermissionException;
 use FrontendForms\Link as Link;
 use function ProcessWire\__;
+use function ProcessWire\wirePopulateStringTags;
 
 
 class FrontendLoginRegisterPages extends Form
@@ -303,8 +304,15 @@ class FrontendLoginRegisterPages extends Form
         $this->setSenderName($m);
         $m->subject($this->_('Action required to activate your account'));
         $m->title($this->_('Have you forgotten to verify your account?'));
-        $m->bodyHTML($this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText());
+
+        $body = $this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText();
+        $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
+            ['tagOpen' => '[[', 'tagClose' => ']]']);
+        $this->setMailPlaceholder('body', $body);
+        $m->bodyHTML($body);
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
+        $this->includeMailTemplate($m);
+        $m->mailTemplate('none'); // important to prevent double inclusion of HTML template on hooks
 
         // set back the language to the site language
         $this->user->setLanguage($this->site_language_id);
@@ -342,8 +350,15 @@ class FrontendLoginRegisterPages extends Form
             $this->setSenderName($m);
             $m->subject($this->_('Your account has been deleted'));
             $m->title($this->_('Good bye!'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText());
+
+            $body = $this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText();
+            $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
+                ['tagOpen' => '[[', 'tagClose' => ']]']);
+            $this->setMailPlaceholder('body', $body);
+            $m->bodyHTML($body);
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
+            $this->includeMailTemplate($m);
+            $m->mailTemplate('none'); // important to prevent double inclusion of HTML template on hooks
 
             // set back the language to the site language
             $this->user->setLanguage($this->site_language_id);
