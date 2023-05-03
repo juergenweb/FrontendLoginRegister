@@ -142,11 +142,13 @@ class RegisterPage extends FrontendLoginRegisterPages
 
             if ($newUser->save()) {
 
-                // get the id of the user language as stored inside the db
-                $this->stored_user_lang = $this->getSavedUserLanguage($newUser);
+                if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                    // get the id of the user language as stored inside the db
+                    $this->stored_user_lang = $this->getSavedUserLanguage($newUser);
 
-                // change user language to the stored user language placeholder in the stored user language
-                $this->user->setLanguage($this->stored_user_lang);
+                    // change user language to the stored user language placeholder in the stored user language
+                    $this->user->setLanguage($this->stored_user_lang);
+                }
 
                 // add placeholders !!important!!
                 $this->createGeneralPlaceholders();
@@ -169,14 +171,24 @@ class RegisterPage extends FrontendLoginRegisterPages
                 $this->setSenderName($m);
                 $m->subject($this->_('Action required to activate your account'));
                 $m->title($this->_('Please click the link to verify your registration'));
-                $m->bodyHTML($this->getLangValueOfConfigField('input_activationtext', $this->loginregisterConfig,
-                    $this->stored_user_lang->id).$this->___generateNoReplyText());
+
+                if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                   $text =  $this->getLangValueOfConfigField('input_activationtext', $this->loginregisterConfig,
+                       $this->stored_user_lang->id);
+                } else {
+                    $text = $this->loginregisterConfig['input_activationtext'];
+                }
+                $body = $text.$this->___generateNoReplyText();
+
+                $m->bodyHTML($body);
                 $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
                 $activation_mail_sent = $m->send();
 
-                // set back the language to the site language
-                $this->user->setLanguage($this->site_language_id);
+                if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                    // set back the language to the site language
+                    $this->user->setLanguage($this->site_language_id);
+                }
 
                 if ($activation_mail_sent) {
 
