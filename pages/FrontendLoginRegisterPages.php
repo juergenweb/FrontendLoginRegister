@@ -36,7 +36,6 @@ use FrontendForms\Link as Link;
 use function ProcessWire\__;
 use function ProcessWire\wirePopulateStringTags;
 
-
 class FrontendLoginRegisterPages extends Form
 {
 
@@ -91,9 +90,9 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function getSavedUserLanguage(User $user): \ProcessWire\Language
+    protected function getSavedUserLanguage(User $user):\ProcessWire\Language
     {
-        if($user->id != 0){
+        if ($user->id != 0) {
             // user exists inside the database
             $languageField = $this->wire('fields')->get('language');
             $profileLanguageId = $languageField->type->loadPageField($user, $languageField)[0];
@@ -113,33 +112,33 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function setFormFieldValues(User $user):void
     {
-        foreach($this->formElements as $field){
+        foreach ($this->formElements as $field) {
             // exclude password-confirm field if present
             $exclude_fields = [
-                $this->getID().'-pass-confirm',
-                $this->getID().'-oldpass'
+                $this->getID() . '-pass-confirm',
+                $this->getID() . '-oldpass'
             ];
-            if(($field->getAttribute('name')) && (!in_array($field->getAttribute('name'), $exclude_fields))){
+            if (($field->getAttribute('name')) && (!in_array($field->getAttribute('name'), $exclude_fields))) {
                 $field_name = $field->getAttribute('name');
-                $cleaned_field_name = str_replace($this->getID().'-', '', $field_name);
+                $cleaned_field_name = str_replace($this->getID() . '-', '', $field_name);
                 // username has to be changed to name as stored inside the database
-                if($cleaned_field_name == 'username'){
+                if ($cleaned_field_name == 'username') {
                     $cleaned_field_name = 'name';
                 }
                 // do not overwrite empty password fields on profile form
-                if($cleaned_field_name != 'pass') {
+                if ($cleaned_field_name != 'pass') {
                     $value = $this->getValue($field_name);
                     // add sanitizer for email and username for security reasons
                     // all other fields will be sanitized with text by default
-                    if($cleaned_field_name == 'email'){
+                    if ($cleaned_field_name == 'email') {
                         $value = $this->wire('sanitizer')->email($value);
                     }
-                    if($cleaned_field_name == 'username'){
+                    if ($cleaned_field_name == 'username') {
                         $value = $this->wire('sanitizer')->pageName($value);
                     }
                     $user->$cleaned_field_name = $value;
                 } else {
-                    if($this->getValue($field_name)){
+                    if ($this->getValue($field_name)) {
                         $user->$cleaned_field_name = $this->getValue($field_name);
                     }
                 }
@@ -193,9 +192,10 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function createActivationLink(User $user): string
+    protected function createActivationLink(User $user):string
     {
-        return $this->createCodeLink('fl_activationpage', $user->fl_activation, null, $this->_('I have registered for an account - activate my account now'));
+        return $this->createCodeLink('fl_activationpage', $user->fl_activation, null,
+            $this->_('I have registered for an account - activate my account now'));
     }
 
     /**
@@ -205,9 +205,10 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function createNotRegisteredLink(User $user): string
+    protected function createNotRegisteredLink(User $user):string
     {
-        return $this->createCodeLink('fl_activationpage', $user->fl_activation, 'notregisteredcode', $this->_('I have not registered for an account - delete the account'));
+        return $this->createCodeLink('fl_activationpage', $user->fl_activation, 'notregisteredcode',
+            $this->_('I have not registered for an account - delete the account'));
     }
 
     /**
@@ -220,10 +221,14 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function createCodeLink(string $templateName, string $code, string|null $querystringname = null, string|null $linktext = null): string
-    {
-        $targetPage = $this->wire('pages')->get('template=' . $templateName.',include=all');
-        if(is_null($querystringname)){
+    protected function createCodeLink(
+        string $templateName,
+        string $code,
+        string|null $querystringname = null,
+        string|null $linktext = null
+    ):string {
+        $targetPage = $this->wire('pages')->get('template=' . $templateName . ',include=all');
+        if (is_null($querystringname)) {
             $codeName = substr($templateName, 3);// remove  "fL_"
             $codeName = str_replace('page', 'code', $codeName); // replace the string "Page" with "code"
         } else {
@@ -232,7 +237,7 @@ class FrontendLoginRegisterPages extends Form
         $link = new Link();
         $link->setUrl($targetPage->httpUrl);
         $link->setQueryString($codeName . '=' . $code);
-        $linkt_text = (!is_null($linktext))? $linktext : $targetPage->httpUrl;
+        $linkt_text = (!is_null($linktext)) ? $linktext : $targetPage->httpUrl;
         $link->setLinkText($linkt_text);
         return $link->___render();
     }
@@ -269,11 +274,13 @@ class FrontendLoginRegisterPages extends Form
     protected function sendReminderMail(User $user):bool
     {
 
-        // get the user language object as stored inside the db
-        $this->stored_user_lang = $this->getSavedUserLanguage($user);
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            // get the user language object as stored inside the db
+            $this->stored_user_lang = $this->getSavedUserLanguage($user);
 
-        // change user language to the stored user language placeholder in the stored user language
-        $this->user->setLanguage($this->stored_user_lang);
+            // change user language to the stored user language placeholder in the stored user language
+            $this->user->setLanguage($this->stored_user_lang);
+        }
 
         // add placeholders !!important!!
         $this->createGeneralPlaceholders();
@@ -305,17 +312,25 @@ class FrontendLoginRegisterPages extends Form
         $m->subject($this->_('Action required to activate your account'));
         $m->title($this->_('Have you forgotten to verify your account?'));
 
-        $body = $this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText();
-        $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
-            ['tagOpen' => '[[', 'tagClose' => ']]']);
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            $text = $this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig,
+                $this->stored_user_lang->id);
+        } else {
+            $text = $this->loginregisterConfig['input_remindertext'];
+        }
+
+        $body = $text. $this->___generateNoReplyText();
+        $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
         $this->setMailPlaceholder('body', $body);
         $m->bodyHTML($body);
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
         $this->includeMailTemplate($m);
         $m->mailTemplate('none'); // important to prevent double inclusion of HTML template on hooks
 
-        // set back the language to the site language
-        $this->user->setLanguage($this->site_language_id);
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            // set back the language to the site language
+            $this->user->setLanguage($this->site_language_id);
+        }
 
         return (bool)$m->send();
     }
@@ -329,11 +344,13 @@ class FrontendLoginRegisterPages extends Form
     {
         if (!$this->loginregisterConfig['input_prevent_send_deletion_email']) {
 
-            // get the id of the user language as stored inside the db
-            $this->stored_user_lang = $user->language;
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                // get the id of the user language as stored inside the db
+                $this->stored_user_lang = $user->language;
 
-            // change user language to the stored user language placeholder in the stored user language
-            $this->user->setLanguage($this->stored_user_lang);
+                // change user language to the stored user language placeholder in the stored user language
+                $this->user->setLanguage($this->stored_user_lang);
+            }
 
             // add placeholders !!important!!
             $this->createGeneralPlaceholders();
@@ -351,19 +368,30 @@ class FrontendLoginRegisterPages extends Form
             $m->subject($this->_('Your account has been deleted'));
             $m->title($this->_('Good bye!'));
 
-            $body = $this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig, $this->stored_user_lang->id).$this->___generateNoReplyText();
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                $text = $this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig,
+                    $this->stored_user_lang->id);
+            } else {
+                $text = $this->loginregisterConfig['input_deletion_confirmation'];
+            }
+
+            $body = $text. $this->___generateNoReplyText();
+
             $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
                 ['tagOpen' => '[[', 'tagClose' => ']]']);
+
             $this->setMailPlaceholder('body', $body);
             $m->bodyHTML($body);
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
             $this->includeMailTemplate($m);
             $m->mailTemplate('none'); // important to prevent double inclusion of HTML template on hooks
 
-            // set back the language to the site language
-            $this->user->setLanguage($this->site_language_id);
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                // set back the language to the site language
+                $this->user->setLanguage($this->site_language_id);
+            }
 
-            return (bool) $m->send();
+            return (bool)$m->send();
 
         }
         return true;
@@ -371,8 +399,9 @@ class FrontendLoginRegisterPages extends Form
 
     /**
      * Set alert for error message if there occurs an error during the storage of a user
+     * @return void
      */
-    public function savingUserProblemAlert()
+    public function savingUserProblemAlert(): void
     {
         $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.'));
     }
@@ -555,6 +584,7 @@ class FrontendLoginRegisterPages extends Form
      * Create new email input field for registration and profile form
      * @return void
      * @throws WireException
+     * @throws Exception
      */
     protected function createEmail():void
     {
@@ -571,6 +601,7 @@ class FrontendLoginRegisterPages extends Form
      * Create username field
      * @return void
      * @throws WireException
+     * @throws Exception
      */
     protected function createUsername():void
     {
@@ -589,20 +620,23 @@ class FrontendLoginRegisterPages extends Form
      * Create language select input field for changing user language
      * @return void
      * @throws WireException
+     * @throws Exception
      */
     protected function createLanguage():void
     {
-        $language = new Language('language');
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            $language = new Language('language');
 
-        //set stored user language as default value
-        $user_language = $this->getSavedUserLanguage($this->user);
-        $language->setFixedLanguageID($user_language->id);
-        $this->add($language);
+            //set stored user language as default value
+            $user_language = $this->getSavedUserLanguage($this->user);
+            $language->setFixedLanguageID($user_language->id);
+            $this->add($language);
+        }
     }
 
     /**
      * Create Tfa input field
-     * Maybe for future puroposes - will not be used at the moment
+     * Maybe for future purposes - will not be used at the moment
      * At the moment only TfaEmail is supported
      * @return void
      * @throws WireException
@@ -628,6 +662,7 @@ class FrontendLoginRegisterPages extends Form
      * @return void
      * @throws WireException
      * @throws WirePermissionException
+     * @throws Exception
      */
     protected function createFormFields(string $needle, Form $form):void
     {
@@ -638,10 +673,10 @@ class FrontendLoginRegisterPages extends Form
         $noCreation = ['pass', 'email', 'language', 'tfa', 'username'];
 
         foreach ($fields as $field) {
-            if($field->name == 'title'){
-                $name ='username';
+            if ($field->name == 'title') {
+                $name = 'username';
             } else {
-               $name = $field->name;
+                $name = $field->name;
             }
             if (in_array($name, $noCreation)) {
                 $methodName = 'create' . ucfirst($name);
@@ -733,12 +768,12 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function checkForUser(string $codeName): bool
+    protected function checkForUser(string $codeName):bool
     {
-        if ($this->checkQueryStringUser($codeName)) return true;
-        $this->getAlert()
-            ->setCSSClass('alert_dangerClass')
-            ->setText(__('Sorry, but no user was found with this code.'));
+        if ($this->checkQueryStringUser($codeName)) {
+            return true;
+        }
+        $this->getAlert()->setCSSClass('alert_dangerClass')->setText(__('Sorry, but no user was found with this code.'));
         $this->showForm = false;
         return false;
     }
@@ -750,12 +785,12 @@ class FrontendLoginRegisterPages extends Form
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function checkQueryStringUser(string $querystringParameterName): bool
+    protected function checkQueryStringUser(string $querystringParameterName):bool
     {
         $fieldName = str_replace('code', '', $querystringParameterName); // remove the string "code" from the string
 
         $user = $this->wire('users')->get('fl_' . $fieldName . '=' . $this->queryString);
-        if($user->id != 0){
+        if ($user->id != 0) {
             $this->user = $user; // set the user object to the property user
             return true;
         }
