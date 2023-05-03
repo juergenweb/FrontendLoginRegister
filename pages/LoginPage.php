@@ -118,11 +118,13 @@ class LoginPage extends FrontendLoginRegisterPages
     protected function sendAccountLockedMail(User $user, string $code):bool
     {
 
-        // get the user language object as stored inside the db
-        $this->stored_user_lang = $this->getSavedUserLanguage($user);
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            // get the user language object as stored inside the db
+            $this->stored_user_lang = $this->getSavedUserLanguage($user);
 
-        // change user language to the stored user language placeholder in the stored user language
-        $this->user->setLanguage($this->stored_user_lang);
+            // change user language to the stored user language placeholder in the stored user language
+            $this->user->setLanguage($this->stored_user_lang);
+        }
 
         // add placeholders !!important!!
         $this->createGeneralPlaceholders();
@@ -147,8 +149,10 @@ class LoginPage extends FrontendLoginRegisterPages
             $this->stored_user_lang->id).$this->___generateNoReplyText());
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
-        // set back the language to the site language
-        $this->user->setLanguage($this->site_language_id);
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            // set back the language to the site language
+            $this->user->setLanguage($this->site_language_id);
+        }
 
         return (bool)$m->send();
 
