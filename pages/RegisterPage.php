@@ -14,6 +14,7 @@ namespace FrontendLoginRegister;
  * Created: 06.07.2022
  */
 
+use Exception;
 use FrontendForms\Button as Button;
 use FrontendForms\Privacy as Privacy;
 use ProcessWire\TfaEmail;
@@ -27,6 +28,7 @@ class RegisterPage extends FrontendLoginRegisterPages
 
     /**
      * @throws WireException
+     * @throws Exception
      */
     public function __construct(string $id = 'register-form')
     {
@@ -121,6 +123,11 @@ class RegisterPage extends FrontendLoginRegisterPages
             // create the new user
             $newUser = new User();
             $newUser->of(false);
+
+            // set page language as default user language if language support is enabled
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                $newUser->setLanguage($this->user->language);
+            }
 
             // set values for all fields inside the form
             $this->setFormFieldValues($newUser);
