@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "class_name": "FrontendLoginRegister",
+  "module_version": "1.0.1",
+  "authors": [
+    {
+      "title": "Juergen"
+    }
+  ],
+  "pw_versions": [
+    {
+      "name": "3.0"
+    }
+  ],
+  "download_url": "https://github.com/juergenweb/FrontendLoginRegister/archive/main.zip",
+  "release_state": {
+    "title": "Beta"
+  },
+  "summary": "A module for ProcessWire CMS to integrate a user registration/login functionality based on the FrontendForms module.",
+  "module_home": "https://github.com/juergenweb/FrontendLoginRegister"
+}
