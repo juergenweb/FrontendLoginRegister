@@ -312,6 +312,9 @@ class FrontendLoginRegisterPages extends Form
         $m->subject($this->_('Action required to activate your account'));
         $m->title($this->_('Have you forgotten to verify your account?'));
 
+        // set placeholder for title
+        $this->setMailPlaceholder('title', $m->title);
+
         if ($this->wire('modules')->isInstalled('LanguageSupport')) {
             $text = $this->getLangValueOfConfigField('input_remindertext', $this->loginregisterConfig,
                 $this->stored_user_lang->id);
@@ -367,6 +370,9 @@ class FrontendLoginRegisterPages extends Form
             $this->setSenderName($m);
             $m->subject($this->_('Your account has been deleted'));
             $m->title($this->_('Good bye!'));
+
+            // set placeholder for title
+            $this->setMailPlaceholder('title', $m->title);
 
             if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                 $text = $this->getLangValueOfConfigField('input_deletion_confirmation', $this->loginregisterConfig,
