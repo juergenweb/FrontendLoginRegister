@@ -19,7 +19,7 @@ $input_activationtext = <<<HEREA
 <p>Sie erhalten diese E-Mail, weil Sie sich für ein Konto bei [[DOMAINVALUE]] am [[CURRENTDATETIMEVALUE]] registriert haben.<br />
 Um zu bestätigen, dass Sie die Person sind, die sich auf dieser Website registriert hat, klicken Sie bitte auf den nachfolgenden Link, um Ihr Konto zu aktivieren.</p>
 <p>[[VERIFICATIONLINK]]</p>
-<p>Nach der Überprüfung ist Ihr Konto aktiviert, und Sie können sich mit Ihren Anmeldedaten anmelden.</p>
+<p>Nach dieser Überprüfung ist Ihr Konto aktiviert, und Sie können sich mit Ihren Anmeldedaten anmelden.</p>
 <p>Wenn Sie sich nicht für ein Konto registriert haben, ignorieren Sie bitte diese E-Mail oder klicken Sie auf den folgenden Link, um das Benutzerkonto zu löschen und keine weiteren E-Mails zu erhalten.</p>
 <p>[[NOTREGISTEREDLINK]]</p>
 HEREA;
@@ -64,7 +64,7 @@ HEREA;
 // text for the email containing the information that the non-verified account is deleted
 $input_deletion_confirmation = <<<HEREA
 <p>Lieber Nutzer</p>
-<p>wir möchten Sie darüber informieren, dass Ihr Konto bei [[DOMAINVALUE]] nun am [[CURRENTDATETIMEVALUE]] gelöscht wurde.<br />
+<p>Wir möchten Sie darüber informieren, dass Ihr Konto bei [[DOMAINVALUE]] nun am [[CURRENTDATETIMEVALUE]] gelöscht wurde.<br />
 Der Grund für die Löschung ist, dass Ihr Account seit Ihrer Registrierung am [[REGISTRATIONDATE]] nicht aktiviert wurde.<br />
 Um inaktiven Konten vorzubeugen, wird jedes nicht verifizierte Konto nach einer gewissen Zeit automatisch gelöscht.<br />
 Wenn Sie sich erneut registrieren möchten, besuchen Sie bitte [[REGISTERURL]] und registrieren Sie sich erneut.</p>
