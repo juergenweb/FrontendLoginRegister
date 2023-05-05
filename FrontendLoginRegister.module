@@ -223,6 +223,22 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $version = $this->getModuleInfo()['version'] . '-' . time();
         $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
 
+        // TODO remove if module is inside module directory
+        // this is only for updating it on my local account
+        $this->addHookBefore("ProcessModule::execute", $this, "changeModuleService");
+    }
+
+    /**
+     * Update the module from a custom location - in this case my GitHub account
+     * @param HookEvent $event
+     * @return void
+     */
+    // TODO delete if module is inside the module directory
+    public function changeModuleService(HookEvent $event) {
+        if($this->input->get->update === "FrontendLoginRegister") {
+            $this->wire("config")->moduleServiceURL = "https://raw.githubusercontent.com/juergenweb/";
+            $this->wire("config")->moduleServiceKey = (__NAMESPACE__ ? "pw300" : "pw280");
+        }
     }
 
 
