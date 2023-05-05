@@ -322,7 +322,7 @@ class FrontendLoginRegisterPages extends Form
             $text = $this->loginregisterConfig['input_remindertext'];
         }
 
-        $body = $text. $this->___generateNoReplyText();
+        $body = $this->generateEmailPreHeader($m).$text. $this->___generateNoReplyText();
         $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
         $this->setMailPlaceholder('body', $body);
         $m->bodyHTML($body);
@@ -381,8 +381,7 @@ class FrontendLoginRegisterPages extends Form
                 $text = $this->loginregisterConfig['input_deletion_confirmation'];
             }
 
-            $body = $text. $this->___generateNoReplyText();
-
+            $body = $this->generateEmailPreHeader($m).$text. $this->___generateNoReplyText();
             $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
                 ['tagOpen' => '[[', 'tagClose' => ']]']);
 
