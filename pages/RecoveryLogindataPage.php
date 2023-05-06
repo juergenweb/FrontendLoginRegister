@@ -19,7 +19,6 @@ use FrontendForms\Password as Password;
 use FrontendForms\PasswordConfirmation as PasswordConfirmation;
 use FrontendForms\Username as Username;
 use ProcessWire\WireException;
-use function ProcessWire\_n;
 
 class RecoveryLogindataPage extends FrontendLoginRegisterPages
 {
