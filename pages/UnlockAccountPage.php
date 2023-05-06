@@ -17,6 +17,7 @@ namespace FrontendLoginRegister;
  */
 
 
+use Exception;
 use FrontendForms\Button as Button;
 use FrontendForms\Password as Password;
 use ProcessWire\WireException;
@@ -27,6 +28,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
     /**
      * Every form must have an id, so let's add it via the constructor
      * @throws WireException
+     * @throws Exception
      */
     public function __construct(string $id = 'deletion-form')
     {
@@ -61,7 +63,6 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
         $button->setAttribute('value', $buttonText);
         $this->add($button);
     }
-
 
     /**
      * @return string
