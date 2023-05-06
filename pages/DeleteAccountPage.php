@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
+
 // checked 27.3
 /*
  * Class for deleting a user via a deletion link and his password
@@ -13,6 +14,7 @@ namespace FrontendLoginRegister;
  * Created: 06.07.2022
  */
 
+use Exception;
 use FrontendForms\Alert;
 use FrontendForms\Button as Button;
 use FrontendForms\InputCheckbox;
@@ -26,6 +28,7 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
     /**
      * Every form must have an id, so let's add it via the constructor
      * @throws WireException
+     * @throws Exception
      */
     public function __construct(string $id = 'deletion-form')
     {
@@ -113,7 +116,7 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
 
         if ((time() - $this->user->getUnformatted('fl_deleteaccountdatetime')) > 300) {
             $this->getAlert()->setCSSClass('alert_dangerClass')->setText(sprintf($this->_('Your deletion link is expired. It was only valid for 5 minutes. Please %s for a new deletion link.'),
-                    $this->___requestLink()->___render()));
+                $this->___requestLink()->___render()));
             $this->showForm = false;
 
             //delete deletion code and time
@@ -146,10 +149,9 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
         if ($this->isValid()) {
             $content = '';
             // delete the user
-            if(!$this->wire('users')->delete($this->user)){
-               // problem deleting the user - set an alert to inform the user
-                $this->getAlert()->setCSSClass('alert_dangerClass')->setText(
-                    $this->_('Unfortunately there was a technical problem deleting your account. Please try it once more or contact the webmaster of the site.'));
+            if (!$this->wire('users')->delete($this->user)) {
+                // problem deleting the user - set an alert to inform the user
+                $this->getAlert()->setCSSClass('alert_dangerClass')->setText($this->_('Unfortunately there was a technical problem deleting your account. Please try it once more or contact the webmaster of the site.'));
             }
         } else {
             $content = $this->wire('page')->body;
