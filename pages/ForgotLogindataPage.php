@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
+
 // checked 27.3
 
 /*
@@ -15,6 +16,7 @@ namespace FrontendLoginRegister;
  * Created: 06.07.2022
  */
 
+use Exception;
 use FrontendForms\Button as Button;
 use FrontendForms\Email as Email;
 use ProcessWire\WireException;
@@ -26,6 +28,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
 
     /**
      * @throws WireException
+     * @throws Exception
      */
     public function __construct(string $id = 'forgotlogindata-form')
     {
@@ -134,12 +137,12 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
                     $m->title(sprintf($this->_('Create a new %s'), $requestText));
 
                     if ($this->wire('modules')->isInstalled('LanguageSupport')) {
-                        $text =  $this->getLangValueOfConfigField('input_passwordforgottentext', $this->loginregisterConfig,
-                            $this->stored_user_lang->id);
+                        $text = $this->getLangValueOfConfigField('input_passwordforgottentext',
+                            $this->loginregisterConfig, $this->stored_user_lang->id);
                     } else {
                         $text = $this->loginregisterConfig['input_passwordforgottentext'];
                     }
-                    $body = $text.$this->___generateNoReplyText();
+                    $body = $text . $this->___generateNoReplyText();
 
                     $m->bodyHTML($body);
                     $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
