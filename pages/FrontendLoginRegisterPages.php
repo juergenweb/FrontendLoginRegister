@@ -18,6 +18,7 @@ use FrontendForms\Email as Email;
 use FrontendForms\FieldsetClose as FieldsetClose;
 use FrontendForms\FieldsetOpen as FieldsetOpen;
 use FrontendForms\Form as Form;
+use FrontendForms\InputCheckbox;
 use FrontendForms\InputFields;
 use FrontendForms\InputPassword as InputPassword;
 use FrontendForms\InputRadioMultiple as InputRadioMultiple;
@@ -42,17 +43,18 @@ class FrontendLoginRegisterPages extends Form
     /*properties*/
     protected string $redirectSuccess = '';
     protected string $queryString = ''; // The get parameter of the querystring
-    protected string $input_preventIPs = ''; // String of forbidden IP addresses
-    protected int|bool|string $input_enable_captcha_loggedin = false; // should the captcha be enabled if user is logged in or not
-
     protected array $loginregisterConfig = []; // array that holds all module configuration properties
     protected array $frontendformsConfig = []; // array that holds all module configuration properties from FrontendForms
+
     /*objects*/
     protected Page $login_page; // the login page object
     protected Page $delete_page; // the delete page object
     protected Page $delete_request_page; // the delete request page object
     protected FrontendForms $frontendForms; // the FrontendForms module object
     protected \ProcessWire\Language $stored_user_lang; // the user language as stored inside the database
+    protected string $tmp_profile_image_dir_path = ''; // the path to the temp folder for the profile image upload
+    protected Field $image_field; // the profile image field
+    protected array $image_fields = []; // array containing all names of the image fields if present
 
     /**
      * Every form must have an id, so let's add it via the constructor
@@ -62,6 +64,14 @@ class FrontendLoginRegisterPages extends Form
     public function __construct(string $id)
     {
         parent::__construct($id);
+
+        // set tmp_profile_image_dir_path
+        $this->tmp_profile_image_dir_path = $this->wire('config')->paths->siteModules . 'FrontendLoginRegister/tmp_profile_image/';
+
+        //check if temp folder exists, otherwise create it
+        if (!$this->wire('files')->exists($this->tmp_profile_image_dir_path, 'dir')) {
+            $this->wire('files')->mkdir($this->tmp_profile_image_dir_path);
+        }
 
         // get module configuration data from FrontendLoginRegister module and create properties of each setting
         foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
@@ -80,6 +90,54 @@ class FrontendLoginRegisterPages extends Form
         $this->delete_page = $this->wire('pages')->get('template=fl_deleteaccountpage');
         $this->delete_request_page = $this->wire('pages')->get('template=fl_deleterequestpage');
 
+    }
+
+
+    /**
+     * Save an uploaded image to an user
+     * @param User $user
+     * @param string $form_name
+     * @return void
+     * @throws WireException
+     */
+    protected function saveProfileImage(User $user, string $form_name):void
+    {
+
+        $user->of(false);
+
+        // set the path to the final user asset/files folder with the id of the user
+        $dist_upload_path = $this->wire('config')->paths->assets . 'files/' . $user->id . '/';
+
+        // just for the case that there is more than 1 image field present
+        foreach ($this->image_fields as $fieldname) {
+
+            $file_name = $this->getValue($fieldname); // filename of the uploaded image if present
+
+            // run code afterward only if image was uploaded
+            if ($file_name) {
+
+                // delete old user images from this field in the db first
+                $user->$fieldname->deleteAll();
+
+                // copy the image from the tmp folder to the appropriate assets/files folder of the user
+                $this->wire('files')->copy($this->tmp_profile_image_dir_path, $dist_upload_path);
+
+                // unlink this file inside the tmp folder
+                $this->wire('files')->unlink($this->tmp_profile_image_dir_path . $file_name);
+
+                if ($form_name == 'register-form') {
+                    // save the image to the database
+                    $user->$fieldname = $file_name;
+                    $user->save($fieldname);
+                }
+
+            } else {
+                // check if remove image checkbox is checked
+                if (isset($_POST['remove-' . $fieldname])) {
+                    $user->$fieldname->deleteAll();// delete the image
+                }
+            }
+        }
     }
 
     /**
@@ -118,6 +176,21 @@ class FrontendLoginRegisterPages extends Form
                 $this->getID() . '-pass-confirm',
                 $this->getID() . '-oldpass'
             ];
+
+            /*
+             * check if we are on registration page
+             * if yes, exclude profile image
+             */
+            /*
+             * // TODO delete after testing
+            if (get_class($this) == 'FrontendLoginRegister\RegisterPage') {
+                // check if $field is of Fieldtypeimage - exclude it on registration page
+                if (get_class($field) == 'FrontendForms\FileUploadSingle') {
+                    $exclude_fields[] = $field->getAttribute('name');
+                }
+            }
+            */
+
             if (($field->getAttribute('name')) && (!in_array($field->getAttribute('name'), $exclude_fields))) {
                 $field_name = $field->getAttribute('name');
                 $cleaned_field_name = str_replace($this->getID() . '-', '', $field_name);
@@ -160,7 +233,9 @@ class FrontendLoginRegisterPages extends Form
         'FieldtypeFloat' => 'InputText',
         'FieldtypeDatetime' => 'InputDateTime',
         'FieldtypeURL' => 'InputUrl',
-        'FieldtypePage' => 'InputText'
+        'FieldtypePage' => 'InputText',
+        'FieldtypeImage' => 'FileUploadSingle',
+        'FieldtypeCroppableImage3' => 'FileUploadSingle'
     ];
 
     /**
@@ -322,7 +397,7 @@ class FrontendLoginRegisterPages extends Form
             $text = $this->loginregisterConfig['input_remindertext'];
         }
 
-        $body = $this->generateEmailPreHeader($m).$text. $this->___generateNoReplyText();
+        $body = $this->generateEmailPreHeader($m) . $text . $this->___generateNoReplyText();
         $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
         $this->setMailPlaceholder('body', $body);
         $m->bodyHTML($body);
@@ -337,7 +412,6 @@ class FrontendLoginRegisterPages extends Form
 
         return (bool)$m->send();
     }
-
 
     /**
      * @throws WireException
@@ -381,7 +455,7 @@ class FrontendLoginRegisterPages extends Form
                 $text = $this->loginregisterConfig['input_deletion_confirmation'];
             }
 
-            $body = $this->generateEmailPreHeader($m).$text. $this->___generateNoReplyText();
+            $body = $this->generateEmailPreHeader($m) . $text . $this->___generateNoReplyText();
             $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
                 ['tagOpen' => '[[', 'tagClose' => ']]']);
 
@@ -406,7 +480,7 @@ class FrontendLoginRegisterPages extends Form
      * Set alert for error message if there occurs an error during the storage of a user
      * @return void
      */
-    public function savingUserProblemAlert(): void
+    public function savingUserProblemAlert():void
     {
         $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.'));
     }
@@ -649,7 +723,6 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function createTfa():void
     {
-        //_pw_page_name
         $tfa = new InputRadioMultiple('tfa');
         $tfa->setLabel($this->_('TFA'));
         $tfa->addOption('none', '0');
@@ -712,11 +785,53 @@ class FrontendLoginRegisterPages extends Form
         return $formFields; // returns an array of field objects
     }
 
+
+    /**
+     * Create view of profile image
+     * @param string|null $fieldname
+     * @return string
+     * @throws Exception
+     */
+    protected function createProfileImagePreview(string|null $fieldname = null):string
+    {
+        $string = '';
+        if ($this->user->isLoggedin()) {
+
+            if (($fieldname) && (count($this->user->$fieldname))) {
+                if ($this->user->$fieldname->first()->url) {
+                    $userimage = $this->user->$fieldname->first();
+
+                    $sizes = array_map('intval', explode(',', $this->loginregisterConfig['input_image_size']));
+                    // only 1 size is set
+                    if (count($sizes) == 1) {
+                        $sizes[1] = $sizes[0];
+                    }
+                    // more than 2 sizes are set
+                    if (count($sizes) > 2) {
+                        $sizes = array_slice($sizes, 0, 2);
+                    }
+                    $thumb = $userimage->size($sizes[0], $sizes[1]);
+                    $string = '<div id="' . $fieldname . '" class="profile-image-wrapper"><img alt="' . sprintf($this->_('User image of %s'),
+                            $this->user->name) . '" src="' . $thumb->url . '"></div>';
+                    // create checkbox to delete the image
+                    $delete_checkbox = new InputCheckbox('remove-' . $fieldname);
+                    $delete_checkbox->setLabel($this->_('Remove this image'));
+                    $delete_checkbox->setAttribute('value', 'remove');
+                    $string .= $delete_checkbox->___render();
+                } else {
+                    $string = '<p>' . $this->_('No pic at the moment') . '</p>';
+                }
+            }
+        }
+        return $string;
+    }
+
     /**
      * Method to create a form field according to the settings in the backend
      * @param Field $fieldtype - a ProcessWire Fieldtype fe FieldtypePassword
      * @return InputFields|null - returns an object of the FrontendForm Class (fe InputPassword)
      * @throws WireException
+     * @throws Exception
      */
     public function createFormField(Field $fieldtype):?Inputfields
     {
@@ -724,6 +839,33 @@ class FrontendLoginRegisterPages extends Form
         if (array_key_exists($fieldtypeName, $this->linkingFieldTypes)) {
             $class = 'FrontendForms\\' . $this->linkingFieldTypes[$fieldtypeName];
             $field = new $class($fieldtype->name);
+
+            // check if it is profile image upload field
+            if (($fieldtypeName == 'FieldtypeImage') || ($fieldtypeName == 'FieldtypeCroppableImage3')) {
+                $this->image_field = $this->wire('fields')->get($field->getAttribute('name'));
+
+                // add this field to the image fields array for later usage
+                $this->image_fields[] = $field->getAttribute('name');
+
+                // get allowed extensions from this input field and add it as rule
+                if ($this->image_field->get('extensions')) {
+                    $ext = explode(' ', $this->image_field->get('extensions'));
+                    // add additional validator for image files
+                    $field->setRule('allowedFileExt', $ext);
+                }
+
+                // remove phpini max filesize validation depending on module configuration
+                if ($this->loginregisterConfig['input_phpini']) {
+                    $field->removeRule('phpIniFilesize');
+                }
+                // add max file size validator if max file size was set in the module config
+                if ($this->loginregisterConfig['input_max_filesize'] > 0) {
+                    $field->setRule('allowedFileSize', $this->loginregisterConfig['input_max_filesize']);
+                }
+
+                $field->prepend($this->createProfileImagePreview($field->getAttribute('name')));
+            }
+
             $field->setLabel($fieldtype->label);
             // add stored values if user is logged in
             if ($this->wire('user')->isLoggedin()) {
@@ -744,7 +886,6 @@ class FrontendLoginRegisterPages extends Form
         }
         return null;
     }
-
 
     /**
      * Get the redirect url
