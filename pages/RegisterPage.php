@@ -55,6 +55,8 @@ class RegisterPage extends FrontendLoginRegisterPages
         $button->setAttribute('value', $this->_('Register'));
         $this->add($button);
 
+        $this->setUploadPath($this->tmp_profile_image_dir_path);
+
     }
 
     /**
@@ -115,8 +117,11 @@ class RegisterPage extends FrontendLoginRegisterPages
         if ($this->isValid()) {
 
             //get the form values
+            // TODO delete after testing
+            /*
             $email = $this->getValue('email');
             $pass = $this->getValue('pass');
+            */
 
             $activationCode = $this->createQueryCode();// create the activation code
 
@@ -141,6 +146,9 @@ class RegisterPage extends FrontendLoginRegisterPages
             }
 
             if ($newUser->save()) {
+
+                // save uploaded profile image
+                $this->saveProfileImage($newUser, 'register-form');
 
                 if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                     // get the id of the user language as stored inside the db
@@ -233,7 +241,6 @@ class RegisterPage extends FrontendLoginRegisterPages
                     }
                 }
             }
-
 
         }
         // render the form on the frontend
