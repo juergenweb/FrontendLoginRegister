@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace FrontendLoginRegister;
+
 //checked 27.3
 
 /*
@@ -14,6 +15,7 @@ namespace FrontendLoginRegister;
  * Created: 06.07.2022
  */
 
+use Exception;
 use FrontendForms\Button as Button;
 use FrontendForms\Link as Link;
 use ProcessWire\WireException;
@@ -28,6 +30,7 @@ class ProfilePage extends FrontendLoginRegisterPages
      * Every form must have an id, so let's add it via the constructor
      * @throws WireException
      * @throws WireException
+     * @throws Exception
      */
     public function __construct(string $id = 'profile-form')
     {
@@ -46,7 +49,7 @@ class ProfilePage extends FrontendLoginRegisterPages
         $this->setMaxTime(3600);
         $this->useDoubleFormSubmissionCheck(false); // allow multiple submissions to change profile data
 
-        if(!$this->loginregisterConfig['input_enable_captcha_loggedin']) {
+        if (!$this->loginregisterConfig['input_enable_captcha_loggedin']) {
             $this->disableCaptcha(); // disable Captcha
         }
 
@@ -79,6 +82,8 @@ class ProfilePage extends FrontendLoginRegisterPages
             }
         }
 
+        $this->setUploadPath($this->tmp_profile_image_dir_path);
+
     }
 
     /**
@@ -106,6 +111,7 @@ class ProfilePage extends FrontendLoginRegisterPages
      * Render the form and save the user data
      * @return string
      * @throws WireException
+     * @throws Exception
      */
     public function render():string
     {
@@ -124,8 +130,8 @@ class ProfilePage extends FrontendLoginRegisterPages
                 $old_user_lang = $this->user->language->id;
             }
 
-            // save the user values to the database
-            $this->user->of(false);
+            // save an uploaded profile image to the given user
+            $this->saveProfileImage($this->user, 'profile-form');
 
             // set the form field values to the user object
             $this->setFormFieldValues($this->user);
@@ -139,6 +145,9 @@ class ProfilePage extends FrontendLoginRegisterPages
                         $this->wire('session')->redirect($this->wire('pages')->get($this->wire->page->id)->localUrl($this->wire('user')->language));
                     }
                 }
+
+                // redirect to the page -> necessary to show new uploaded image
+                $this->wire('session')->redirect($this->wire('page')->url);
             } else {
                 $this->savingUserProblemAlert();
             }
