@@ -12,17 +12,18 @@ namespace FrontendLoginRegister;
  * Created: 06.07.2022
  */
 
+use Exception;
 use FrontendForms\Button as Button;
 use FrontendForms\Password as Password;
 use ProcessWire\WireException;
 use ProcessWire\WireMail;
-use function ProcessWire\wireMail;
 
 class DeleteRequestPage extends FrontendLoginRegisterPages
 {
 
     /**
      * @throws WireException
+     * @throws Exception
      */
     public function __construct(string $id = 'deleteaccount-form')
     {
@@ -37,9 +38,6 @@ class DeleteRequestPage extends FrontendLoginRegisterPages
         $this->setMinTime(2);
         $this->setMaxTime(3600);
         $this->setSuccessMsg($this->_('A link to complete your account deletion has been sent to your email address.'));
-        if(!$this->loginregisterConfig['input_enable_captcha_loggedin']) {
-            $this->disableCaptcha(); // disable Captcha
-        }
 
         // password field
         // sanitizers added: text
