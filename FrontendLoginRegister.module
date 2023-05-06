@@ -13,6 +13,7 @@ namespace ProcessWire;
  */
 
 use DOMDocument;
+use DOMException;
 use DOMNode;
 use FrontendForms\Form;
 use FrontendLoginRegister\FrontendLoginRegisterPages;
@@ -28,13 +29,13 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
     protected string|int|null $input_prevent_send_deletion_email = ''; // prevent sending of email after user account has been deleted
     protected string $input_selectlogin = 'email'; // Select between log in with username or email
-    protected string $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
+    protected string|int|null $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
     protected string $input_selectloginregister = 'loginregister'; // Select if login only or login and register
     protected string $input_emailTemplate = 'inherit'; // The HTML template that should be used for emails
     protected string $input_email = ''; // The email for this page, that will be used to send emails (fe. noreplay@mycompany.com)
     protected string $input_sender = ''; // The name of the sender for the emails (fe MyCompany)
     protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
-    protected string|int $input_tfa = ''; // Use Tfa by default
+    protected string|int|null $input_tfa = ''; // Use Tfa by default
     protected string|int|null $input_deleteProfile = null; // allow users to delete their profile
     protected string $input_activationtext = ''; // the text for the activation email
     protected string $input_remindertext = ''; // the text for the reminder email
@@ -44,6 +45,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
     protected string $input_unlock_account = ''; // the text for the unlock account email
     protected array $input_roles = []; // IDs of all roles a new user will get
+    protected string|int|null $input_phpini = ''; // disable the validation against the phpini max filesize
+    protected string $input_image_size = ''; // the width and height of the profile image
+    protected int $input_max_filesize = 0; // max file size for image upload in kb
 
     // Declaration of configuration properties for templates and user fields
     protected array $userFields = []; // Array of all user fields
@@ -61,7 +65,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected array $fl_reminderdatetime = []; // userfield containing date and time when the reminder mail was sent
     protected array $fl_recoverylogindata = []; // userfield for that contains the password recovery code
     protected array $fl_recoverylogindatadatetime = []; // userfield containing date and time when the recovery code mail was sent
-    protected array $fl_deleteaccount = []; // userfield for that contains the deletion code
+    protected array $fl_deleteaccount = []; // userfield that contains the deletion code
     protected array $fl_deleteaccountdatetime = []; // userfield containing date and time when the deletion code mail was sent
     protected array $fl_unlockaccount = [];
     protected array $config = []; // array containing the module configuration values
@@ -101,6 +105,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $this->input_deletion_confirmation = $this->config['input_deletion_confirmation'];
             $this->input_unlock_account = $this->config['input_unlock_account'];
             $this->input_roles = $this->config['input_roles'];
+            $this->input_phpini = $this->config['input_phpini'];
+            $this->input_image_size = $this->config['input_image_size'];
+            $this->input_max_filesize = $this->config['input_max_filesize'];
         }
 
         // array of the names of all mail text input fields
@@ -132,6 +139,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/pages');
         $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/traits');
 
+        // set upload path for profile image
+        $this->setUploadPath($this->tmp_profile_image_dir_path);
     }
 
     /**
@@ -179,7 +188,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_redirectSuccess' => '-1',
             'input_tfa' => 0,
             'input_deleteProfile' => 0,
-            'input_enable_captcha_loggedin' => 0
+            'input_phpini' => '',
+            'input_image_size' => '200,200',
+            'input_max_filesize' => 0
         ];
     }
 
@@ -203,7 +214,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // validate fields  to check if the neccessary fields are included
         $this->addHookAfter('InputfieldAsmSelect::processInput', $this, 'validateFormFields');
         // add the label "hours" next to the inputfield
-        $this->addHookAfter('InputfieldInteger::render', $this, 'addDaysLabel');
+        $this->addHookAfter('InputfieldInteger::render', $this, 'addLabelsToInputfields');
         // allow HTML tags inside the description of the inputfield_delete
         $this->addHookBefore('InputfieldInteger::render', $this, 'insertText');
         // write title, name and description in the page fields after adding a new translation file to a language
@@ -232,6 +243,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * Update the module from a custom location - in this case my GitHub account
      * @param HookEvent $event
      * @return void
+     * @throws WireException
      */
     // TODO delete if module is inside the module directory
     public function changeModuleService(HookEvent $event) {
@@ -404,10 +416,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
     /**
      * Save the texts for a given language to the module configuration
-     * @param Language $language -> the language object
      * @param array $data -> array of configuration data for the module
      * @return array
      * @throws WireException
+     * @throws WirePermissionException
      */
     protected function writeMailTexts(array $data):array
     {
@@ -417,7 +429,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'language_fi' => ''
         */
         $language_keys = array_filter($_POST, function($key) {
-            return strpos($key, 'language_') === 0;
+            return str_starts_with($key, 'language_');
         }, ARRAY_FILTER_USE_KEY);
         /* filter out all empty values
            fe 'language_de' => 'de'
@@ -446,10 +458,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 // run for each textarea field
                 foreach($this->textareas as $inputfield){
                     $textarea_name = $inputfield;
-
                     $inputfield = $inputfield.$suffix;
-
-
 
                     if((isset($_POST['mail_'.$select_name])) && ($_POST['mail_'.$select_name])){
 
@@ -472,8 +481,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @param HookEvent $event
      * @throws WireException
      * @throws WirePermissionException
+     * @return void
      */
-    protected function writeDataToPages(HookEvent $event)
+    protected function writeDataToPages(HookEvent $event): void
     {
 
         $csvFile_path = $event->arguments(0);
@@ -660,7 +670,12 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         }
     }
 
-    protected function addPlaceholderInfo(HookEvent $event)
+    /**
+     * Add additional information about the placeholders used at the email templates
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function addPlaceholderInfo(HookEvent $event): void
     {
         $field = $event->object;
 
@@ -690,7 +705,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * @param string $source
      * @return void
      */
-    protected function appendHTML(DOMNode $parent, string $source) {
+    protected function appendHTML(DOMNode $parent, string $source): void
+    {
         $tmpDoc = new DOMDocument();
         $tmpDoc->loadHTML($source);
         foreach ($tmpDoc->getElementsByTagName('body')->item(0)->childNodes as $node) {
@@ -703,7 +719,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
      * Add an additional checkbox to the language import form
      * @param HookEvent $event
      * @return void
-     * @throws WireException
+     * @throws WireException|DOMException
      */
     protected function addCheckbox(HookEvent $event):void
     {
@@ -717,7 +733,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         if ($name == 'FrontendLoginRegister') {
 
             // get all language select
-            $selects = [];
 
             $dom = new DOMDocument;
             $dom->loadHTML($form);
@@ -734,7 +749,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 $f->label = $this->_('Import the text for the emails too if they are available in the given language.') . ' ';
                 $field = $f->render();
 
-                $wrapper = $dom->createElement('div', '');
+                $wrapper = $dom->createElement('div');
                 $wrapper->setAttribute('style', 'margin-top: 15px');
                 $tag->parentNode->insertBefore($wrapper, $tag);
 
@@ -909,7 +924,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // Enable or disable sending of email after user account has been deleted
         $prevent_send_deletion_email = $modules->get('InputfieldCheckbox');
         $prevent_send_deletion_email->attr('name', 'input_prevent_send_deletion_email');
-        $prevent_send_deletion_email->attr('checked', $this->prevent_send_deletion_email == '1' ? 'checked' : '');
+        $prevent_send_deletion_email->attr('checked', $this->input_prevent_send_deletion_email == '1' ? 'checked' : '');
         $prevent_send_deletion_email->label = $this->_('Disable sending of the deletion confirmation email');
         $prevent_send_deletion_email->label2 = $this->_('Disable sending the email');
         $prevent_send_deletion_email->description = $this->_('Usually a user will be informed via email after his unverified account has been deleted. By checking the box, the sending of the email after account deletion will be disabled.');
@@ -961,7 +976,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // Email text fields
         $email_text_fieldset = $modules->get('InputfieldFieldset');
-        $email_text_fieldset->icon = 'fa-envelope';
+        $email_text_fieldset->icon = 'fa-comment';
         $email_text_fieldset->label = $this->_('Texts for the mails that are sent with this module');
         $email_text_fieldset->description = $this->_('These fields contain the texts for the emails which will be send by this module. You can adapt them to your needs.');
         $email_text_fieldset->collapsed = 1;
@@ -1160,6 +1175,53 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         $inputfields->add($emailfieldset);
 
+        // profile image fieldset
+        // Email settings
+        $imagefieldset = $modules->get('InputfieldFieldset');
+        $imagefieldset->icon = 'fa-image';
+        $imagefieldset->label = $this->_('Profile image settings');
+        $imagefieldset->collapsed = 1;
+
+        // size of the image inside the profile form
+        $size = $modules->get('InputfieldText');
+        $size->label = $this->_('Profile image size');
+        $size->attr('name', 'input_image_size');
+        $size->attr('value', $this->input_image_size);
+        $size->description = $this->_('Please specify the desired size of the profile image as it should be displayed on the profile page.');
+        $size->notes = $this->_('Please enter width and height of the image in px separated by a comma (fe 200,200) for a rectangular image or one value (fe 100) for a squared image.');
+        $size->columnWidth = 33;
+        $size->required = true;
+        $imagefieldset->add($size);
+
+        // max file size for uploaded images
+        $maxfilesize = $modules->get('InputfieldInteger');
+        $maxfilesize->label = $this->_('Set allowed max file size');
+        $maxfilesize->attr('name', 'input_max_filesize');
+        $maxfilesize->attr('value', $this->input_max_filesize);
+        $maxfilesize->description = $this->_('If you want to restrict the max file size of uploaded images, please enter a value in kB.');
+        $maxfilesize->notes = $this->_('0 means no restrictions.');
+        $maxfilesize->required = 1;
+        $maxfilesize->min = 0;
+        $maxfilesize->inputType = 'number';
+        $maxfilesize->columnWidth = 33;
+        $imagefieldset->add($maxfilesize);
+
+        // size of the image inside the profile form
+        $phpini = $modules->get('InputfieldCheckbox');
+        $phpini->label = $this->_('Disable phpini max filesize validation');
+        $phpini->attr('name', 'input_phpini');
+        $phpini->attr('checked', $this->input_phpini == '1' ? 'checked' : '');
+        $phpini->checkboxLabel = $this->_('Disable check against phpini max filesize');
+        $phpini->description = $this->_('By default, the size of the uploaded image is compared to the maximum allowed filesize as set inside the phpini file. If you want to disable the check, please tick the box.');
+        $phpini->notes = $this->_('In some cases, it may be necessary to disable this check. Especially if you are in a development environment (fe XAMPP, WAMPP,..) and the maximum file size allowed is very small.');
+        $phpini->columnWidth = 33;
+        $imagefieldset->add($phpini);
+
+
+
+
+        $inputfields->add($imagefieldset);
+
         // open fieldset on error
         foreach ($inputfields->getErrorInputfields() as $inputfield) {
             $inputfield->collapsed = Inputfield::collapsedNo;
@@ -1208,17 +1270,29 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         //add username field
         $userfields[] = 'title';
 
+        // allowed image field types
+        $allowed_imagefields = ['FieldtypeImage', 'FieldtypeCroppableImage3'];
 
         // create asm select options for form fields
         foreach ($fields as $id => $v) {
+            if(in_array($v->type, $allowed_imagefields)) {
+                if($v->get('maxFiles') != 1) {
+                    // no single upload field -> add it to the exclude array
+                    $exclude[] = $v->name;
+                }
+            }
+
+
             if (!in_array($v->name, $exclude)) {
                 // allow only fields which are editable by the user
                 if (in_array($v->name, $userfields)) {
+
                     $label = ($v->name == 'title') ? $this->_('Username') : $v->label;
                     $f->addOption($id, $label);
                 }
             }
         }
+
         if ($nameAttribute == 'input_registration') {
             $f->attr('value', $this->input_registration);
             $f->label = $this->_('Fields of the registration form');
@@ -1723,12 +1797,12 @@ EOT;
     }
 
     /**
-     * Add the label "Hours" next to the input of input_delete and input_remind
+     * Add additional labels to various input fields
      * Not really necessary - but it looks good ;-)
      * @param HookEvent $event
      * @return void
      */
-    protected function addDaysLabel(HookEvent $event):void
+    protected function addLabelsToInputfields(HookEvent $event):void
     {
         $inputfield = $event->object;
         if (($inputfield->name === 'input_remind') || ($inputfield->name === 'input_delete')) {
@@ -1740,6 +1814,11 @@ EOT;
             $additional_text = '<p id="input_delete_text" class="description">' . sprintf($this->_('According to your settings, an unverified user account will be deleted %s day(s) after the registration.'),
                     '<span id="days-to-delete"></span>') . '</p>';
             $event->return = $input . $additional_text;
+        }
+        if ($inputfield->name === 'input_max_filesize') {
+            $input = $event->return;
+            bd('gaga^2');
+            $event->return = '<div class="label">' . $input . ' ' . $this->_('kB') . '</div>';
         }
 
     }
