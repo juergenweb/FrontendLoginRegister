@@ -31,6 +31,7 @@ This module creates pages and templates during the installation for faster devel
 - Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights) (fe. CAPTCHA, various security settings,...)
 - Support for SeoMaestro if installed
 - Lock accounts if suspicious login attempts were made
+- Allow users to upload a profile image for their account
 
 ## Table of contents
 
@@ -71,6 +72,9 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`From email address`** Enter the email address, which should be displayed as sender email address for emails
 * **`Sender name`** Enter the name, which should be displayed as sender of the emails
 * **`Email Texts`** You can customize the text of each email, that will be send by this module, using a CKEditor field
+* **`Set image size`** You can set the size of the user image as it should be displayed on the user profile page
+* **`Restrict user image file size`** You can restrict the max file size of the user image for the upload to prevent upload of huge files
+* **`Disable phpini max file size validation`** By default the max file size will be restricted by the max file size as set inside the phpini file, but you can disable it if you want
 
 Some settings will be taken from the FrontendForms module settings (fe enable/disable Captcha, logging failed attempts,...)
 and cannot be set individually in the module configuration of this module globally, but you can always change form
@@ -272,8 +276,16 @@ There is only one restriction: Only Processwire inputfields of the follwing type
 * FieldtypeDatetime
 * FieldtypeURL
 * FieldtypePage
+* FieldtypeImage
+* FieldtypeCroppableImage3
 
 All other field types will be ignored and cannot be selected.
+
+**One thing to mention about the image upload fields (FieldtypeImage, FieldtypeCroppableImage3)**
+
+Only single file upload image fields are supported (no multi-file upload). So only image fields which allow only one file upload will be taken into account - all others will be ignored.
+
+If you need more than 1 image for a user, you can add as many image upload fields to the profile or registration form as you want, but this image upload feature was primarly designed to offer the user to upload 1 user image.
 
 In this case first name and surname were added to the user template:
 
