@@ -189,7 +189,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_tfa' => 0,
             'input_deleteProfile' => 0,
             'input_phpini' => '',
-            'input_image_size' => '200,200',
+            'input_image_size' => '200',
             'input_max_filesize' => 0
         ];
     }
