@@ -287,6 +287,8 @@ Only single file upload image fields are supported (no multi-file upload). So on
 
 If you need more than 1 image for a user, you can add as many image upload fields to the profile or registration form as you want, but this image upload feature was primarly designed to offer the user to upload 1 user image.
 
+The allowed file types of images (jpg, png,..) will be taken directly from the image field, so no need to set it manually. Please note: If you have created a new image field, the settings will not be stored automatically. So please save the image field at the end to save the settings too.
+
 Afterwards you will find an example of the profile page including the user image.
 
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/profile-image.png?raw=true)
