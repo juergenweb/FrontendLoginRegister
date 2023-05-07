@@ -326,6 +326,7 @@ At the moment there is unfortunately only one file for the German texts and not 
 
 
 ## ToDo
-Testing, testing, testing....
+* Testing, testing, testing....
+* Adding image preview on upload field
 
 This read me file will be extended time after time - so please be patient ;-)
