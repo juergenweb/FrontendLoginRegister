@@ -858,7 +858,7 @@ class FrontendLoginRegisterPages extends Form
                 }
                 // add max file size validator if max file size was set in the module config
                 if ($this->loginregisterConfig['input_max_filesize'] > 0) {
-                    $field->setRule('allowedFileSize', $this->loginregisterConfig['input_max_filesize']);
+                    $field->setRule('allowedFileSize', $this->loginregisterConfig['input_max_filesize']*1024);
                 }
 
                 $field->prepend($this->createProfileImagePreview($field->getAttribute('name')));
