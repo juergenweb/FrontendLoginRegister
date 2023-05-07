@@ -45,7 +45,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
     protected string $input_unlock_account = ''; // the text for the unlock account email
     protected array $input_roles = []; // IDs of all roles a new user will get
-    protected string|int|null $input_phpini = ''; // disable the validation against the phpini max filesize
+    protected string|int|null $input_phpini = ''; // disable the validation against the php.ini max-filesize
     protected string $input_image_size = ''; // the width and height of the profile image
     protected int $input_max_filesize = 0; // max file size for image upload in kb
 
@@ -1208,11 +1208,11 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // size of the image inside the profile form
         $phpini = $modules->get('InputfieldCheckbox');
-        $phpini->label = $this->_('Disable phpini max filesize validation');
-        $phpini->attr('name', 'input_phpini');
+        $phpini->label = $this->_('Disable php.ini max filesize validation');
+        $phpini->attr('name', 'input_php.ini');
         $phpini->attr('checked', $this->input_phpini == '1' ? 'checked' : '');
-        $phpini->checkboxLabel = $this->_('Disable check against phpini max filesize');
-        $phpini->description = $this->_('By default, the size of the uploaded image is compared to the maximum allowed filesize as set inside the phpini file. If you want to disable the check, please tick the box.');
+        $phpini->checkboxLabel = $this->_('Disable check against php.ini max filesize');
+        $phpini->description = $this->_('By default, the size of the uploaded image is compared to the maximum allowed filesize as set inside the php.ini file. If you want to disable the check, please tick the box.');
         $phpini->notes = $this->_('In some cases, it may be necessary to disable this check. Especially if you are in a development environment (fe XAMPP, WAMPP,..) and the maximum file size allowed is very small.');
         $phpini->columnWidth = 33;
         $imagefieldset->add($phpini);
