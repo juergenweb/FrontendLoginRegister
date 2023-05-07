@@ -235,7 +235,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
 
         // add CSS and JS to the backend
         $version = $this->getModuleInfo()['version'] . '-' . time();
-        $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/FrontendLoginRegister.js?v=' . $version);
+        $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
 
         // TODO remove if module is inside module directory
         // this is only for updating it on my local account
