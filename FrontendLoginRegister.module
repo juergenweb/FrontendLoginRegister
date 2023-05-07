@@ -1209,7 +1209,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         // size of the image inside the profile form
         $phpini = $modules->get('InputfieldCheckbox');
         $phpini->label = $this->_('Disable php.ini max filesize validation');
-        $phpini->attr('name', 'input_php.ini');
+        $phpini->attr('name', 'input_phpini');
         $phpini->attr('checked', $this->input_phpini == '1' ? 'checked' : '');
         $phpini->checkboxLabel = $this->_('Disable check against php.ini max filesize');
         $phpini->description = $this->_('By default, the size of the uploaded image is compared to the maximum allowed filesize as set inside the php.ini file. If you want to disable the check, please tick the box.');
