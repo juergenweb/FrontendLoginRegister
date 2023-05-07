@@ -48,6 +48,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string|int|null $input_phpini = ''; // disable the validation against the php.ini max-filesize
     protected string $input_image_size = ''; // the width and height of the profile image
     protected int $input_max_filesize = 0; // max file size for image upload in kb
+    protected string|int|null $input_showPrev = '';
 
     // Declaration of configuration properties for templates and user fields
     protected array $userFields = []; // Array of all user fields
@@ -108,6 +109,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $this->input_phpini = $this->config['input_phpini'];
             $this->input_image_size = $this->config['input_image_size'];
             $this->input_max_filesize = $this->config['input_max_filesize'];
+            $this->input_showPreve = $this->config['input_showPrev'];
         }
 
         // array of the names of all mail text input fields
@@ -190,7 +192,8 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_deleteProfile' => 0,
             'input_phpini' => '',
             'input_image_size' => '200',
-            'input_max_filesize' => 0
+            'input_max_filesize' => 0,
+            'input_showPrev' => 1
         ];
     }
 
@@ -1216,9 +1219,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $phpini->notes = $this->_('In some cases, it may be necessary to disable this check. Especially if you are in a development environment (fe XAMPP, WAMPP,..) and the maximum file size allowed is very small.');
         $phpini->columnWidth = 33;
         $imagefieldset->add($phpini);
-
-
-
 
         $inputfields->add($imagefieldset);
 
