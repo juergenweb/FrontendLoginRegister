@@ -39,8 +39,6 @@ class ProfilePage extends FrontendLoginRegisterPages
         // if user is guest -> no need to be here -> lets redirect to the homepage
         $this->redirectToHomepage(true);
 
-        $success_msg = $this->_('Your profile data have been updated successfully.');
-
         // create instance of deletion link
         $this->deleteAccountLink = new Link('deleteAccount');
 
@@ -59,24 +57,16 @@ class ProfilePage extends FrontendLoginRegisterPages
         $button->setAttribute('value', $this->_('Update'));
         $this->add($button);
 
-        // set success message
-        if ($this->wire('input')->post('profile-form-submit')) {
-            // set success message by default on post
-            $this->setSuccessMsg($success_msg);
-        }
-
         // set language values on redirect if language field is present inside the form
         $language_field = $this->getFormelementByName('profile-form-language');
         if ($language_field) {
             if ($this->wire('session')->get('language')) {
-                // display the success message after redirection
-                $this->setSuccessMsg($this->_('Your profile data have been updated successfully.'));
                 $language_field->setDefaultValue($this->wire('session')->get('language'));
-                $this->getAlert()->setText($success_msg);
                 $this->wire('session')->remove('language');
             } else {
                 // needed to display the correct language value in lang select after refresh
                 $language_field->setDefaultValue((string)$this->user->language->id);
+
             }
         }
 
@@ -121,8 +111,6 @@ class ProfilePage extends FrontendLoginRegisterPages
 
         if ($this->isValid()) {
 
-            $this->showForm = true;
-
             // grab the user language id before the saving process on multi-language site
             if ($this->wire('languages') && count($this->wire('languages')) > 1) {
                 $old_user_lang = $this->user->language->id;
@@ -135,6 +123,7 @@ class ProfilePage extends FrontendLoginRegisterPages
             $this->setFormFieldValues($this->user);
 
             if ($this->user->save()) {
+                $this->wire('session')->set('valid','1');
                 // check if site is multi-lingual
                 if ($this->wire('languages') && count($this->wire('languages')) > 1) {
                     if ($old_user_lang != $this->user->language->id) {
@@ -143,17 +132,23 @@ class ProfilePage extends FrontendLoginRegisterPages
                         $this->wire('session')->redirect($this->wire('pages')->get($this->wire->page->id)->localUrl($this->wire('user')->language));
                     }
                 }
-
                 // redirect to the page -> necessary to show new uploaded image
                 $this->wire('session')->redirect($this->wire('page')->url);
             } else {
                 $this->savingUserProblemAlert();
             }
             $this->user->of(true); // set user to true again
+
             // clear all password fields
             $this->getFormelementByName('profile-form-oldpass')->setAttribute('value', '');
             $this->getFormelementByName('profile-form-pass')->setAttribute('value', '');
             $this->getFormelementByName('profile-form-pass-confirm')->setAttribute('value', '');
+
+        }
+
+        if($this->wire('session')->get('valid')){
+            $this->getAlert()->setCSSClass('alert_successClass')->setText($this->_('Your profile data have been updated successfully.'));
+            $this->wire('session')->remove('valid');
         }
 
         // render the form on the frontend
