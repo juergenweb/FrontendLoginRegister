@@ -861,6 +861,11 @@ class FrontendLoginRegisterPages extends Form
                     $field->setRule('allowedFileSize', $this->loginregisterConfig['input_max_filesize']*1024);
                 }
 
+                // add JavaScript onchange attribute for the image preview to the field
+                if($this->loginregisterConfig['input_showPrev']){
+                    $field->setAttribute('onchange','showPreview(event);');
+                }
+
                 $field->prepend($this->createProfileImagePreview($field->getAttribute('name')));
             }
 
