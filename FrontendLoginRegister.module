@@ -1817,7 +1817,6 @@ EOT;
         }
         if ($inputfield->name === 'input_max_filesize') {
             $input = $event->return;
-            bd('gaga^2');
             $event->return = '<div class="label">' . $input . ' ' . $this->_('kB') . '</div>';
         }
 
