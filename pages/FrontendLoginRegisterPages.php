@@ -181,15 +181,13 @@ class FrontendLoginRegisterPages extends Form
              * check if we are on registration page
              * if yes, exclude profile image
              */
-            /*
-             * // TODO delete after testing
             if (get_class($this) == 'FrontendLoginRegister\RegisterPage') {
                 // check if $field is of Fieldtypeimage - exclude it on registration page
                 if (get_class($field) == 'FrontendForms\FileUploadSingle') {
                     $exclude_fields[] = $field->getAttribute('name');
                 }
             }
-            */
+
 
             if (($field->getAttribute('name')) && (!in_array($field->getAttribute('name'), $exclude_fields))) {
                 $field_name = $field->getAttribute('name');
