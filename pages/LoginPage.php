@@ -679,11 +679,13 @@ class LoginPage extends FrontendLoginRegisterPages
         // get the current user
         $user = $this->wire('users')->get('email=' . $email);
 
-        // get the user language object as stored inside the db
-        $this->stored_user_lang = $this->getSavedUserLanguage($user);
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            // get the user language object as stored inside the db
+            $this->stored_user_lang = $this->getSavedUserLanguage($user);
 
-        // change user language to the stored user language placeholder in the stored user language
-        $this->user->setLanguage($this->stored_user_lang);
+            // change user language to the stored user language placeholder in the stored user language
+            $this->user->setLanguage($this->stored_user_lang);
+        }
 
         // add placeholders !!important!!
         $this->createGeneralPlaceholders();
@@ -702,13 +704,21 @@ class LoginPage extends FrontendLoginRegisterPages
         $m->to($email);
         $m->from($this->loginregisterConfig['input_email']);
         $this->setSenderName($m);
-        $m->bodyHTML($this->getLangValueOfConfigField('input_tfatext', $this->loginregisterConfig,
-            $this->stored_user_lang->id).$this->___generateNoReplyText());
+
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            $text =  $this->getLangValueOfConfigField('input_tfatext', $this->loginregisterConfig,
+                $this->stored_user_lang->id);
+            // set back the language to the site language
+            $this->user->setLanguage($this->site_language_id);
+        } else {
+            $text = $this->loginregisterConfig['input_tfatext'];
+        }
+        $body = $text.$this->___generateNoReplyText();
+        $m->bodyHTML($body);
+
         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
         $code_sent = $m->send();
 
-        // set back the language to the site language
-        $this->user->setLanguage($this->site_language_id);
 
         if ($code_sent) {
             // create alert text to enter the code on the screen
