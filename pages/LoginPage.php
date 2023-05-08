@@ -167,6 +167,21 @@ class LoginPage extends FrontendLoginRegisterPages
         return $this->render();
     }
 
+    protected function defaultLogin(User $user): void
+    {
+        // try to log in the user
+        if ($this->wire('session')->login($user->name, $this->getValue('password'))) {
+            // login if tfa is not enabled
+            $this->redirectAfterLogin();// redirect after login
+        } else {
+            // for the rare use case that something went wrong during the session login
+            $alert = $this->getAlert();
+            $alert->setCSSClass('alert_dangerClass');
+            $alert->removeCSSClass('alert_successClass');
+            $alert->setText($this->_('We are sorry, but an unexpected error occurred. Please try it once more and if the problem persists, please inform the webmaster of this site.'));
+        }
+    }
+
     /**
      * Render the form
      * Renders 2 forms - one for password and email/username and another for entering the authentication code if enabled
@@ -189,6 +204,7 @@ class LoginPage extends FrontendLoginRegisterPages
             $alert->setText($this->_('You have to log in to delete your account.'));
             $alert->setCSSClass('alert_warningClass');
         }
+
 
         if ($this->tfa->active()) {
             $tfaSession = $this->wire('session')->get('tfa'); // grab the tfa session
@@ -357,22 +373,15 @@ class LoginPage extends FrontendLoginRegisterPages
                     } else {
                         // check if TFA is enabled in the settings
                         if ($this->loginregisterConfig['input_tfa']) {
-
-                            $this->wire('session')->set('type',
-                                'TfaEmail'); // set session for outputting message that a code was sent by email
-                            $this->tfa->start($user->name, $this->getValue('pass')); // redirects
-                        } else {
-                            // try to log in the user
-                            if ($this->wire('session')->login($user->name, $this->getValue('password'))) {
-                                // login if tfa is not enabled
-                                $this->redirectAfterLogin();// redirect after login
+                            if($this->user->hasTfa()){
+                                $this->wire('session')->set('type',
+                                    'TfaEmail'); // set session for outputting message that a code was sent by email
+                                $this->tfa->start($user->name, $this->getValue('pass')); // redirects
                             } else {
-                                // for the rare use case that something went wrong during the session login
-                                $alert = $this->getAlert();
-                                $alert->setCSSClass('alert_dangerClass');
-                                $alert->removeCSSClass('alert_successClass');
-                                $alert->setText($this->_('We are sorry, but an unexpected error occurred. Please try it once more and if the problem persists, please inform the webmaster of this site.'));
+                                $this->defaultLogin($user);
                             }
+                        } else {
+                            $this->defaultLogin($user);
                         }
                     }
                 }
