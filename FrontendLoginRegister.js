@@ -34,7 +34,6 @@ function showPreview(event){
         }
     }
 }
-}
 
 /**
  * Show or hide the image depending on if checkbox is checked or not
@@ -101,6 +100,7 @@ function onReady() {
                 timeleft -= 1;
             }, 1000);
         }
+
 
     }
 }
