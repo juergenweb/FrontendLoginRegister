@@ -106,9 +106,9 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $this->input_deletion_confirmation = $this->config['input_deletion_confirmation'];
             $this->input_unlock_account = $this->config['input_unlock_account'];
             $this->input_roles = $this->config['input_roles'];
-            $this->input_phpini = $this->config['input_phpini'] ?? '';
-            $this->input_image_size = $this->config['input_image_size'] ??  '200';
-            $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;
+            $this->input_phpini = $this->config['input_phpini'] ?? ''; // add fallback
+            $this->input_image_size = $this->config['input_image_size'] ??  '200';// add fallback
+            $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;// add fallback
         }
 
         // array of the names of all mail text input fields
