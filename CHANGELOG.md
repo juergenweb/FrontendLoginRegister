@@ -15,4 +15,5 @@ All notable changes to this project will be documented in this file.
 - Adding various new configuration settings inside the module configuration for the profile image
 
 ## [1.0.3] 23-05-10
+PLEASE UPDATE FRONTENDFORMS TO THE LATEST VERSION BEFORE UPDATE
 - Adding image preview of new image before upload
