@@ -25,12 +25,14 @@ function showPreview(event){
         // check if file is present and it is an image
         if(file && file["type"].split('/')[0] === "image"){
             let src = URL.createObjectURL(event.target.files[0]);
-            let preview = document.getElementById(id + "-image");
             let wrapper = document.getElementById(id + "-preview");
+            let width = wrapper.style.width;
+            let preview = document.getElementById(id + "-image");
             if(preview){
                 preview.src = src;
+                preview.style.width = width;
             } else
-                wrapper.innerHTML = '<img id="'+id+'-image" alt="'+src+'" src="'+src+'">';
+                wrapper.innerHTML = '<img id="'+id+'-image" alt="'+src+'" style="width:'+width+'" src="'+src+'">';
         }
     }
 }
@@ -47,9 +49,9 @@ function removePreview(checkbox){
 
     if(preview){
         if (checkbox.checked) {
-            preview.style = "display:none"; // hide the image
+            preview.style.display = "none"; // hide the image
         } else {
-            preview.style = "display:block"; // show the image again
+            preview.style.display = "block"; // show the image again
         }
     }
 }
