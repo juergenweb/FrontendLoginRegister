@@ -74,6 +74,7 @@ class FrontendLoginRegisterPages extends Form
             $this->wire('files')->mkdir($this->tmp_profile_image_dir_path);
         }
 
+
         // get module configuration data from FrontendLoginRegister module and create properties of each setting
         foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
             $this->loginregisterConfig[$key] = $value;
@@ -820,9 +821,7 @@ class FrontendLoginRegisterPages extends Form
                         $delete_checkbox->setLabel($this->_('Remove this image'));
                         $delete_checkbox->setAttribute('value', 'remove');
                         // add JavaScript onchange attribute for the image preview to the field
-                        if($this->loginregisterConfig['input_showPrev']){
-                            $delete_checkbox->setAttribute('onclick','removePreview(this);');
-                        }
+                        $delete_checkbox->setAttribute('onclick','removePreview(this);');
                         $string .= $delete_checkbox->___render();
             } else {
                 $string .= '<div style="width:'.$sizes[0].'px;" id="'.$this->getID().'-' . $fieldname . '-preview" class="profile-image-wrapper"></div>';
@@ -869,10 +868,8 @@ class FrontendLoginRegisterPages extends Form
                 }
 
                 // add JavaScript onchange attribute for the image preview to the field
-                if($this->loginregisterConfig['input_showPrev']){
-                    $on_change = $field->getAttribute('onchange');
-                    $field->setAttribute('onchange','showPreview(event);'.$on_change);
-                }
+                $on_change = $field->getAttribute('onchange');
+                $field->setAttribute('onchange','showPreview(event);'.$on_change);
 
                 $link = $field->getClearLink();
                 $onclick = $link->getAttribute('onclick');
