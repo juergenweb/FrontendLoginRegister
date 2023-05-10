@@ -13,3 +13,6 @@ All notable changes to this project will be documented in this file.
 - Fixing som bugs
 - Adding support for image upload. Now user image can also be uploaded on registration and profile form
 - Adding various new configuration settings inside the module configuration for the profile image
+
+## [1.0.3] 23-05-10
+- Adding image preview of new image before upload
