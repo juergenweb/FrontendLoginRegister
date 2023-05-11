@@ -73,7 +73,7 @@ class FrontendLoginRegisterPages extends Form
         if (!$this->wire('files')->exists($this->tmp_profile_image_dir_path, 'dir')) {
             $this->wire('files')->mkdir($this->tmp_profile_image_dir_path);
         }
-
+        
 
         // get module configuration data from FrontendLoginRegister module and create properties of each setting
         foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
@@ -799,6 +799,21 @@ class FrontendLoginRegisterPages extends Form
 
             $sizes = array_map('intval', explode(',', $this->loginregisterConfig['input_image_size']));
 
+            // create outer container class
+            $outer_classes = ['positioning-container'];
+            if(isset($this->loginregisterConfig['input_positionclass'])) {
+                $outer_classes[] = trim($this->loginregisterConfig['input_positionclass']);
+            }
+            $outer_classes = array_filter($outer_classes);
+            $outer_classes = implode(' ',$outer_classes);
+
+            // create img class
+            $image_classes = ['profile-image'];
+            if(isset($this->loginregisterConfig['input_imageclass'])) {
+                $image_classes[] = trim($this->loginregisterConfig['input_imageclass']);
+            }
+            $image_classes = array_filter($image_classes);
+            $image_classes = implode(' ',$image_classes);
 
             if (($fieldname) && (count($this->user->$fieldname))) {
 
@@ -813,9 +828,15 @@ class FrontendLoginRegisterPages extends Form
                         $sizes = array_slice($sizes, 0, 2);
                     }
                     $thumb = $userimage->size($sizes[0], $sizes[1]);
-                    $string .= '<div style="width:'.$sizes[0].'px;" id="'.$this->getID().'-' . $fieldname . '-preview" class="profile-image-wrapper">';
-                    $string .= '<img id="'.$this->getID().'-' . $fieldname . '-image" alt="' . sprintf($this->_('User image of %s'),$this->user->name) . '" src="' . $thumb->url . '">';
+
+                    // crate image wrapper tag
+                    $string .= '<div id="'.$this->getID().'-' . $fieldname . '-preview" class="'.$outer_classes.'" data-width="'.$sizes[0].'px" data-class="'.$image_classes.'">';
+
+                    // create image tag
+                    $string .= '<img id="'.$this->getID().'-' . $fieldname . '-image" class="'.$image_classes.'" alt="' . sprintf($this->_('User image of %s'),$this->user->name) . '" src="' . $thumb->url . '" width="'.$sizes[0].'px">';
+
                     $string .= '</div>';
+
                     // create checkbox to delete the image if an image is present
                         $delete_checkbox = new InputCheckbox($this->getID().'-' . $fieldname . '-remove');
                         $delete_checkbox->setLabel($this->_('Remove this image'));
@@ -824,7 +845,8 @@ class FrontendLoginRegisterPages extends Form
                         $delete_checkbox->setAttribute('onclick','removePreview(this);');
                         $string .= $delete_checkbox->___render();
             } else {
-                $string .= '<div style="width:'.$sizes[0].'px;" id="'.$this->getID().'-' . $fieldname . '-preview" class="profile-image-wrapper"></div>';
+                $string .= '<div id="'.$this->getID().'-' . $fieldname . '-preview" class="'.$outer_classes.'" data-width="'.$sizes[0].'px" data-class="'.$image_classes.'"></div>';
+                //$string .= '<div style="width:'.$sizes[0].'px;" id="'.$this->getID().'-' . $fieldname . '-preview" class="profile-image-wrapper"></div>';
             }
         }
         return $string;
