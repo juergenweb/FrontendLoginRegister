@@ -155,7 +155,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-            'version' => '1.2.3',
+            'version' => '1.2.4',
             'singular' => true,
             'autoload' => true,
             'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.36', 'LazyCron'],
@@ -1218,6 +1218,28 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $phpini->notes = $this->_('In some cases, it may be necessary to disable this check. Especially if you are in a development environment (fe XAMPP, WAMPP,..) and the maximum file size allowed is very small.');
         $phpini->columnWidth = 33;
         $imagefieldset->add($phpini);
+
+        // add CSS class to the image tag
+        $imageclass = $modules->get('InputfieldText');
+        $imageclass->label = $this->_('Custom class for the image tag');
+        $imageclass->attr('name', 'input_imageclass');
+        $imageclass->attr('value', $this->input_imageclass);
+        $imageclass->description = $this->_('Add further CSS classes to the image tag of the profile image separated by a white-space.');
+        $imageclass->placeholder = 'class1 class2';
+        $imageclass->notes = $this->_('By default, the image tag contains the CSS class "profile-image", but if you use fe a CSS-framework, you can add further classes to style the image.');
+        $imageclass->columnWidth = 50;
+        $imagefieldset->add($imageclass);
+
+        // add CSS class to the positioning container
+        $positionclass = $modules->get('InputfieldText');
+        $positionclass->label = $this->_('Custom class for the positioning container');
+        $positionclass->attr('name', 'input_positionclass');
+        $positionclass->attr('value', $this->input_positionclass);
+        $positionclass->description = $this->_('Add further CSS classes to the outer div container of the profile image separated by a white-space.');
+        $positionclass->placeholder = 'class1 class2';
+        $positionclass->notes = $this->_('By default, this div container contains the CSS class "positioning-container" and is especially designed to position the image (left, center, right). If you are using a CSS framework, you can add your custom classes to position the image.');
+        $positionclass->columnWidth = 50;
+        $imagefieldset->add($positionclass);
 
         $inputfields->add($imagefieldset);
 
