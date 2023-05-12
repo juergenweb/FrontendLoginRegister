@@ -73,7 +73,7 @@ class FrontendLoginRegisterPages extends Form
         if (!$this->wire('files')->exists($this->tmp_profile_image_dir_path, 'dir')) {
             $this->wire('files')->mkdir($this->tmp_profile_image_dir_path);
         }
-        
+
 
         // get module configuration data from FrontendLoginRegister module and create properties of each setting
         foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
@@ -135,7 +135,7 @@ class FrontendLoginRegisterPages extends Form
 
             } else {
                 // check if remove image checkbox is checked
-                if (isset($_POST[$this->getID().'-'.$fieldname.'-remove'])) {
+                if (isset($_POST[$this->getID() . '-' . $fieldname . '-remove'])) {
                     $user->$fieldname->deleteAll();// delete the image
                 }
             }
@@ -152,15 +152,15 @@ class FrontendLoginRegisterPages extends Form
      */
     protected function getSavedUserLanguage(User $user):\ProcessWire\Language
     {
-            if ($user->id != 0) {
-                // user exists inside the database
-                $languageField = $this->wire('fields')->get('language');
-                $profileLanguageId = $languageField->type->loadPageField($user, $languageField)[0];
-                return $this->wire('pages')->get("id=$profileLanguageId");
-            } else {
-                // user is guest, so take the site language
-                return $user->language;
-            }
+        if ($user->id != 0) {
+            // user exists inside the database
+            $languageField = $this->wire('fields')->get('language');
+            $profileLanguageId = $languageField->type->loadPageField($user, $languageField)[0];
+            return $this->wire('pages')->get("id=$profileLanguageId");
+        } else {
+            // user is guest, so take the site language
+            return $user->language;
+        }
     }
 
     /**
@@ -795,59 +795,65 @@ class FrontendLoginRegisterPages extends Form
     protected function createProfileImagePreview(string|null $fieldname = null):string
     {
         $string = '';
+
+        // create outer container class
+        $outer_classes = ['positioning-container'];
+        if (isset($this->loginregisterConfig['input_positionclass'])) {
+            $outer_classes[] = trim($this->loginregisterConfig['input_positionclass']);
+        }
+        $outer_classes = array_filter($outer_classes);
+        $outer_classes = implode(' ', $outer_classes);
+
+        // create img class
+        $image_classes = ['profile-image'];
+        if (isset($this->loginregisterConfig['input_imageclass'])) {
+            $image_classes[] = trim($this->loginregisterConfig['input_imageclass']);
+        }
+        $image_classes = array_filter($image_classes);
+        $image_classes = implode(' ', $image_classes);
+
+        $sizes = array_map('intval', explode(',', $this->loginregisterConfig['input_image_size']));
+
         if ($this->user->isLoggedin()) {
-
-            $sizes = array_map('intval', explode(',', $this->loginregisterConfig['input_image_size']));
-
-            // create outer container class
-            $outer_classes = ['positioning-container'];
-            if(isset($this->loginregisterConfig['input_positionclass'])) {
-                $outer_classes[] = trim($this->loginregisterConfig['input_positionclass']);
-            }
-            $outer_classes = array_filter($outer_classes);
-            $outer_classes = implode(' ',$outer_classes);
-
-            // create img class
-            $image_classes = ['profile-image'];
-            if(isset($this->loginregisterConfig['input_imageclass'])) {
-                $image_classes[] = trim($this->loginregisterConfig['input_imageclass']);
-            }
-            $image_classes = array_filter($image_classes);
-            $image_classes = implode(' ',$image_classes);
 
             if (($fieldname) && (count($this->user->$fieldname))) {
 
-                    $userimage = $this->user->$fieldname->first();
+                $userimage = $this->user->$fieldname->first();
 
-                    // only 1 size is set
-                    if (count($sizes) == 1) {
-                        $sizes[1] = $sizes[0];
-                    }
-                    // more than 2 sizes are set
-                    if (count($sizes) > 2) {
-                        $sizes = array_slice($sizes, 0, 2);
-                    }
-                    $thumb = $userimage->size($sizes[0], $sizes[1]);
+                // only 1 size is set
+                if (count($sizes) == 1) {
+                    $sizes[1] = $sizes[0];
+                }
+                // more than 2 sizes are set
+                if (count($sizes) > 2) {
+                    $sizes = array_slice($sizes, 0, 2);
+                }
+                $thumb = $userimage->size($sizes[0], $sizes[1]);
 
-                    // crate image wrapper tag
-                    $string .= '<div id="'.$this->getID().'-' . $fieldname . '-preview" class="'.$outer_classes.'" data-width="'.$sizes[0].'px" data-class="'.$image_classes.'">';
+                // crate image wrapper tag
+                $string .= '<div id="' . $this->getID() . '-' . $fieldname . '-preview" class="' . $outer_classes . '" data-width="' . $sizes[0] . 'px" data-class="' . $image_classes . '">';
 
-                    // create image tag
-                    $string .= '<img id="'.$this->getID().'-' . $fieldname . '-image" class="'.$image_classes.'" alt="' . sprintf($this->_('User image of %s'),$this->user->name) . '" src="' . $thumb->url . '" width="'.$sizes[0].'px">';
+                // create image tag
+                $string .= '<img id="' . $this->getID() . '-' . $fieldname . '-image" class="' . $image_classes . '" alt="' . sprintf($this->_('User image of %s'),
+                        $this->user->name) . '" src="' . $thumb->url . '" width="' . $sizes[0] . 'px">';
 
-                    $string .= '</div>';
+                $string .= '</div>';
 
-                    // create checkbox to delete the image if an image is present
-                        $delete_checkbox = new InputCheckbox($this->getID().'-' . $fieldname . '-remove');
-                        $delete_checkbox->setLabel($this->_('Remove this image'));
-                        $delete_checkbox->setAttribute('value', 'remove');
-                        // add JavaScript onchange attribute for the image preview to the field
-                        $delete_checkbox->setAttribute('onclick','removePreview(this);');
-                        $string .= $delete_checkbox->___render();
+                // create checkbox to delete the image if an image is present
+                $delete_checkbox = new InputCheckbox($this->getID() . '-' . $fieldname . '-remove');
+                $delete_checkbox->setLabel($this->_('Remove this image'));
+                $delete_checkbox->setAttribute('value', 'remove');
+                // add JavaScript onchange attribute for the image preview to the field
+                $delete_checkbox->setAttribute('onclick', 'removePreview(this);');
+                $string .= $delete_checkbox->___render();
             } else {
-                $string .= '<div id="'.$this->getID().'-' . $fieldname . '-preview" class="'.$outer_classes.'" data-width="'.$sizes[0].'px" data-class="'.$image_classes.'"></div>';
+
+                $string .= '<div id="' . $this->getID() . '-' . $fieldname . '-preview" class="' . $outer_classes . '" data-width="' . $sizes[0] . 'px" data-class="' . $image_classes . '"></div>';
                 //$string .= '<div style="width:'.$sizes[0].'px;" id="'.$this->getID().'-' . $fieldname . '-preview" class="profile-image-wrapper"></div>';
             }
+        } else {
+            // user is not logged in (registration form)
+            $string .= '<div id="' . $this->getID() . '-' . $fieldname . '-preview" class="' . $outer_classes . '" data-width="' . $sizes[0] . 'px" data-class="' . $image_classes . '"></div>';
         }
         return $string;
     }
@@ -886,16 +892,16 @@ class FrontendLoginRegisterPages extends Form
                 }
                 // add max file size validator if max file size was set in the module config
                 if ($this->loginregisterConfig['input_max_filesize'] > 0) {
-                    $field->setRule('allowedFileSize', $this->loginregisterConfig['input_max_filesize']*1024);
+                    $field->setRule('allowedFileSize', $this->loginregisterConfig['input_max_filesize'] * 1024);
                 }
 
                 // add JavaScript onchange attribute for the image preview to the field
                 $on_change = $field->getAttribute('onchange');
-                $field->setAttribute('onchange','showPreview(event);'.$on_change);
+                $field->setAttribute('onchange', 'showPreview(event);' . $on_change);
 
                 $link = $field->getClearLink();
                 $onclick = $link->getAttribute('onclick');
-                $link->setAttribute('onclick', 'removeImageTag(this);'.$onclick);
+                $link->setAttribute('onclick', 'removeImageTag(this);' . $onclick);
                 $field->prepend($this->createProfileImagePreview($field->getAttribute('name')));
             }
 
