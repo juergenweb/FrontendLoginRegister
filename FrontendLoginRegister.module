@@ -213,7 +213,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->addHookAfter('Modules::saveConfig', $this, 'setEmailUnique');
         // set email to unique in the email field settings
         $this->addHookAfter('Modules::saveConfig', $this, 'setDeletePagesStatus');
-        // validate fields  to check if the neccessary fields are included
+        // validate fields  to check if the necessary fields are included
         $this->addHookAfter('InputfieldAsmSelect::processInput', $this, 'validateFormFields');
         // add the label "hours" next to the inputfield
         $this->addHookAfter('InputfieldInteger::render', $this, 'addLabelsToInputfields');
@@ -236,25 +236,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $version = $this->getModuleInfo()['version'] . '-' . time();
         $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
 
-        // TODO remove if module is inside module directory
-        // this is only for updating it on my local account
-        $this->addHookBefore("ProcessModule::execute", $this, "changeModuleService");
+        $this->wire->addHookBefore('Modules::saveConfig', function(HookEvent $event) {
+            $event->message("You saved the module config");
+        });
     }
-
-    /**
-     * Update the module from a custom location - in this case my GitHub account
-     * @param HookEvent $event
-     * @return void
-     * @throws WireException
-     */
-    // TODO delete if module is inside the module directory
-    public function changeModuleService(HookEvent $event) {
-        if($this->input->get->update === "FrontendLoginRegister") {
-            $this->wire("config")->moduleServiceURL = "https://raw.githubusercontent.com/juergenweb/";
-            $this->wire("config")->moduleServiceKey = (__NAMESPACE__ ? "pw300" : "pw280");
-        }
-    }
-
 
     /**
      * Send a reminder mail to the user if the account is not activated
@@ -394,7 +379,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     }
 
     /**
-     * Make better page paths by beautifying the slug by replacing non allowed characters
+     * Make better page paths by beautifying the slug by replacing non-allowed characters
      * @param string $text
      * @return string
      */
@@ -718,7 +703,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     }
 
     /**
-     * Add an additional checkbox to the language import form
+     * Add a checkbox to the language import form
      * @param HookEvent $event
      * @return void
      * @throws WireException|DOMException
@@ -1151,7 +1136,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $emailfieldset->add($emailTemplate);
         }
 
-        // enter the email address from where the emails should be sent (fe. noreply@mycompany.com)
+        // enter the email address from where the emails should be sent (fe. no-reply@mycompany.com)
         $email = $modules->get('InputfieldEmail');
         $email->label = $this->_('From email address');
         $email->attr('name', 'input_email');
@@ -1380,7 +1365,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         //save default module configurations on install
         $data = self::getDefaultData();
         $data['input_roles'] = [$registered_role];
-        $data['input_email'] = 'noreply@' . wire('config')->httpHost;
+        $data['input_email'] = 'no-reply@' . wire('config')->httpHost;
 
         // add the texts for the mails in the default language (en) if languages are installed
         include($this->wire('config')->paths->$this . 'mailtexts/en.php');
@@ -1642,63 +1627,72 @@ EOT;
      */
     protected function setPageStatus(HookEvent $e):void
     {
-        $pages = wire('pages')->find('template=fl_registerpage|fl_activationpage|fl_deleteaccountpage|fl_deleterequestpage',
-            ['findAll' => true]);
-        foreach ($pages as $p) {
-            $p->setOutputFormatting(false);
-            switch($p->template->name){
-                // show/hide registration and activation page
-                case('fl_registerpage'):
-                case('fl_activationpage'):
-                    if (isset($e->arguments(1)['input_selectloginregister'])) {
-                        if ($e->arguments(1)['input_selectloginregister'] == 'login') {
-                            $p->addStatus(Page::statusUnpublished);
-                            if($p->template->name == 'fl_registerpage'){
+        $class = $e->arguments(0);
+        // run only on the FrontendLoginRegister module
+        if($class == 'FrontendLoginRegister') {
+            $pages = wire('pages')->find('template=fl_registerpage|fl_activationpage|fl_deleteaccountpage|fl_deleterequestpage',
+                ['findAll' => true]);
+            foreach ($pages as $p) {
+                $p->setOutputFormatting(false);
+                switch ($p->template->name) {
+                    // show/hide registration and activation page
+                    case('fl_registerpage'):
+                    case('fl_activationpage'):
+                        if (isset($e->arguments(1)['input_selectloginregister'])) {
+                            if ($e->arguments(1)['input_selectloginregister'] == 'login') {
+                                $p->addStatus(Page::statusUnpublished);
+                                if ($p->template->name == 'fl_registerpage') {
+                                    $p->addStatus(Page::statusHidden);
+                                }
+                            } else {
+                                $p->removeStatus(Page::statusUnpublished);
+                                if ($p->template->name == 'fl_registerpage') {
+                                    $p->removeStatus(Page::statusHidden);
+                                }
+                            }
+                        }
+                        break;
+                    case('fl_deleteaccountpage'):
+                    case('fl_deleterequestpage'):
+                        if (isset($e->arguments(1)['input_deleteProfile'])) {
+                            if ($e->arguments(1)['input_deleteProfile']) {
+
+                                $p->removeStatus(Page::statusUnpublished);
+                                if ($p->template->name == 'fl_deleterequestpage') {
+                                    $p->removeStatus(Page::statusHidden);
+                                }
+                            } else {
+                                $p->addStatus(Page::statusUnpublished);
                                 $p->addStatus(Page::statusHidden);
-                            }
-                        } else {
-                            $p->removeStatus(Page::statusUnpublished);
-                            if($p->template->name == 'fl_registerpage') {
-                                $p->removeStatus(Page::statusHidden);
+
                             }
                         }
-                    }
-                    break;
-                case('fl_deleteaccountpage'):
-                case('fl_deleterequestpage'):
-
-                    if (isset($e->arguments(1)['input_deleteProfile'])) {
-                        if ($e->arguments(1)['input_deleteProfile']) {
-                            $p->removeStatus(Page::statusUnpublished);
-                            if($p->template->name == 'fl_deleterequestpage') {
-                                $p->removeStatus(Page::statusHidden);
-                            }
-                        } else {
-                            $p->addStatus(Page::statusUnpublished);
-                            $p->addStatus(Page::statusHidden);
-
-                        }
-                    }
-                    break;
+                        break;
+                }
+                $p->save();
             }
-            $p->save();
         }
     }
 
     /**
      * Sets email field to be unique, because this module sends email
      * This is necessary - otherwise it will not work
+     * @param HookEvent
      * @return void
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function setEmailUnique():void
+    protected function setEmailUnique(HookEvent $event):void
     {
-        $email = wire('fields')->get('email');
-        if (!isset($email->flagUnique)) {
-            $email->flagUnique = 1;
-            $email->save('flagUnique');
-            wire('session')->message($this->_('Field email was set to unique, because this is necessary for sending emails to the right user.'));
+        $class = $event->arguments(0);
+        // run only on the FrontendLoginRegister module
+        if($class == 'FrontendLoginRegister') {
+            $email = wire('fields')->get('email');
+            if (!isset($email->flagUnique)) {
+                $email->flagUnique = 1;
+                $email->save('flagUnique');
+                wire('session')->message($this->_('Field email was set to unique, because this is necessary for sending emails to the right user.'));
+            }
         }
     }
 
@@ -1707,25 +1701,31 @@ EOT;
      * inside module configuration
      * box not checked -> set status unpublished
      * box checked -> remove status unpublished
+     * @param HookEvent $event
      * @return void
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function setDeletePagesStatus():void
+    protected function setDeletePagesStatus(HookEvent $event):void
     {
+        $config = $this->wire('modules')->getConfig($this);
+        $class = $event->arguments(0);
+        // run only on the FrontendLoginRegister module
+        if($class == 'FrontendLoginRegister'){
+            $deleteAccountPage = $this->wire('pages')->get('template=fl_deleteaccountpage');
+            $deleteRequestPage = $this->wire('pages')->get('template=fl_deleterequestpage');
 
-        $deleteAccountPage = $this->wire('pages')->get('template=fl_deleteaccountpage');
-        $deleteRequestPage = $this->wire('pages')->get('template=fl_deleterequestpage');
-
-        if ($this->input_deleteProfile) {
-            // remove unpublished status
-            $deleteAccountPage->removeStatus(Page::statusUnpublished);
-            $deleteRequestPage->removeStatus(Page::statusUnpublished);
-        } else {
-            // add unpublished status
-            $deleteAccountPage->addStatus(Page::statusUnpublished);
-            $deleteRequestPage->addStatus(Page::statusUnpublished);
+            if ($config['input_deleteProfile']) {
+                // remove unpublished status
+                $deleteAccountPage->removeStatus(Page::statusUnpublished);
+                $deleteRequestPage->removeStatus(Page::statusUnpublished);
+            } else {
+                // add unpublished status
+                $deleteAccountPage->addStatus(Page::statusUnpublished);
+                $deleteRequestPage->addStatus(Page::statusUnpublished);
+            }
         }
+
     }
 
     /**
