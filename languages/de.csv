@@ -39,6 +39,12 @@ Login/registration,Anmeldung/Registrierung,,site/modules/FrontendLoginRegister/F
 "Login and registration","Anmeldung und Registrierung",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,d9da38a97856e064ae4ee4e28356ae6b
 "Login only","Nur eine Anmeldung",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,2c8ce8d388acc2233e1ea020c3dbf754
 "By selecting ""Login only"", the registration and activation page will be disabled.","Wenn Sie ""Nur eine Anmeldung"" auswählen, dann werden die Registrierungs- und Aktivierungsseite deaktiviert.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,7cce3991bf442fbfda1293c2afde0f51
+"Ajax setting","Ajax Einstellungen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,1836f8ad166c66506955429b3b2e6ea5
+"Choose whether you want to use Ajax form submission or not.","Wählen Sie aus, ob Sie Ajax zum Absenden der Formulare nutzen möchten, oder nicht.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,1df26eee6f80d98c1ec1689177643c75
+"Your version of FrontendForms does not support Ajax form submission. In order to use Ajax form submission, you need to update FrontendForms to the latest version.","Ihre Version von FrontendForms unterstützt keine Ajax-Formularübermittlung. Um die Ajax-Formularübermittlung zu verwenden, müssen Sie FrontendForms auf die neueste Version aktualisieren.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,4f7dcb2d8bbefe8a69aec959f86a1827
+"Inherit from FrontendForms","Von FrontendForms übernehmen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,5bfe6a369b802afdb9bb4909ac726c2d
+Yes,Ja,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,93cba07454f06a4a960172bbd6e2a435
+No,Nein,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,bafd7322c6e97d25b6299b5d6fe8920b
 "Login settings",Anmelde-Einstellungen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,c50bcdf91916f47e39976a3fc267faae
 "Userdata for login","Benutzerdaten für die Anmeldung",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,397135ffd1127e35c2bfda9db3d3b42f
 "Login with email and password","Anmeldung mit E-Mail und Passwort",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,f3d57aeef905677f6e19ce929fcd712f
@@ -152,22 +158,6 @@ Days,Tage,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,e807d
 "According to your settings, an unverified user account will be deleted %s day(s) after the registration.","Entsprechend Ihrer Einstellungen wird ein nicht bestätigtes Benutzerkonto nach %s Tag(en) gelöscht.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,81ab11fbe84d59b70b91cfa26e671874
 kB,=,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,3e56c011b37f0bc78fb9eb175c1181c6
 en,de,description,file,hash
-"I have registered for an account - activate my account now","Ich habe mich für einen Account registriert - Meinen Account jetzt aktivieren",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,8c81405575ad2673b1ca89ebcd7125ad
-"I have not registered for an account - delete the account","Ich habe mich nicht für einen Account registriert - Diesen Account jetzt löschen",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c6a483b1849ccedc51f459b897bd48bc
-"Action required to activate your account","Aktion erforderlich zur Aktivierung Ihres Benutzer-Kontos",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,fc6b228c1c76a11ae16c0ae5cfdd61c8
-"Have you forgotten to verify your account?","Haben Sie vergessen, Ihr Benutzer-Konto zu bestätigen?",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,dd79d2ddc57b56fbb60b6e534495e2b7
-"Your account has been deleted","Ihr Benutzer-Konto wurde gelöscht",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,220d4fb4dc0df6ce398ab2143fe1b991
-"Good bye!",Aufwiedersehen!,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,45dbe67ab9d69929dc41b8bfe83ce764
-"A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.","Beim Speichern der Benutzerdaten ist ein technisches Problem aufgetreten, so dass die Benutzerdaten nicht gespeichert werden konnten. Bitte versuchen Sie es noch einmal. Sollte das Problem weiterhin bestehen, wenden Sie sich bitte an den Webmaster dieser Seite.",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c21061f89026131a859929bf526452e4
-Login?,Anmelden?,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,3d60e1651d302a5aaf33325d3f7d6298
-"Change password","Password ändern",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,0b39c5aca15b84b1ad53a94d6b3feb78
-"Old password","Altes Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,062d2b8bc2cfac7772c75ae8090fb9d1
-"New password","Neues Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,3544848f820b9d94a3f3871a382cf138
-TFA,=,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,61bca12cd76652bf2fe763b5c4952066
-"User image of %s","Profilbild von %s",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,014fe1878c312d890ced94491f20695c
-"Remove this image","Dieses Bild entfernen",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,73c8a0a1101c3a8b45d2115a99c7c9c7
-"Sorry, but no user was found with this code.","Es tut uns leid, aber es wurde kein Nutzer mit diesem Code gefunden.",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c0b573f315326f74c6dd9e211f1c5973
-en,de,description,file,hash
 Cancel,Abbrechen,,site/modules/FrontendLoginRegister/pages/LoginPage.php,ea4788705e6873b424c65e91c2846b19
 "Forgot login data?","Zugangsdaten vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,688a8c015589eb6d8210fa3de138e784
 "Forgot password?","Passwort vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,8458bad978f4fd6d6c7f8ec2ec0824b4
@@ -184,7 +174,9 @@ username,Benutzername,,site/modules/FrontendLoginRegister/pages/LoginPage.php,14
 "The authentication code is not correct.","Der Authentifizierungscode ist nicht korrekt.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,f08d5706520d9748b7a402f98009f405
 Send,Senden,,site/modules/FrontendLoginRegister/pages/LoginPage.php,94966d90747b97d1f0f206c98a8b1ac3
 "A code has been sent to you by email - please enter it in the input field below.","Ein Code wurde Ihnen per E-Mail zugesendet - bitte geben Sie diesen in das Eingabefeld weiter unten ein.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,9617e082efca9114f99fe77ab37fb6e9
-"This code is still valid for %s seconds.","Dieser Code ist noch %s Sekunden gültig.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,fb344de9edd9e8df1c5bb661cc4317a5
+"seconds left","Sekunden übrig",plural,site/modules/FrontendLoginRegister/pages/LoginPage.php,c2d918e53348ee8896137bec79036f84
+"second left","Sekunde übrig",singular,site/modules/FrontendLoginRegister/pages/LoginPage.php,1793e600a6822489f25244c196a05085
+"This code is valid for %s.","Dieser Code ist für %s gültig.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,e518aa22de7d67d958c444aade71a55f
 Login,Anmeldung,,site/modules/FrontendLoginRegister/pages/LoginPage.php,99dea78007133396a7b8ed70578ac6ae
 "Dear user! Your account is still blocked! An email with a link to unlock your account has been sent once more to your email address. Please follow the instructions inside the email to unlock your account again.","Lieber Benutzer! Ihr Konto ist immer noch gesperrt! Es wurde erneut eine E-Mail mit einem Link zur Freischaltung Ihres Kontos an Ihre E-Mail-Adresse gesendet. Bitte folgen Sie den Anweisungen in der E-Mail, um Ihr Konto wieder zu entsperren.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,c0ed2d539b54593322434fb2bdd73b32
 "Dear user! Your account is still blocked! Due to technical problems an email with the unlock code could not be sent to you. Please try again a little later or contact the webmaster of this site.","Lieber Benutzer! Ihr Konto ist immer noch gesperrt! Aufgrund technischer Probleme konnte eine E-Mail mit dem Freischaltcode nicht an Sie gesendet werden. Bitte versuchen Sie es etwas später noch einmal oder kontaktieren Sie den Webmaster dieser Seite.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,fc986ac381da2e0ac19b503be72fb325
