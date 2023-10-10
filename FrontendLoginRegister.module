@@ -88,7 +88,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         $this->frontendForms = wire('modules')->get('FrontendForms');
         $this->moduleversion = wire('modules')->getModuleInfo('FrontendForms')['version'];
 
-        $versionCompare = version_compare($this->moduleversion, '2.1.45');
+        $versionCompare = version_compare($this->moduleversion, '2.1.47');
         if($versionCompare < 0){
             $this->needUpdate = true;
         }
