@@ -45,7 +45,7 @@ class FrontendLoginRegisterPages extends Form
     protected string $queryString = ''; // The get parameter of the querystring
     protected array $loginregisterConfig = []; // array that holds all module configuration properties
     protected array $frontendformsConfig = []; // array that holds all module configuration properties from FrontendForms
-
+    protected bool $useAjax = false;
     /*objects*/
     protected Page $login_page; // the login page object
     protected Page $delete_page; // the delete page object
@@ -55,7 +55,8 @@ class FrontendLoginRegisterPages extends Form
     protected string $tmp_profile_image_dir_path = ''; // the path to the temp folder for the profile image upload
     protected Field $image_field; // the profile image field
     protected array $image_fields = []; // array containing all names of the image fields if present
-
+    protected string $moduleversion = ''; // get the current version of FrontendForms
+    protected bool $needUpdate = false; // should FrontendForms be updated to support certain functions
     /**
      * Every form must have an id, so let's add it via the constructor
      * @param string $id
@@ -65,6 +66,12 @@ class FrontendLoginRegisterPages extends Form
     {
         parent::__construct($id);
 
+        $this->moduleversion = $this->wire('modules')->getModuleInfo('FrontendForms')['version'];
+
+        $versionCompare = version_compare($this->moduleversion, '2.1.45');
+        if($versionCompare < 0){
+            $this->needUpdate = true;
+        }
 
         // set tmp_profile_image_dir_path
         $this->tmp_profile_image_dir_path = $this->wire('config')->paths->siteModules . 'FrontendLoginRegister/tmp_profile_image/';
@@ -92,6 +99,28 @@ class FrontendLoginRegisterPages extends Form
         $this->delete_page = $this->wire('pages')->get('template=fl_deleteaccountpage');
         $this->delete_request_page = $this->wire('pages')->get('template=fl_deleterequestpage');
 
+        // set value of Ajax submission depending on the module configuration
+        if(array_key_exists('input_useajax',$this->loginregisterConfig)){
+            $ajax = $this->loginregisterConfig['input_useajax'];
+        } else {
+            $ajax = 'inherit';
+        }
+        if($ajax === 'inherit'){
+            if(array_key_exists('input_ajaxformsubmission',$this->frontendformsConfig)){
+                $ajax= (bool)($this->frontendformsConfig['input_ajaxformsubmission']);
+            } else {
+                // set Ajax submission to false
+                $ajax = false;
+            }
+        } else {
+            $ajax = (bool)$ajax;
+        }
+        $this->useAjax = $ajax;
+
+        // Ajax form submission will not be supported by the current FrontendForms version
+        if($this->needUpdate){
+            $this->useAjax = false;
+        }
     }
 
 
