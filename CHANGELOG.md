@@ -17,3 +17,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0.3] 23-05-10
 PLEASE UPDATE FRONTENDFORMS TO THE LATEST VERSION BEFORE UPDATE
 - Adding image preview of new image before upload
+
+## [1.2.5] 23-10-10
+There were a lot of undocumented changes done in the last half year so the version number is not much higher.
+
+In this update, the module will be prepared to support the new Ajax form submission functionality and a lot of code improvements were done too.
