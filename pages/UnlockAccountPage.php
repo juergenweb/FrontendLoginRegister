@@ -47,6 +47,7 @@ class UnlockAccountPage extends FrontendLoginRegisterPages
         $this->setMaxAttempts(5);
         $this->setMinTime(2); // 3 seconds
         $this->setMaxTime(600); // 10 minutes
+        $this->setSubmitWithAjax($this->useAjax);
         $this->setAttribute('action', $this->wire('page')->url . '?unlockaccountcode=' . $this->queryString);
         $successMsg = $this->_('Your account is now unlocked.');
         $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
