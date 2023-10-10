@@ -61,6 +61,7 @@ class DeleteAccountPage extends FrontendLoginRegisterPages
                 $this->setMinTime(2);
                 $this->setSuccessMsg($this->_('Your account has been successfully deleted.'));
                 $this->setAttribute('action', $this->wire('page')->url . '?deleteaccountcode=' . $this->queryString);
+                $this->setSubmitWithAjax($this->useAjax);
 
                 // password
                 $pass = new Password('pass');
