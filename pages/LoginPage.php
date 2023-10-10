@@ -16,11 +16,11 @@
     use Exception;
     use FrontendForms\Button as Button;
     use FrontendForms\Email as Email;
-    use FrontendForms\Form as Form;
     use FrontendForms\InputText as InputText;
     use FrontendForms\Link as Link;
     use FrontendForms\Password as Password;
     use FrontendForms\Username as Username;
+    use FrontendForms\FormValidation as FormValidation;
     use ProcessWire\HookEvent as HookEvent;
     use ProcessWire\Tfa as Tfa;
     use ProcessWire\User;
@@ -48,6 +48,11 @@
         {
             parent::__construct($id);
 
+            $this->setMaxAttempts(5);
+            $this->setMinTime(3);
+            $this->setMaxTime(3600);
+            $this->setSubmitWithAjax($this->useAjax);
+
             $this->redirectToHomepage(); // if a user is logged in -> no need to be here -> let's redirect to the homepage
 
             $this->tfa = new Tfa(); // instantiate a new instance of Tfa (2-factor authentication)
@@ -60,6 +65,7 @@
 
             // Hook to replace emailCode method entirely
             $this->addHookBefore('TfaEmail::emailCode', $this, 'emailCode');
+
         }
 
         /**
@@ -159,16 +165,15 @@
         }
 
         /**
-         * @return string
-         * @throws WireException
+         * Login the user and redirect to the selected page
+         * @param \ProcessWire\User $user
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
          */
-        public function __toString(): string
-        {
-            return $this->render();
-        }
-
         protected function defaultLogin(User $user): void
         {
+
             // try to log in the user
             if ($this->wire('session')->login($user->name, $this->getValue('password'))) {
                 // login if tfa is not enabled
@@ -193,6 +198,8 @@
         public function render(): string
         {
 
+            $content = '';
+
             /*
              Check if "deletion" session from deletion link is active
              This is the case if a user clicks on the deletion link inside the email and is not logged in,
@@ -206,8 +213,9 @@
                 $alert->setCSSClass('alert_warningClass');
             }
 
-
+            // check if the tfa session is active and render the second form
             if ($this->tfa->active()) {
+
                 $tfaSession = $this->wire('session')->get('tfa'); // grab the tfa session
                 $module = $this->tfa->getModule(); // get the TFA module object which is used by the user who currently tries to log in
                 $user = $this->wire('users')->get($tfaSession['id']);// grab the user by session id
@@ -237,13 +245,11 @@
                 }
 
                 // Create the form for the authentication code
-                $form = new Form('tfa');
-                $form->setMaxAttempts(3);
-                $form->setMinTime(3);
-                $form->setMaxTime(3600);
-                $form->setSuccessMsg($this->_('You are now logged in.'));
-                $form->setAttribute('action', $this->wire('page')->url . '?tfa=' . $this->tfa->getSessionKey(true));
-                $form->disableCaptcha(); // disable Captcha by default - no need for it
+
+                $this->setSuccessMsg($this->_('You are now logged in.'));
+                $this->setAttribute('action', $this->wire('page')->url . '?tfa=' . $this->tfa->getSessionKey(true));
+                $this->disableCaptcha(); // disable Captcha by default - no need for it
+
 
                 // authentication code input field
                 $tfaCode = new InputText('tfa_code');
@@ -252,35 +258,50 @@
                 $tfaCode->setRule('required');
                 $tfaCode->setRule('checkTfaCode', $user,
                     $module)->setCustomMessage($this->_('The authentication code is not correct.'));
-                $form->add($tfaCode);
+                $this->add($tfaCode);
 
                 // submit button
                 $button = new Button('tfa_submit');
                 $button->setAttribute('value', $this->_('Send'));
-                $form->add($button);
+                $this->add($button);
 
                 // show or hide the cancel link depending on settings
                 if ($this->tfa->showCancel) {
-                    $form->add($this->___cancelLink());
+                    $this->add($this->___cancelLink());
                 }
 
                 // log failed attempts if enabled
                 $this->addLogFailedLoginAttempt();
 
-                if ($form->isValid()) {
+
+                if($this->getSubmitWithAjax()){
+                    // redirect to the page, which has been selected inside the module configuration
+                    $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
+                }
+
+                if ($this->isValid()) {
+
 
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
-                    $this->redirectAfterLogin(); // redirect after login
+
+                    if($this->getSubmitWithAjax()){
+                        $this->showForm = true;
+                        // redirect to the page, which has been selected inside the module configuration
+                        //$this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
+                    } else {
+                        $this->redirectAfterLogin(); // redirect after login if submission was not done via Ajax
+                    }
+
                 }
 
-                $msg = $form->getAlert()->getText() ? $form->getAlert()->getText() : ''; // grab alert text if present
+                $msg = $this->getAlert()->getText() ? $this->getAlert()->getText() : ''; // grab alert text if present
 
                 // Only if TfaEmail module is used
                 if (($module->className() == 'TfaEmail') && ($this->wire('session')->get('type'))) {
                     // only on redirect from step 1 to 2
                     $msg .= $this->_('A code has been sent to you by email - please enter it in the input field below.');
-                    $form->getAlert()->setCSSClass('alert_successClass');
+                    $this->getAlert()->setCSSClass('alert_successClass');
                     $this->wire('session')->remove('type');
                 }
 
@@ -288,16 +309,25 @@
                 $expireTime = $this->wire('modules')->get('TfaEmail')->codeExpire;
                 if (($expireTime) && $this->wire('user')->isGuest()) {
                     // show info only if it will be submitted in time and the user is not logged in
-                    $msg .= '<br>' . sprintf($this->_('This code is still valid for %s seconds.'),
-                            '<span id="expirationcounter">' . $expireTime . '</span>');
+                    $secondsLeft = $this->_('seconds left'); //plural
+                    $secondLeft = $this->_('second left'); // singular
+                    $timerMarkup = '<span id="minTime" data-time="' . $expireTime . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . FormValidation::secondsToReadable($expireTime) . '</span><span id="timecounter" class="expiration-counter">180 '.$secondsLeft.'</span>';
+                    $msg .= '<br>' . sprintf($this->_('This code is valid for %s.'), $timerMarkup);
+                            //'<span id="expirationcounter">' . $expireTime . '</span>');
                 }
-                $form->getAlert()->setText($msg);
-                return $form->render();
+                $this->getAlert()->setText($msg);
+
+                // !! Important: To load the next form properly with Ajax, the previous wrapper container has to be added
+                // TODO event. nicht notwendig
+                /*
+                if($this->getSubmitWithAjax()){
+                    $content .=  '<div id="login-form-ajax-wrapper">'.$this->render().'</div>';
+                } else {
+                    $content .= $this->render();
+                }*/
+
             } else {
-                // render login form
-                $this->setMaxAttempts(5);
-                $this->setMinTime(3);
-                $this->setMaxTime(3600);
+                // login form
                 $this->setSuccessMsg($this->_('You are now logged in.'));
 
                 if ($this->loginregisterConfig['input_selectlogin'] === 'email') {
@@ -343,9 +373,16 @@
                 // log failed attempts if enabled
                 $this->addLogFailedLoginAttempt();
 
+                // Set the redirect url for the Javascript redirect if Tfa is not enabled
+                if($this->getSubmitWithAjax()){
+                    if (!$this->loginregisterConfig['input_tfa']) {
+                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
+                    }
+                }
+
                 if ($this->isValid()) {
 
-                    $content = '';
+
 
                     if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
                         // login with email
@@ -375,10 +412,12 @@
                         } else {
                             // check if TFA is enabled in the settings
                             if ($this->loginregisterConfig['input_tfa']) {
-                                if ($this->user->hasTfa()) {
-                                    $this->wire('session')->set('type',
-                                        'TfaEmail'); // set session for the outputting message that a code was sent by email
-                                    $this->tfa->start($user->name, $this->getValue('pass')); // redirects
+                                // check if TFA is enabled for the given user
+                                if ($user->hasTfa()) {
+                                    bd('user has tfa');
+                                    // set session for the outputting message that a code was sent by email
+                                    $this->wire('session')->set('type', 'TfaEmail');
+                                    $this->tfa->start($user->name, $this->getValue('pass')); // redirects if Ajax is not enabled
                                 } else {
                                     $this->defaultLogin($user);
                                 }
@@ -463,7 +502,7 @@
                             }
                         }
                     }
-                    $content = $this->wire('page')->body;
+                    $content .= $this->wire('page')->body;
                 }
 
                 // create error messages from session if present
@@ -477,11 +516,15 @@
                     $this->wire('session')->remove('error');
                 }
 
-                // render the form on the frontend
-                $content .= parent::render();
-                return $content;
+
             }
+            // render the form on the frontend
+            $content .= parent::render();
+
+            return $content;
         }
+
+
 
         /**
          * Get all username/email inputs of the unsuccessful login attempts
@@ -533,11 +576,99 @@
         }
 
         /**
+         * Get the deletion query string if it is present
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function getDeletionQueryString(): string
+        {
+            $query_string = '';
+            // check if 'deletion' session is present
+            if ($this->wire('session')->get('deletion')) {
+                $query_string = '?' . $this->wire('session')->get('deletion');
+            }
+            return $query_string;
+        }
+
+        /**
+         * Get the id of the page where it should be redirected after successfull form submission
+         * @return int
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function getRedirectPageIdAfterLogin(): int
+        {
+            // check if 'deletion' session is present
+            if ($this->getDeletionQueryString() != '') {
+                $id = $this->delete_page->id;
+            } else {
+                // get redirect page from module configuration settings
+                $current_page_id = $this->wire('pages')->get('template=fl_loginpage')->id;
+
+                switch (true) {
+                    case($this->loginregisterConfig['input_redirectSuccess'] == -1):
+                        if ($this->wire('session')->get('prevPage') > 0) {
+                            $id = (int)$this->wire('session')->get('prevPage');
+                            $this->wire('session')->remove('prevPage');
+                        } else {
+                            $id = $current_page_id;
+                        }
+                        break;
+                    case($this->loginregisterConfig['input_redirectSuccess'] > 0):
+                        $id = (int)$this->loginregisterConfig['input_redirectSuccess'];
+                        break;
+                    default:
+                        $id = $current_page_id;
+                }
+            }
+            return (int)$id;
+        }
+
+        /**
          * Redirect after successful login to a pre-defined page from the settings
          * @return void
          * @throws WireException
          * @throws WirePermissionException
          */
+        protected function redirectAfterLogin(): void
+        {
+            $id = $this->getRedirectPageIdAfterLogin();
+            $query_string = $this->getDeletionQueryString();
+
+            $this->wire('session')->set('loginID', $id);
+            if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
+                $redirectUrl = $this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string;
+                // set data attribute if Ajax call
+                if($this->getSubmitWithAjax()){
+                    $this->setRedirectUrlAfterAjax($redirectUrl);
+                } else {
+                    // otherwise redirect to a given page
+                    $this->wire('session')->redirect($this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string);
+                }
+            } else {
+                $redirectUrl = $this->wire('pages')->get($id)->url . $query_string;
+            }
+            // set data attribute if Ajax call
+            if($this->getSubmitWithAjax()){
+                $this->setRedirectUrlAfterAjax($redirectUrl);
+            } else {
+                // otherwise redirect to a given page
+                bd('normal');
+                $this->wire('session')->redirect($redirectUrl);
+            }
+
+
+        }
+
+
+        /**
+         * Redirect after successful login to a pre-defined page from the settings
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        /*
         protected function redirectAfterLogin(): void
         {
 
@@ -573,7 +704,7 @@
             } else {
                 $this->wire('session')->redirect($this->wire('pages')->get($id)->url . $query_string);
             }
-        }
+        }*/
 
         /**
          * This method replaces the start method from the Tfa class completely,
@@ -754,6 +885,14 @@
         protected function checkIfAccountLocked(User $user): bool
         {
             return ($user->fl_unlockaccount != '');
+        }
+
+        /**
+         * @return string
+         */
+        public function __toString():string
+        {
+            return $this->render();
         }
 
     }
