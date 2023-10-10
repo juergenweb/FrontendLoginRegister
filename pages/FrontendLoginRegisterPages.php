@@ -68,7 +68,7 @@ class FrontendLoginRegisterPages extends Form
 
         $this->moduleversion = $this->wire('modules')->getModuleInfo('FrontendForms')['version'];
 
-        $versionCompare = version_compare($this->moduleversion, '2.1.45');
+        $versionCompare = version_compare($this->moduleversion, '2.1.47');
         if($versionCompare < 0){
             $this->needUpdate = true;
         }
