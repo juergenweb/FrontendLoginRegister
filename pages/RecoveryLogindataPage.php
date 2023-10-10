@@ -80,7 +80,10 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         $this->add($passwordConfirm);
 
         $button = new Button('submit');
-        $buttonText = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? $this->_('Save new login data') : $this->_('Save new password');
+        $buttonText = $this->_('Save new password');
+        if($this->loginregisterConfig['input_selectlogin'] == 'username'){
+            $buttonText = $this->_('Save new login data');
+        }
         $button->setAttribute('value', $buttonText);
         $this->add($button);
 
