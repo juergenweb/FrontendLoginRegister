@@ -46,6 +46,7 @@ class RecoveryLogindataPage extends FrontendLoginRegisterPages
         $this->setMinTime(3); // 3 seconds
         $this->setMaxTime(600); // 10 minutes
         $this->setAttribute('action', $this->wire('page')->url . '?recoverylogindatacode=' . $this->queryString);
+        $this->setSubmitWithAjax($this->useAjax);
 
         // create success message and add username field depending on login type (username/password or email/password)
         if($this->loginregisterConfig['input_selectlogin'] == 'username') {
