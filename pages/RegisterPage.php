@@ -42,6 +42,7 @@ class RegisterPage extends FrontendLoginRegisterPages
         $this->setMaxAttempts(5);
         $this->setMinTime(3);
         $this->setMaxTime(3600);
+        $this->setSubmitWithAjax($this->useAjax);
 
         // add the various form fields dynamically depending on the settings in the backend
         $this->createFormFields('input_registration', $this);
@@ -115,13 +116,6 @@ class RegisterPage extends FrontendLoginRegisterPages
     {
 
         if ($this->isValid()) {
-
-            //get the form values
-            // TODO delete after testing
-            /*
-            $email = $this->getValue('email');
-            $pass = $this->getValue('pass');
-            */
 
             $activationCode = $this->createQueryCode();// create the activation code
 
