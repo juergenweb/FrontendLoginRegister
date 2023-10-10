@@ -43,6 +43,7 @@ class ForgotLogindataPage extends FrontendLoginRegisterPages
         $this->setMinTime(2);
         $this->setMaxTime(600);
         $this->setSuccessMsg($this->_('If the email address supplied was found, an email with further instructions will be sent to you. Please check your email account within the next few minutes, including any junk or spam folders.'));
+        $this->setSubmitWithAjax($this->useAjax);
 
         // email field
         $email = new Email('email');
