@@ -32,6 +32,7 @@ This module creates pages and templates during the installation for faster devel
 - Support for SeoMaestro if installed
 - Lock accounts if suspicious login attempts were made
 - Allow users to upload a profile image for their account
+- Support of Ajax form submission
 
 ## Table of contents
 
@@ -75,6 +76,7 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`Set image size`** You can set the size of the user image as it should be displayed on the user profile page
 * **`Restrict user image file size`** You can restrict the max file size of the user image for the upload to prevent upload of huge files
 * **`Disable phpini max file size validation`** By default the max file size will be restricted by the max file size as set inside the phpini file, but you can disable it if you want
+* **`Enable/disable Ajax form submission`** By default, the settings of FrontendForms will be used for this module, but you have the possibility to change this in the configuration settings of this module
 
 Some settings will be taken from the FrontendForms module settings (fe enable/disable Captcha, logging failed attempts,...)
 and cannot be set individually in the module configuration of this module globally, but you can always change form
