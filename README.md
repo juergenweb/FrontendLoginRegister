@@ -65,6 +65,7 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`Set roles`** Select which role(s) should be added to a newly created user
 * **`Set form fields for registration form`** Select which fields of the user template should be displayed inside
   registration form
+* **`Select type of privacy notice`** Select if you want a checkbox field or a text only, to inform the user, that he has to accept the privacy policy by submitting the registration form. You can also disable the privacy notice, but it is not recommended.
 * **`Set form fields for profile form`** Select which fields of the user template should be displayed inside
   profile form (page for user data if the user is logged in)
 * **`Offer account deletion`** Select if you want to enable account deletion for users, so that the user can delete his
