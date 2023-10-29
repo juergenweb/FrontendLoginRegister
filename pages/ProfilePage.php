@@ -107,7 +107,7 @@
                 $this->add($this->___deleteAccountLink());
             }
 
-            if ($this->isValid()) {
+            if ($this->___isValid()) {
 
                 // grab the user language id before the saving process on multi-language site
                 if ($this->wire('languages') && count($this->wire('languages')) > 1) {
