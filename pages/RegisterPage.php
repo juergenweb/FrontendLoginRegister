@@ -67,7 +67,8 @@
 
         /**
          * @return string
-         * @throws WireException
+         * @throws \DOMException
+         * @throws \ProcessWire\WireException
          */
         public function __toString()
         {
@@ -143,7 +144,7 @@
                     $this->remove($this->privacy);
             }
 
-            if ($this->isValid()) {
+            if ($this->___isValid()) {
 
                 $activationCode = $this->createQueryCode();// create the activation code
 
