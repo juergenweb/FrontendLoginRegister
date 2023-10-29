@@ -1,648 +1,644 @@
 <?php
-declare(strict_types=1);
+    declare(strict_types=1);
 
-namespace ProcessWire;
+    namespace ProcessWire;
 
-/*
- * Module for creating a user registration/login
- *
- * Created by Jürgen K.
- * https://github.com/juergenweb
- * File name: FrontendLoginRegister.php
- * Created: 06.07.2022
- */
-
-use DOMDocument;
-use DOMException;
-use DOMNode;
-use FrontendForms\Form;
-use FrontendLoginRegister\FrontendLoginRegisterPages;
-use ReflectionException;
-
-class FrontendLoginRegister extends WireData implements Module, ConfigurableModule
-{
-
-    // Declaration  of configuration properties
-    protected array $input_registration = ['3', '92']; // Fields that should be displayed on the registration form
-    protected array $input_profile = ['3', '92']; // Fields that should be displayed on the profile form
-    protected string|int $input_privacy = 2;
-    protected string|int $input_delete = 3; // The time in days after which the user will be deleted
-    protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
-    protected string|int|null $input_prevent_send_deletion_email = ''; // prevent sending of email after user account has been deleted
-    protected string $input_selectlogin = 'email'; // Select between log in with username or email
-    protected string|int|null $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
-    protected string $input_selectloginregister = 'loginregister'; // Select if login only or login and register
-    protected string $input_emailTemplate = 'inherit'; // The HTML template that should be used for emails
-    protected string $input_email = ''; // The email for this page, that will be used to send emails (fe. noreplay@mycompany.com)
-    protected string $input_sender = ''; // The name of the sender for the emails (fe MyCompany)
-    protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
-    protected string|int|null $input_tfa = ''; // Use Tfa by default
-    protected string|int|null $input_deleteProfile = null; // allow users to delete their profile
-    protected string $input_activationtext = ''; // the text for the activation email
-    protected string $input_remindertext = ''; // the text for the reminder email
-    protected string $input_tfatext = ''; // the text for the TFA code email
-    protected string $input_passwordforgottentext = ''; // the text for the password forgotten email
-    protected string $input_deleteaccounttext = ''; // the text for the delete account email
-    protected string $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
-    protected string $input_unlock_account = ''; // the text for the unlock account email
-    protected array $input_roles = []; // IDs of all roles a new user will get
-    protected string|int|null $input_phpini = ''; // disable the validation against the php.ini max-filesize
-    protected string $input_image_size = ''; // the width and height of the profile image
-    protected int $input_max_filesize = 0; // max file size for image upload in kb
-    protected string|int|null $input_showPrev = 2;
-    protected string|int $input_useajax = 'inherit'; // whether to use Ajax for form submission or not
-
-    // Declaration of configuration properties for templates and user fields
-    protected array $userFields = []; // Array of all user fields
-    protected array $templatePages = []; // Array of all template pages
-    protected array $textareas = []; // array of all textarea input fields for the mail textes
-    protected array $userSettings = []; // Holds the data for the specific user
-    protected string $moduleversion = ''; // get the current version of FrontendForms
-    protected bool $needUpdate = false; // should FrontendForms be updated to support certain functions
-
-    // Declaration of class objects used
-    protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
-
-    // Declaration of all user field properties
-    protected array $userfields = []; // array that contains all userfields
-    protected array $fl_activation = []; // userfield for the activation code
-    protected array $fl_activationdatetime = []; // userfield for storing date and time of the activation
-    protected array $fl_reminderdatetime = []; // userfield containing date and time when the reminder mail was sent
-    protected array $fl_recoverylogindata = []; // userfield for that contains the password recovery code
-    protected array $fl_recoverylogindatadatetime = []; // userfield containing date and time when the recovery code mail was sent
-    protected array $fl_deleteaccount = []; // userfield that contains the deletion code
-    protected array $fl_deleteaccountdatetime = []; // userfield containing date and time when the deletion code mail was sent
-    protected array $fl_unlockaccount = [];
-    protected array $config = []; // array containing the module configuration values
-
-    /**
-     * @throws WireException
-     * @throws WirePermissionException|ReflectionException
+    /*
+     * Module for creating a user registration/login
+     *
+     * Created by Jürgen K.
+     * https://github.com/juergenweb
+     * File name: FrontendLoginRegister.php
+     * Created: 06.07.2022
      */
-    public function __construct()
+
+    use DOMDocument;
+    use DOMException;
+    use DOMNode;
+    use FrontendForms\Form;
+    use FrontendLoginRegister\FrontendLoginRegisterPages;
+    use ReflectionException;
+
+    class FrontendLoginRegister extends WireData implements Module, ConfigurableModule
     {
-        parent::__construct();
 
+        // Declaration  of configuration properties
+        protected array $input_registration = ['3', '92']; // Fields that should be displayed on the registration form
+        protected array $input_profile = ['3', '92']; // Fields that should be displayed on the profile form
+        protected string|int $input_privacy = 2;
+        protected string|int $input_delete = 3; // The time in days after which the user will be deleted
+        protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
+        protected string|int|null $input_prevent_send_deletion_email = ''; // prevent sending of email after the user account has been deleted
+        protected string $input_selectlogin = 'email'; // Select between login with username or email
+        protected string|int|null $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
+        protected string $input_selectloginregister = 'loginregister'; // Select if login only or login and register
+        protected string $input_emailTemplate = 'inherit'; // The HTML template that should be used for emails
+        protected string $input_email = ''; // The email for this page, that will be used to send emails (fe. noreplay@mycompany.com)
+        protected string $input_sender = ''; // The name of the sender for the emails (fe MyCompany)
+        protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
+        protected string|int|null $input_tfa = ''; // Use Tfa by default
+        protected string|int|null $input_deleteProfile = null; // allow users to delete their profile
+        protected string $input_activationtext = ''; // the text for the activation email
+        protected string $input_remindertext = ''; // the text for the reminder email
+        protected string $input_tfatext = ''; // the text for the TFA code email
+        protected string $input_passwordforgottentext = ''; // the text for the password-forgotten email
+        protected string $input_deleteaccounttext = ''; // the text for the delete account email
+        protected string $input_deletion_confirmation = ''; // the text for the account deletion confirmation email
+        protected string $input_unlock_account = ''; // the text for the unlock account email
+        protected array $input_roles = []; // IDs of all roles a new user will get
+        protected string|int|null $input_phpini = ''; // disable the validation against the php.ini max-filesize
+        protected string $input_image_size = ''; // the width and height of the profile image
+        protected int $input_max_filesize = 0; // max file size for image upload in kb
+        protected string|int|null $input_showPrev = 2;
+        protected string|int $input_useajax = 'inherit'; // whether to use Ajax for form submission or not
 
+        // Declaration of configuration properties for templates and user fields
+        protected array $userFields = []; // Array of all user fields
+        protected array $templatePages = []; // Array of all template pages
+        protected array $textareas = []; // array of all textarea input fields for the mail textes
+        protected array $userSettings = []; // Holds the data for the specific user
+        protected string $moduleversion = ''; // get the current version of FrontendForms
+        protected bool $needUpdate = false; // should FrontendForms be updated to support certain functions?
 
-        // Get FrontendForms module
-        $this->frontendForms = wire('modules')->get('FrontendForms');
-        $this->moduleversion = wire('modules')->getModuleInfo('FrontendForms')['version'];
+        // Declaration of class objects used
+        protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
 
-        $versionCompare = version_compare($this->moduleversion, '2.1.47');
-        if($versionCompare < 0){
-            $this->needUpdate = true;
-        }
+        // Declaration of all user field properties
+        protected array $userfields = []; // array that contains all userfields
+        protected array $fl_activation = []; // userfield for the activation code
+        protected array $fl_activationdatetime = []; // userfield for storing date and time of the activation
+        protected array $fl_reminderdatetime = []; // userfield containing date and time when the reminder mail was sent
+        protected array $fl_recoverylogindata = []; // userfield for that contains the password recovery code
+        protected array $fl_recoverylogindatadatetime = []; // userfield containing date and time when the recovery code mail was sent
+        protected array $fl_deleteaccount = []; // userfield that contains the deletion code
+        protected array $fl_deleteaccountdatetime = []; // userfield containing date and time when the deletion code mail was sent
+        protected array $fl_unlockaccount = [];
+        protected array $config = []; // array containing the module configuration values
 
+        /**
+         * @throws WireException
+         * @throws WirePermissionException|ReflectionException
+         */
+        public function __construct()
+        {
+            parent::__construct();
+
+            // Get FrontendForms module
+            $this->frontendForms = wire('modules')->get('FrontendForms');
+            $this->moduleversion = wire('modules')->getModuleInfo('FrontendForms')['version'];
+
+            $versionCompare = version_compare($this->moduleversion, '2.1.47');
+            if ($versionCompare < 0) {
+                $this->needUpdate = true;
+            }
 
             // set configuration values from the database
-        $this->config = $this->wire('modules')->getConfig($this); // get the module config values from the db
+            $this->config = $this->wire('modules')->getConfig($this); // get the module config values from the db
 
-        // run only if configuration data exists (after module install!)
-        if($this->config){
-            $this->input_registration = $this->config['input_registration'];
-            $this->input_profile = $this->config['input_profile'];
-            $this->input_privacy = $this->config['input_privacy'];
-            $this->input_showPrev = $this->config['input_showPrev'];
-            $this->input_delete = $this->config['input_delete'];
-            $this->input_remind = $this->config['input_remind'];
-            $this->input_prevent_send_deletion_email = $this->config['input_prevent_send_deletion_email'];
-            $this->input_selectlogin = $this->config['input_selectlogin'];
-            $this->input_removeJS = $this->config['input_removeJS'];
-            $this->input_selectloginregister = $this->config['input_selectloginregister'];
-            $this->input_emailTemplate = $this->config['input_emailTemplate'];
-            $this->input_email = $this->config['input_email'];
-            $this->input_sender = $this->config['input_sender'];
-            $this->input_redirectSuccess = $this->config['input_redirectSuccess'];
-            $this->input_tfa = $this->config['input_tfa'];
-            $this->input_deleteProfile = $this->config['input_deleteProfile'];
-            $this->input_activationtext = $this->config['input_activationtext'];
-            $this->input_remindertext = $this->config['input_remindertext'];
-            $this->input_tfatext = $this->config['input_tfatext'];
-            $this->input_passwordforgottentext = $this->config['input_passwordforgottentext'];
-            $this->input_deleteaccounttext = $this->config['input_deleteaccounttext'];
-            $this->input_deletion_confirmation = $this->config['input_deletion_confirmation'];
-            $this->input_unlock_account = $this->config['input_unlock_account'];
-            $this->input_roles = $this->config['input_roles'];
-            $this->input_phpini = $this->config['input_phpini'] ?? ''; // add fallback
-            $this->input_image_size = $this->config['input_image_size'] ??  '200';// add fallback
-            $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;// add fallback
-            $this->input_useajax = $this->config['input_useajax'] ?? 'inherit'; // add fallback
-        }
-
-        // array of the names of all mail text input fields
-        $this->textareas = [
-            'input_activationtext',
-            'input_tfatext',
-            'input_remindertext',
-            'input_passwordforgottentext',
-            'input_deleteaccounttext',
-            'input_deletion_confirmation',
-            'input_unlock_account'
-        ];
-
-
-
-        // include configuration file for additional user fields for FrontendLoginRegister
-        include('config/userFields.php');
-        // create property of each user field
-        foreach ($this->userFields as $key => $value) {
-            $this->$key = $value;
-        }
-
-        // templates and pages (template name as key and page properties as assoc. array)
-        include('config/templatePages.php');
-
-        //  Include all classes with PW autoload function
-        $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/mails');
-        $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/pages');
-        $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/traits');
-
-        // set upload path for profile image
-        $this->setUploadPath($this->tmp_profile_image_dir_path);
-    }
-
-    /**
-     * Get the module info
-     * @return array
-     */
-    public static function getModuleInfo():array
-    {
-        return [
-            'title' => 'FrontendLoginRegister',
-            'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
-            'author' => "Jürgen Kern",
-            'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-            'version' => '1.2.6',
-            'singular' => true,
-            'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.51', 'LazyCron'],
-            'icon' => 'sign-in'
-        ];
-    }
-
-    /**
-     * Set default values for configuration fields
-     * These values will be stored in the DB during the installation process
-     * This is necessary to get them via getModuleConfig() without saving the configuration page
-     * @return string[]
-     */
-    public static function getDefaultData():array
-    {
-        return [
-            'input_registration' => ['3', '92'],
-            'input_profile' => ['3', '92'],
-            'input_privacy' => '2',
-            'userFields' => [],
-            'templatePages' => [],
-            'userSettings' => [],
-            'input_delete' => 3,
-            'input_remind' => 1,
-            'input_prevent_send_deletion_email' => '',
-            'input_selectlogin' => 'email',
-            'input_removeJS' => '',
-            'input_selectloginregister' => 'loginregister',
-            'input_emailTemplate' => 'inherit',
-            'input_email' => '',
-            'input_sender' => '',
-            'input_redirectSuccess' => '-1',
-            'input_tfa' => 0,
-            'input_deleteProfile' => 0,
-            'input_phpini' => '',
-            'input_image_size' => '200',
-            'input_max_filesize' => 0,
-            'input_showPrev' => 2,
-            'input_useajax' => 'inherit'
-        ];
-    }
-
-    /**
-     * initialize the Hooks
-     * @return void
-     * @throws WireException
-     */
-    public function init():void
-    {
-        // send email to remind the user to activate the account
-        $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
-        // delete inactive accounts after a certain time
-        $this->addHookAfter('LazyCron::everyHour', $this, 'deleteAccount');
-        // set pages status to hidden on certain pages
-        $this->addHookAfter('Modules::saveConfig', $this, 'setPageStatus');
-        // set email to unique in the email field settings
-        $this->addHookAfter('Modules::saveConfig', $this, 'setEmailUnique');
-        // set email to unique in the email field settings
-        $this->addHookAfter('Modules::saveConfig', $this, 'setDeletePagesStatus');
-        // validate fields  to check if the necessary fields are included
-        $this->addHookAfter('InputfieldAsmSelect::processInput', $this, 'validateFormFields');
-        // add the label "hours" next to the inputfield
-        $this->addHookAfter('InputfieldInteger::render', $this, 'addLabelsToInputfields');
-        // allow HTML tags inside the description of the inputfield_delete
-        $this->addHookBefore('InputfieldInteger::render', $this, 'insertText');
-        // write title, name and description in the page fields after adding a new translation file to a language
-        $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToPages');
-        // store the id of the page currently visited in a session - needed to get the last visited page
-        $this->addHookAfter('Page::render', $this, 'setPageVisitedSession');
-        // add javascript file to the HEAD section
-        $this->addHookAfter('Page::render', $this, 'addAssets');
-        // allow HTML tags in field notes and descriptions
-        $this->addHookBefore('Inputfield::render', $this, 'allowHTML');
-        // add description of used placeholders after the input field
-        $this->addHookAfter('Inputfield::render', $this, 'addPlaceholderInfo');
-        // add additional checkbox after import languages select
-        $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
-
-        // add CSS and JS to the backend
-        $version = $this->getModuleInfo()['version'] . '-' . time();
-        $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
-
-        $this->wire->addHookBefore('Modules::saveConfig', function(HookEvent $event) {
-            $event->message("You saved the module config");
-        });
-    }
-
-    /**
-     * Send a reminder mail to the user if the account is not activated
-     * Takes the settings from the module configuration
-     * Save the timestamp of the reminding in the database
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function remindAccount():void
-    {
-
-        if ($this->input_remind > 0) {
-            // find all users with activation code
-            $users = $this->wire('users')->find('fl_activation!=');
-            foreach ($users as $user) {
-
-                // take only user with empty fl_reminderdatetime
-                if (!$user->fl_reminderdatetime) {
-
-                    $activation_date = $user->getUnformatted('created');
-                    $diff_time = $this->input_remind * 60 * 60 * 24;
-
-                    if ((int)$activation_date + $diff_time < time()) {
-                        // send reminder email to the user
-                        $reminder = new FrontendLoginRegisterPages('test');
-                        //set user language if languages
-                        if($this->wire('languages')){
-                            $this->wire('languages')->setLanguage($user->language);
-                        }
-                        if ($reminder->sendReminderMail($user)) {
-                            if ($this->input_delete > 0) {
-                                $user->setOutputFormatting(false);
-                                $user->fl_reminderdatetime = time();
-                                $user->save();
-                                $user->setOutputFormatting();
-                            }
-                        }
-                    }
-                }
+            // run only if configuration data exists (after module installation!)
+            if ($this->config) {
+                $this->input_registration = $this->config['input_registration'];
+                $this->input_profile = $this->config['input_profile'];
+                $this->input_privacy = $this->config['input_privacy'];
+                $this->input_showPrev = $this->config['input_showPrev'];
+                $this->input_delete = $this->config['input_delete'];
+                $this->input_remind = $this->config['input_remind'];
+                $this->input_prevent_send_deletion_email = $this->config['input_prevent_send_deletion_email'];
+                $this->input_selectlogin = $this->config['input_selectlogin'];
+                $this->input_removeJS = $this->config['input_removeJS'];
+                $this->input_selectloginregister = $this->config['input_selectloginregister'];
+                $this->input_emailTemplate = $this->config['input_emailTemplate'];
+                $this->input_email = $this->config['input_email'];
+                $this->input_sender = $this->config['input_sender'];
+                $this->input_redirectSuccess = $this->config['input_redirectSuccess'];
+                $this->input_tfa = $this->config['input_tfa'];
+                $this->input_deleteProfile = $this->config['input_deleteProfile'];
+                $this->input_activationtext = $this->config['input_activationtext'];
+                $this->input_remindertext = $this->config['input_remindertext'];
+                $this->input_tfatext = $this->config['input_tfatext'];
+                $this->input_passwordforgottentext = $this->config['input_passwordforgottentext'];
+                $this->input_deleteaccounttext = $this->config['input_deleteaccounttext'];
+                $this->input_deletion_confirmation = $this->config['input_deletion_confirmation'];
+                $this->input_unlock_account = $this->config['input_unlock_account'];
+                $this->input_roles = $this->config['input_roles'];
+                $this->input_phpini = $this->config['input_phpini'] ?? ''; // add fallback
+                $this->input_image_size = $this->config['input_image_size'] ?? '200';// add fallback
+                $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;// add fallback
+                $this->input_useajax = $this->config['input_useajax'] ?? 'inherit'; // add fallback
             }
+
+            // array of the names of all mail text input fields
+            $this->textareas = [
+                'input_activationtext',
+                'input_tfatext',
+                'input_remindertext',
+                'input_passwordforgottentext',
+                'input_deleteaccounttext',
+                'input_deletion_confirmation',
+                'input_unlock_account'
+            ];
+
+            // include configuration file for additional user fields for FrontendLoginRegister
+            include('config/userFields.php');
+            // create property of each user field
+            foreach ($this->userFields as $key => $value) {
+                $this->$key = $value;
+            }
+
+            // templates and pages (template name as key and page properties as assoc. array)
+            include('config/templatePages.php');
+
+            //  Include all classes with PW autoload function
+            $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/mails');
+            $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/pages');
+            $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/traits');
+
+            // set upload path for profile image
+            $this->setUploadPath($this->tmp_profile_image_dir_path);
         }
-    }
 
-    /**
-     * Send the user an information mail, that the account has been deleted
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function deleteAccount():void
-    {
+        /**
+         * Get the module info
+         * @return array
+         */
+        public static function getModuleInfo(): array
+        {
+            return [
+                'title' => 'FrontendLoginRegister',
+                'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
+                'author' => "Jürgen Kern",
+                'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
+                'version' => '1.2.6',
+                'singular' => true,
+                'autoload' => true,
+                'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.51', 'LazyCron'],
+                'icon' => 'sign-in'
+            ];
+        }
 
-        if ($this->input_delete > 0) {
-            if ($this->input_remind == 0) {
+        /**
+         * Set default values for configuration fields
+         * These values will be stored in the DB during the installation process
+         * This is necessary to get them via getModuleConfig() without saving the configuration page
+         * @return string[]
+         */
+        public static function getDefaultData(): array
+        {
+            return [
+                'input_registration' => ['3', '92'],
+                'input_profile' => ['3', '92'],
+                'input_privacy' => '2',
+                'userFields' => [],
+                'templatePages' => [],
+                'userSettings' => [],
+                'input_delete' => 3,
+                'input_remind' => 1,
+                'input_prevent_send_deletion_email' => '',
+                'input_selectlogin' => 'email',
+                'input_removeJS' => '',
+                'input_selectloginregister' => 'loginregister',
+                'input_emailTemplate' => 'inherit',
+                'input_email' => '',
+                'input_sender' => '',
+                'input_redirectSuccess' => '-1',
+                'input_tfa' => 0,
+                'input_deleteProfile' => 0,
+                'input_phpini' => '',
+                'input_image_size' => '200',
+                'input_max_filesize' => 0,
+                'input_showPrev' => 2,
+                'input_useajax' => 'inherit'
+            ];
+        }
 
-                // find all users that have not activated the account til now
+        /**
+         * initialize the Hooks
+         * @return void
+         * @throws WireException
+         */
+        public function init(): void
+        {
+            // send email to remind the user to activate the account
+            $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
+            // delete inactive accounts after a certain time
+            $this->addHookAfter('LazyCron::everyHour', $this, 'deleteAccount');
+            // set pages status to hidden on certain pages
+            $this->addHookAfter('Modules::saveConfig', $this, 'setPageStatus');
+            // set email to unique in the email field settings
+            $this->addHookAfter('Modules::saveConfig', $this, 'setEmailUnique');
+            // set email to unique in the email field settings
+            $this->addHookAfter('Modules::saveConfig', $this, 'setDeletePagesStatus');
+            // validate fields to check if the necessary fields are included
+            $this->addHookAfter('InputfieldAsmSelect::processInput', $this, 'validateFormFields');
+            // add the label "hours" next to the inputfield
+            $this->addHookAfter('InputfieldInteger::render', $this, 'addLabelsToInputfields');
+            // allow HTML tags inside the description of the inputfield_delete
+            $this->addHookBefore('InputfieldInteger::render', $this, 'insertText');
+            // write title, name and description in the page fields after adding a new translation file to a language
+            $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToPages');
+            // store the id of the page currently visited in a session - needed to get the last visited page
+            $this->addHookAfter('Page::render', $this, 'setPageVisitedSession');
+            // add javascript file to the HEAD section
+            $this->addHookAfter('Page::render', $this, 'addAssets');
+            // allow HTML tags in field notes and descriptions
+            $this->addHookBefore('Inputfield::render', $this, 'allowHTML');
+            // add description of used placeholders after the input field
+            $this->addHookAfter('Inputfield::render', $this, 'addPlaceholderInfo');
+            // add additional checkbox after import languages select
+            $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
+
+            // add CSS and JS to the backend
+            $version = $this->getModuleInfo()['version'] . '-' . time();
+            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
+
+            $this->wire->addHookBefore('Modules::saveConfig', function (HookEvent $event) {
+                $event->message("You saved the module config");
+            });
+        }
+
+        /**
+         * Send a reminder mail to the user if the account is not activated
+         * Takes the settings from the module configuration
+         * Save the timestamp of the reminding in the database
+         * @return void
+         * @throws \DOMException
+         * @throws \ProcessWire\WireException
+         */
+        protected function remindAccount(): void
+        {
+
+            if ($this->input_remind > 0) {
+                // find all users with activation code
                 $users = $this->wire('users')->find('fl_activation!=');
-            } else {
-                // find all users with reminder timestamp
-                $users = $this->wire('users')->find('fl_reminderdatetime!=');
+                foreach ($users as $user) {
+
+                    // take only user with empty fl_reminderdatetime
+                    if (!$user->fl_reminderdatetime) {
+
+                        $activation_date = $user->getUnformatted('created');
+                        $diff_time = $this->input_remind * 60 * 60 * 24;
+
+                        if ((int)$activation_date + $diff_time < time()) {
+                            // send reminder email to the user
+                            $reminder = new FrontendLoginRegisterPages('test');
+                            //set user language if languages
+                            if ($this->wire('languages')) {
+                                $this->wire('languages')->setLanguage($user->language);
+                            }
+                            if ($reminder->sendReminderMail($user)) {
+                                if ($this->input_delete > 0) {
+                                    $user->setOutputFormatting(false);
+                                    $user->fl_reminderdatetime = time();
+                                    $user->save();
+                                    $user->setOutputFormatting();
+                                }
+                            }
+                        }
+                    }
+                }
             }
+        }
 
-            foreach ($users as $user) {
+        /**
+         * Send a mail to the user, to inform him that the account has been deleted
+         * @return void
+         * @throws \DOMException
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         * @throws \DOMException
+         */
+        protected function deleteAccount(): void
+        {
 
-                if ($this->input_remind = 0) {
-                    // use created date as reminder_date
-                    $reminder_date = $user->created;
+            if ($this->input_delete > 0) {
+                if ($this->input_remind == 0) {
+
+                    // find all users that have not activated the account till now
+                    $users = $this->wire('users')->find('fl_activation!=');
                 } else {
-                    $reminder_date = $user->getUnformatted('fl_reminderdatetime');
+                    // find all users with reminder timestamp
+                    $users = $this->wire('users')->find('fl_reminderdatetime!=');
                 }
-                $diff_time = $this->input_delete * 60 * 60 * 24;
 
-                if ((int)$reminder_date + $diff_time < time()) {
-                    // send deletion confirmation email to the user
-                    $deletionconfirmation = new FrontendLoginRegisterPages('test');
-                    if ($deletionconfirmation->sendDeletionConfirmationMail($user)) {
-                        //delete the user to keep the database clean from not activated accounts
-                        wire('users')->delete($user);
+                foreach ($users as $user) {
+
+                    if ($this->input_remind = 0) {
+                        // use created date as reminder_date
+                        $reminder_date = $user->created;
+                    } else {
+                        $reminder_date = $user->getUnformatted('fl_reminderdatetime');
                     }
-                }
-            }
-        }
-    }
+                    $diff_time = $this->input_delete * 60 * 60 * 24;
 
-    /**
-     * Use magic call method to create methods for rendering all pages on the Frontend
-     * Fe $modules->get('FrontendLoginRegister')->LoginPage();
-     * @param $name
-     * @param $args
-     * @return object|null
-     * @throws WireException
-     */
-    public function __call($name, $args):?object
-    {
-        if (in_array($name, $this->getAllClasses())) {
-            $className = $this->className() . '\\' . $name;
-            return new $className();
-        }
-        return null;
-    }
-
-    /**
-     * Get all classes inside the pages folder as an assoc array with template name as key and class name as value
-     * @return array
-     * @throws WireException
-     */
-    private function getAllClasses():array
-    {
-        $files = wire('files')->find($this->wire('config')->paths->$this . 'pages');
-        $classes = [];
-        foreach ($files as $file) {
-            $className = basename($file, '.php');
-            // exclude FrontendLoginRegisterPages, which is the parent class
-            if ($className != 'FrontendLoginRegisterPages') {
-                $classes['fl_' . strtolower($className)] = $className;
-            }
-        }
-        return $classes;
-    }
-
-    /**
-     * Search the multidimensional array containing the translations for the given hash
-     * and output the text in the given language
-     * @param string $val
-     * @param array $array
-     * @return string|null
-     */
-    protected function searchMultiArray(string $val, array $array):?string
-    {
-        foreach ($array as $item) {
-            if ($item[4] == $val) {
-                return $item[1];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Make better page paths by beautifying the slug by replacing non-allowed characters
-     * @param string $text
-     * @return string
-     */
-    protected function convertUmlauts(string|null $text): string
-    {
-        if(is_null($text)){
-            return '';
-        }
-        // convert all to lowercase first
-        $text = strtolower($text);
-
-        // Replace German umlauts first
-        $text = str_replace("ä", "ae",$text);
-        $text = str_replace("ü", "ue",$text);
-        $text = str_replace("ö", "oe",$text);
-        $text = str_replace("ß", "ss",$text);
-
-        // Replace all others and output it
-        return iconv("utf-8","ASCII//TRANSLIT",$text);
-    }
-
-    /**
-     * Save the texts for a given language to the module configuration
-     * @param array $data -> array of configuration data for the module
-     * @return array
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function writeMailTexts(array $data):array
-    {
-        /* get all languages imported with their value
-        fe  'language_default' => ''
-            'language_de' => 'de'
-            'language_fi' => ''
-        */
-        $language_keys = array_filter($_POST, function($key) {
-            return str_starts_with($key, 'language_');
-        }, ARRAY_FILTER_USE_KEY);
-        /* filter out all empty values
-           fe 'language_de' => 'de'
-        */
-       $languages_added = array_filter($language_keys);
-
-        // set path to the language files
-        $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
-        // extract language name and according filename
-        foreach($languages_added as $lang_name => $file_name) {
-            $select_name = $lang_name;
-            // remove the prefix "language_" from the language name
-            $lang_name = str_replace('language_', '', $lang_name);
-
-            // check if a language file exists
-            if ($this->wire('files')->exists($path_to_mailtexts . $file_name . '.php')) {
-                include($path_to_mailtexts . $file_name . '.php');
-                if ($lang_name == 'default') {
-                    $suffix = '';
-                } else {
-                    // get the suffix for the language with the name
-                    $lang = $this->wire('languages')->get('name=' . $lang_name);
-                    $suffix = '__' . $lang->id;
-                }
-
-                // run for each textarea field
-                foreach($this->textareas as $inputfield){
-                    $textarea_name = $inputfield;
-                    $inputfield = $inputfield.$suffix;
-
-                    if((isset($_POST['mail_'.$select_name])) && ($_POST['mail_'.$select_name])){
-
-                        // check if appropriate text for this textarea exists in the language file
-                        if(isset(${$textarea_name})){
-                            // save the text of the variable to the database
-                            $data[$inputfield] = ${$textarea_name};
+                    if ((int)$reminder_date + $diff_time < time()) {
+                        // send deletion confirmation email to the user
+                        $deletionconfirmation = new FrontendLoginRegisterPages('test');
+                        if ($deletionconfirmation->sendDeletionConfirmationMail($user)) {
+                            //delete the user to keep the database clean from not activated accounts
+                            wire('users')->delete($user);
                         }
                     }
                 }
             }
         }
-        return $data;
-    }
 
-    /**
-     * Method to save title, name and description in other language(s)
-     * Method is included in the hooked addMultilangData() method
-     * Takes account of SeoMaestro field values if installed
-     * @param HookEvent $event
-     * @throws WireException
-     * @throws WirePermissionException
-     * @return void
-     */
-    protected function writeDataToPages(HookEvent $event): void
-    {
-
-        $csvFile_path = $event->arguments(0);
-
-
-        // run only if translation file of this module is processed (contains FrontendLoginRegister in path)
-        if (str_contains($csvFile_path, $this->className)) {
-
-            $language = $event->arguments(1);
-
-            //instantiate Language translator class
-            $translation = new LanguageTranslator($language);
-
-            // The nested array to hold all the arrays
-            $translations_array = [];
-
-            // Open the language file for reading
-            if (($h = fopen("$csvFile_path", "r")) !== false) {
-                // Each line in the file is converted into an individual array that we call $data
-                // The items of the array are comma separated
-                while (($data = fgetcsv($h, 1000)) !== false) {
-                    // Each individual array is being pushed into the nested array
-                    $translations_array[] = $data;
-                }
-                // Close the file
-                fclose($h);
+        /**
+         * Use magic call method to create methods for rendering all pages on the Frontend
+         * Fe $modules->get('FrontendLoginRegister')->LoginPage();
+         * @param $name
+         * @param $args
+         * @return object|null
+         * @throws WireException
+         */
+        public function __call($name, $args): ?object
+        {
+            if (in_array($name, $this->getAllClasses())) {
+                $className = $this->className() . '\\' . $name;
+                return new $className();
             }
+            return null;
+        }
 
-            // save data (label, description,..) to user fields in current language
-            $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . $this->className() . '/config/userfields.php');
-            foreach ($this->userFields as $name => $fieldproperties) {
-                //grab the field object
-                $f = $this->wire('fields')->get($name);
-                // create array of field properties that should be set and saved
-                $field_properties = ['label', 'description', 'notes'];
-                foreach ($field_properties as $property) {
-                    if ($f->$property) {
-                        ${$property} = $translation->getTranslation($textdomain, $f->$property);
-                        $property_lang = $property . $language->id;
-                        $f->set($property_lang, ${$property});
-                        $f->save($property);
-                    }
+        /**
+         * Get all classes inside the pages folder as an assoc array with template name as key and class name as value
+         * @return array
+         * @throws WireException
+         */
+        private function getAllClasses(): array
+        {
+            $files = wire('files')->find($this->wire('config')->paths->$this . 'pages');
+            $classes = [];
+            foreach ($files as $file) {
+                $className = basename($file, '.php');
+                // exclude FrontendLoginRegisterPages, which is the parent class
+                if ($className != 'FrontendLoginRegisterPages') {
+                    $classes['fl_' . strtolower($className)] = $className;
                 }
             }
+            return $classes;
+        }
 
-            // save title, body and description to the pages in the current language
-            foreach ($this->templatePages as $templateName => $properties) {
-
-                // get the title in the given language
-                $titleHash = $translation->getTextHash($properties['title']);
-                $title = $this->searchMultiArray($titleHash, $translations_array);
-
-                // get the description in the given language
-                $descriptionHash = $translation->getTextHash($properties['description']);
-                $description = $this->searchMultiArray($descriptionHash, $translations_array);
-
-                // get the body in the given language if present
-                $bodyHash = $translation->getTextHash($properties['body']);
-                $body = $this->searchMultiArray($bodyHash, $translations_array);
-
-                // add the title and the description to the page
-                $p = wire('pages')->get('template=' . $templateName);
-                $p->of(false);
-
-                if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
-                    // multi-language site
-                    if (!$p->getLanguageValue($language->id, 'title')) {
-                        $p->setLanguageValue($language->id, 'title', $title); // title
-                        $title_slug = $this->convertUmlauts($title);
-                        $p->setLanguageValue($language->id, 'name', wire('sanitizer')->pageName($title_slug)); // name
-                    }
-                    if (!$p->getLanguageValue($language->id, 'body')) {
-                        $p->setLanguageValue($language->id, 'body', $body); // body
-                    }
-                } else {
-                    // single-language site
-                    $p->title = $title;
-                    $p->name = wire('sanitizer')->pageName($title);
-                    if ($body) {
-                        $p->body = $body;
-                    }
+        /**
+         * Search the multidimensional array containing the translations for the given hash
+         * and output the text in the given language
+         * @param string $val
+         * @param array $array
+         * @return string|null
+         */
+        protected function searchMultiArray(string $val, array $array): ?string
+        {
+            foreach ($array as $item) {
+                if ($item[4] == $val) {
+                    return $item[1];
                 }
-                $seo = Form::getSeoMaestro();
-                //check if SeoMaestro is installed
-                if (($seo) && ($seo->name)) {
+            }
+            return null;
+        }
 
-                    // values will be always set to the given user language
-                    if ($title) {
+        /**
+         * Make better page paths by beautifying the slug by replacing non-allowed characters
+         * @param string|null $text
+         * @return string
+         */
+        protected function convertUmlauts(string|null $text): string
+        {
+            if (is_null($text)) {
+                return '';
+            }
+            // convert all to lowercase first
+            $text = strtolower($text);
 
-                        if ($p->$seo->seo_meta_title != 'inherit') {
-                            if ((!$p->$seo->meta->title) || ($p->$seo->meta->title == $p->$seo->meta_title)) {
-                                $p->$seo->meta->title = $title;
-                            }
-                        }
+            // Replace German umlauts first
+            $text = str_replace("ä", "ae", $text);
+            $text = str_replace("ü", "ue", $text);
+            $text = str_replace("ö", "oe", $text);
+            $text = str_replace("ß", "ss", $text);
 
-                        if ($p->$seo->seo_opengraph_title != 'inherit') {
-                            if ((!$p->$seo->opengraph->title) || ($p->$seo->opengraph->title == $p->$seo->opengraph_title)) {
-                                $p->$seo->opengraph->title = $title;
-                            }
-                        }
+            // Replace all others and output it
+            return iconv("utf-8", "ASCII//TRANSLIT", $text);
+        }
 
+        /**
+         * Save the texts for a given language to the module configuration
+         * @param array $data -> array of configuration data for the module
+         * @return array
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        protected function writeMailTexts(array $data): array
+        {
+            /* get all languages imported with their value
+            fe  'language_default' => ''
+                'language_de' => 'de'
+                'language_fi' => ''
+            */
+            $language_keys = array_filter($_POST, function ($key) {
+                return str_starts_with($key, 'language_');
+            }, ARRAY_FILTER_USE_KEY);
+            /* filter out all empty values
+               fe 'language_de' => 'de'
+            */
+            $languages_added = array_filter($language_keys);
+
+            // set the path to the language files
+            $path_to_mailtexts = $this->wire('config')->paths->$this . 'mailtexts/';
+            // extract language name and according filename
+            foreach ($languages_added as $lang_name => $file_name) {
+                $select_name = $lang_name;
+                // remove the prefix "language_" from the language name
+                $lang_name = str_replace('language_', '', $lang_name);
+
+                // check if a language file exists
+                if ($this->wire('files')->exists($path_to_mailtexts . $file_name . '.php')) {
+                    include($path_to_mailtexts . $file_name . '.php');
+                    if ($lang_name == 'default') {
+                        $suffix = '';
+                    } else {
+                        // get the suffix for the language with the name
+                        $lang = $this->wire('languages')->get('name=' . $lang_name);
+                        $suffix = '__' . $lang->id;
                     }
-                    if ($description) {
-                        // add description if not present, or it is the same description as the default language description
-                        if ($p->$seo->seo_meta_description != 'inherit') {
-                            if ((!$p->$seo->meta->description) || ($p->$seo->meta->description == $p->$seo->meta_description)) {
-                                $p->$seo->meta->description = $description;
-                            }
-                        }
-                        if ($p->$seo->seo_opengraph_description != 'inherit') {
-                            if ((!$p->$seo->opengraph->description) || ($p->$seo->opengraph->description == $p->$seo->opengraph_description)) {
-                                $p->$seo->opengraph->description = $description;
+
+                    // run for each textarea field
+                    foreach ($this->textareas as $inputfield) {
+                        $textarea_name = $inputfield;
+                        $inputfield = $inputfield . $suffix;
+
+                        if ((isset($_POST['mail_' . $select_name])) && ($_POST['mail_' . $select_name])) {
+
+                            // check if an appropriate text for this textarea exists in the language file
+                            if (isset(${$textarea_name})) {
+                                // save the text of the variable to the database
+                                $data[$inputfield] = ${$textarea_name};
                             }
                         }
                     }
                 }
-                $p->save();
-                $p->of(true);
             }
-            // save the texts for the mails in the given language if present
-            $data = $this->writeMailTexts($this->config);
-            wire('modules')->saveConfig($this, $data);
+            return $data;
         }
-    }
 
-    /**
-     * Store the id of the currently visited page inside the session prevPage
-     * Only pages which are on the frontend will be considered (no admin pages)
-     * Will be used for redirection after successful login if "redirect to previous page" was selected
-     * @param HookEvent $event
-     * @return void
-     * @throws WireException
-     */
-    public function setPageVisitedSession(HookEvent $event):void
-    {
-        $page = $event->object;
-        //template of pages, which should be not tracked if they are visited
-        $notTrackedPages = ['fl_loginpage', 'fl_logoutpage'];
-        // check if page is a frontend page
-        if (($page->rootParent->id != 2) && (!in_array($page->template->name, $notTrackedPages))) {
-            wire('session')->set('prevPage', $page->id);
+        /**
+         * Method to save title, name and description in other language(s)
+         * Method is included in the hooked addMultilangData() method
+         * Takes account of SeoMaestro field values if installed
+         * @param HookEvent $event
+         * @return void
+         * @throws WirePermissionException
+         * @throws WireException
+         */
+        protected function writeDataToPages(HookEvent $event): void
+        {
+
+            $csvFile_path = $event->arguments(0);
+
+            // run only if the translation file of this module is processed (contains FrontendLoginRegister in the path)
+            if (str_contains($csvFile_path, $this->className)) {
+
+                $language = $event->arguments(1);
+
+                //instantiate Language translator class
+                $translation = new LanguageTranslator($language);
+
+                // The nested array to hold all the arrays
+                $translations_array = [];
+
+                // Open the language file for reading
+                if (($h = fopen("$csvFile_path", "r")) !== false) {
+                    // Each line in the file is converted into an individual array that we call $data
+                    // The items of the array are comma separated
+                    while (($data = fgetcsv($h, 1000)) !== false) {
+                        // Each individual array is being pushed into the nested array
+                        $translations_array[] = $data;
+                    }
+                    // Close the file
+                    fclose($h);
+                }
+
+                // save data (label, description,..) to user fields in current language
+                $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . $this->className() . '/config/userfields.php');
+                foreach ($this->userFields as $name => $fieldproperties) {
+                    //grab the field object
+                    $f = $this->wire('fields')->get($name);
+                    // create an array of field properties that should be set and saved
+                    $field_properties = ['label', 'description', 'notes'];
+                    foreach ($field_properties as $property) {
+                        if ($f->$property) {
+                            ${$property} = $translation->getTranslation($textdomain, $f->$property);
+                            $property_lang = $property . $language->id;
+                            $f->set($property_lang, ${$property});
+                            $f->save($property);
+                        }
+                    }
+                }
+
+                // save title, body and description to the pages in the current language
+                foreach ($this->templatePages as $templateName => $properties) {
+
+                    // get the title in the given language
+                    $titleHash = $translation->getTextHash($properties['title']);
+                    $title = $this->searchMultiArray($titleHash, $translations_array);
+
+                    // get the description in the given language
+                    $descriptionHash = $translation->getTextHash($properties['description']);
+                    $description = $this->searchMultiArray($descriptionHash, $translations_array);
+
+                    // get the body in the given language if present
+                    $bodyHash = $translation->getTextHash($properties['body']);
+                    $body = $this->searchMultiArray($bodyHash, $translations_array);
+
+                    // add the title and the description to the page
+                    $p = wire('pages')->get('template=' . $templateName);
+                    $p->of(false);
+
+                    if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
+                        // multi-language site
+                        if (!$p->getLanguageValue($language->id, 'title')) {
+                            $p->setLanguageValue($language->id, 'title', $title); // title
+                            $title_slug = $this->convertUmlauts($title);
+                            $p->setLanguageValue($language->id, 'name', wire('sanitizer')->pageName($title_slug)); // name
+                        }
+                        if (!$p->getLanguageValue($language->id, 'body')) {
+                            $p->setLanguageValue($language->id, 'body', $body); // body
+                        }
+                    } else {
+                        // single-language site
+                        $p->title = $title;
+                        $p->name = wire('sanitizer')->pageName($title);
+                        if ($body) {
+                            $p->body = $body;
+                        }
+                    }
+                    $seo = Form::getSeoMaestro();
+                    //check if SeoMaestro is installed
+                    if (($seo) && ($seo->name)) {
+
+                        // values will always be set to the given user language
+                        if ($title) {
+
+                            if ($p->$seo->seo_meta_title != 'inherit') {
+                                if ((!$p->$seo->meta->title) || ($p->$seo->meta->title == $p->$seo->meta_title)) {
+                                    $p->$seo->meta->title = $title;
+                                }
+                            }
+
+                            if ($p->$seo->seo_opengraph_title != 'inherit') {
+                                if ((!$p->$seo->opengraph->title) || ($p->$seo->opengraph->title == $p->$seo->opengraph_title)) {
+                                    $p->$seo->opengraph->title = $title;
+                                }
+                            }
+
+                        }
+                        if ($description) {
+                            // add description if not present, or it is the same description as the default language description
+                            if ($p->$seo->seo_meta_description != 'inherit') {
+                                if ((!$p->$seo->meta->description) || ($p->$seo->meta->description == $p->$seo->meta_description)) {
+                                    $p->$seo->meta->description = $description;
+                                }
+                            }
+                            if ($p->$seo->seo_opengraph_description != 'inherit') {
+                                if ((!$p->$seo->opengraph->description) || ($p->$seo->opengraph->description == $p->$seo->opengraph_description)) {
+                                    $p->$seo->opengraph->description = $description;
+                                }
+                            }
+                        }
+                    }
+                    $p->save();
+                    $p->of(true);
+                }
+                // save the texts for the mails in the given language if present
+                $data = $this->writeMailTexts($this->config);
+                wire('modules')->saveConfig($this, $data);
+            }
         }
-    }
 
-    /**
-     * Add JavaScript and CSS file to the frontend
-     * @param HookEvent $event
-     * @return void
-     */
-    public function addAssets(HookEvent $event):void
-    {
-        $page = $event->object;
+        /**
+         * Store the id of the currently visited page inside the session prevPage
+         * Only pages which are on the frontend will be considered (no admin pages)
+         * Will be used for redirection after successful login if "redirect to previous page" was selected
+         * @param HookEvent $event
+         * @return void
+         * @throws WireException
+         */
+        public function setPageVisitedSession(HookEvent $event): void
+        {
+            $page = $event->object;
+            //template of pages, which should be not tracked if they are visited
+            $notTrackedPages = ['fl_loginpage', 'fl_logoutpage'];
+            // check if page is a frontend page
+            if (($page->rootParent->id != 2) && (!in_array($page->template->name, $notTrackedPages))) {
+                wire('session')->set('prevPage', $page->id);
+            }
+        }
+
+        /**
+         * Add JavaScript and CSS file to the frontend
+         * @param HookEvent $event
+         * @return void
+         */
+        public function addAssets(HookEvent $event): void
+        {
+            $page = $event->object;
             $assets = wire('config')->urls->siteModules . $this->className() . '/';
             $js = '';
             // load only on frontend
@@ -653,872 +649,862 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
                 // TODO
                 $this->input_removeCSS = false;
                 if (!$this->input_removeCSS) {
-                    $css = '<link rel="stylesheet" type="text/css" href="' . $assets . $this->className().'.css"/>' . PHP_EOL;
+                    $css = '<link rel="stylesheet" type="text/css" href="' . $assets . $this->className() . '.css"/>' . PHP_EOL;
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
                 }
             }
             $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
-    }
-
-    /**
-     * Allow HTML tags in notes and description texts of fields mentioned in the array $field_names
-     * @param HookEvent $event
-     * @return void
-     */
-    protected function allowHTML(HookEvent $event):void
-    {
-        $field = $event->object;
-        // names of all fields where HTML tags are allowed in description and notes
-        $field_names = [
-            'input_activationtext',
-            'input_tfatext',
-            'input_remindertext',
-            'input_passwordforgottentext',
-            'input_deleteaccounttext',
-            'input_deletion_confirmation',
-            'input_unlock_account'
-        ];
-        if (in_array($field->name, $field_names)) {
-            $field->entityEncodeText = false;
         }
-    }
 
-    /**
-     * Add additional information about the placeholders used at the email templates
-     * @param HookEvent $event
-     * @return void
-     */
-    protected function addPlaceholderInfo(HookEvent $event): void
-    {
-        $field = $event->object;
-
-        // An 'after' hook can retrieve and/or modify the return value
-        $return = $event->return;
-
-
-        // add the additional text
-        if ($field->info) {
-            $placeholder_list = '<h3>' . $this->_('Description of the placeholders used') . ':</h3>';
-            $placeholder_list .= '<ul class"ph-info ">';
-            foreach ($field->info as $ph_name => $ph_desc) {
-                $placeholder_list .= '<li class="description">' . $ph_name . ': ' . $ph_desc . '</li>';
+        /**
+         * Allow HTML tags in notes and description texts of fields mentioned in the array $field_names
+         * @param HookEvent $event
+         * @return void
+         */
+        protected function allowHTML(HookEvent $event): void
+        {
+            $field = $event->object;
+            // names of all fields where HTML tags are allowed in description and notes
+            $field_names = [
+                'input_activationtext',
+                'input_tfatext',
+                'input_remindertext',
+                'input_passwordforgottentext',
+                'input_deleteaccounttext',
+                'input_deletion_confirmation',
+                'input_unlock_account'
+            ];
+            if (in_array($field->name, $field_names)) {
+                $field->entityEncodeText = false;
             }
-            $placeholder_list .= '</ul>';
-            $return = $return . $placeholder_list;
         }
 
-        // Populate back return value, if you have modified it
-        $event->return = $return;
-    }
+        /**
+         * Add additional information about the placeholders used at the email templates
+         * @param HookEvent $event
+         * @return void
+         */
+        protected function addPlaceholderInfo(HookEvent $event): void
+        {
+            $field = $event->object;
 
+            // An 'after' hook can retrieve and/or modify the return value
+            $return = $event->return;
 
-    /**
-     * Method to append an HTML string to the DOM object
-     * @param DOMNode $parent
-     * @param string $source
-     * @return void
-     */
-    protected function appendHTML(DOMNode $parent, string $source): void
-    {
-        $tmpDoc = new DOMDocument();
-        $tmpDoc->loadHTML($source);
-        foreach ($tmpDoc->getElementsByTagName('body')->item(0)->childNodes as $node) {
-            $node = $parent->ownerDocument->importNode($node, true);
-            $parent->appendChild($node);
+            // add the additional text
+            if ($field->info) {
+                $placeholder_list = '<h3>' . $this->_('Description of the placeholders used') . ':</h3>';
+                $placeholder_list .= '<ul class"ph-info ">';
+                foreach ($field->info as $ph_name => $ph_desc) {
+                    $placeholder_list .= '<li class="description">' . $ph_name . ': ' . $ph_desc . '</li>';
+                }
+                $placeholder_list .= '</ul>';
+                $return = $return . $placeholder_list;
+            }
+
+            // Populate back return value if you have modified it
+            $event->return = $return;
         }
-    }
 
-    /**
-     * Add a checkbox to the language import form
-     * @param HookEvent $event
-     * @return void
-     * @throws WireException|DOMException
-     */
-    protected function addCheckbox(HookEvent $event):void
-    {
 
-        $qstring = $this->wire('input')->queryStringClean(['validNames' => ['name']]);
-        $name = explode('=', $qstring)[1];
+        /**
+         * Method to append an HTML string to the DOM object
+         * @param DOMNode $parent
+         * @param string $source
+         * @return void
+         */
+        protected function appendHTML(DOMNode $parent, string $source): void
+        {
+            $tmpDoc = new DOMDocument();
+            $tmpDoc->loadHTML($source);
+            foreach ($tmpDoc->getElementsByTagName('body')->item(0)->childNodes as $node) {
+                $node = $parent->ownerDocument->importNode($node, true);
+                $parent->appendChild($node);
+            }
+        }
 
-        $form = $event->return;
+        /**
+         * Add a checkbox to the language import form
+         * @param HookEvent $event
+         * @return void
+         * @throws WireException|DOMException
+         */
+        protected function addCheckbox(HookEvent $event): void
+        {
 
-        // run only on this module
-        if ($name == 'FrontendLoginRegister') {
+            $qstring = $this->wire('input')->queryStringClean(['validNames' => ['name']]);
+            $name = explode('=', $qstring)[1];
 
-            // get all language select
+            $form = $event->return;
 
-            $dom = new DOMDocument;
-            $dom->loadHTML($form);
+            // run only on this module
+            if ($name == 'FrontendLoginRegister') {
 
-            foreach ($dom->getElementsByTagName('select') as $tag) {
+                // get all languages select
+                $dom = new DOMDocument;
+                $dom->loadHTML($form);
 
-                // get the name attribute
-                $name = $tag->getAttribute('name');
+                foreach ($dom->getElementsByTagName('select') as $tag) {
 
-                // create the checkbox
-                $f = $event->wire('modules')->InputfieldCheckbox;
-                $f->name = 'mail_' . $name;
-                $f->attr('style', 'margin-right: 15px');
-                $f->label = $this->_('Import the text for the emails too if they are available in the given language.') . ' ';
-                $field = $f->render();
+                    // get the name attribute
+                    $name = $tag->getAttribute('name');
 
-                $wrapper = $dom->createElement('div');
-                $wrapper->setAttribute('style', 'margin-top: 15px');
-                $tag->parentNode->insertBefore($wrapper, $tag);
+                    // create the checkbox
+                    $f = $event->wire('modules')->InputfieldCheckbox;
+                    $f->name = 'mail_' . $name;
+                    $f->attr('style', 'margin-right: 15px');
+                    $f->label = $this->_('Import the text for the emails too if they are available in the given language.') . ' ';
+                    $field = $f->render();
 
-                if ($tag->nextSibling === null) {
-                    $tag->parentNode->appendChild($wrapper);
-                } else {
-                    $tag->parentNode->insertBefore($wrapper, $tag->nextSibling);
+                    $wrapper = $dom->createElement('div');
+                    $wrapper->setAttribute('style', 'margin-top: 15px');
+                    $tag->parentNode->insertBefore($wrapper, $tag);
+
+                    if ($tag->nextSibling === null) {
+                        $tag->parentNode->appendChild($wrapper);
+                    } else {
+                        $tag->parentNode->insertBefore($wrapper, $tag->nextSibling);
+                    }
+
+                    $field_div = $dom->createElement('div');
+                    $this->appendHTML($field_div, $field); // append the checkbox
+
+                    $wrapper->append($field_div);
+
+                    // add notes
+                    $notes = $dom->createElement('p',
+                        $this->_('Please note: This will overwrite all of your previous entered texts for the emails in the given language.'));
+                    $notes->setAttribute('class', 'notes');
+
+                    if ($wrapper->nextSibling === null) {
+                        $wrapper->parentNode->appendChild($notes);
+                    } else {
+                        $wrapper->parentNode->insertBefore($notes, $tag->nextSibling);
+                    }
+
                 }
-
-                $field_div = $dom->createElement('div');
-                $this->appendHTML($field_div, $field); // append the checkbox
-
-                $wrapper->append($field_div);
-
-                // add notes
-                $notes = $dom->createElement('p',
-                    $this->_('Please note: This will overwrite all of your previous entered texts for the emails in the given language.'));
-                $notes->setAttribute('class', 'notes');
-
-                if ($wrapper->nextSibling === null) {
-                    $wrapper->parentNode->appendChild($notes);
-                } else {
-                    $wrapper->parentNode->insertBefore($notes, $tag->nextSibling);
-                }
+                $form = $dom->saveHTML();
 
             }
-            $form = $dom->saveHTML();
 
+            $event->return = $form;
         }
 
-        $event->return = $form;
-    }
+        /**
+         * Create settings for the module
+         * @param InputfieldWrapper $inputfields
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        public function getModuleConfigInputfields(InputfieldWrapper $inputfields): void
+        {
 
-    /**
-     * Create settings for the module
-     * @param InputfieldWrapper $inputfields
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    public function getModuleConfigInputfields(InputfieldWrapper $inputfields):void
-    {
+            $modules = $this->wire()->modules;
 
-        $modules = $this->wire()->modules;
+            // General settings
+            $generalfieldset = $modules->get('InputfieldFieldset');
+            $generalfieldset->icon = 'fa-cog';
+            $generalfieldset->label = $this->_('General settings');
+            $generalfieldset->collapsed = 1;
 
+            // select if you want to create login only or login and registration
+            $loginSelect = $modules->get('InputfieldSelect');
+            $loginSelect->label = $this->_('Login/registration');
+            $loginSelect->description = $this->_('Choose whether you want a user login only or you want to offer the possibility of registration too.');
+            $loginSelect->attr('name', 'input_selectloginregister');
+            $loginSelect->addOptions([
+                'loginregister' => $this->_('Login and registration'),
+                'login' => $this->_('Login only')
+            ]);
+            $loginSelect->attr('value', $this->input_selectloginregister);
+            $loginSelect->notes = $this->_('By selecting "Login only", the registration and activation page will be disabled.');
+            $loginSelect->required = 1;
 
+            $generalfieldset->add($loginSelect);
 
-        // General settings
-        $generalfieldset = $modules->get('InputfieldFieldset');
-        $generalfieldset->icon = 'fa-cog';
-        $generalfieldset->label = $this->_('General settings');
-        $generalfieldset->collapsed = 1;
+            // select if you want to use Ajax for form submission
+            $ajaxSelect = $modules->get('InputfieldSelect');
+            $ajaxSelect->label = $this->_('Ajax setting');
+            $ajaxSelect->description = $this->_('Choose whether you want to use Ajax form submission or not.');
+            if ($this->needUpdate) {
+                $ajaxSelect->notes = $this->_('Your version of FrontendForms does not support Ajax form submission. In order to use Ajax form submission, you need to update FrontendForms to the latest version.');
+                $ajaxSelect->attr('disabled', 'disabled');
+            }
+            $ajaxSelect->attr('name', 'input_useajax');
+            $ajaxSelect->addOptions([
+                'inherit' => $this->_('Inherit from FrontendForms'),
+                '1' => $this->_('Yes'),
+                '0' => $this->_('No')
+            ]);
+            $ajaxSelect->attr('value', $this->input_useajax);
+            $ajaxSelect->required = 1;
+            $generalfieldset->add($ajaxSelect);
 
-        // select if you want to create login only or login and registration
-        $loginSelect = $modules->get('InputfieldSelect');
-        $loginSelect->label = $this->_('Login/registration');
-        $loginSelect->description = $this->_('Choose whether you want a user login only or you want to offer the possibility of registration too.');
-        $loginSelect->attr('name', 'input_selectloginregister');
-        $loginSelect->addOptions([
-            'loginregister' => $this->_('Login and registration'),
-            'login' => $this->_('Login only')
-        ]);
-        $loginSelect->attr('value', $this->input_selectloginregister);
-        $loginSelect->notes = $this->_('By selecting "Login only", the registration and activation page will be disabled.');
-        $loginSelect->required = 1;
+            $inputfields->add($generalfieldset);
 
-        $generalfieldset->add($loginSelect);
+            // Login settings
+            $loginfieldset = $modules->get('InputfieldFieldset');
+            $loginfieldset->label = $this->_('Login settings');
+            $loginfieldset->icon = 'fa-sign-in';
+            $loginfieldset->collapsed = 1;
 
-        // select if you want to use Ajax for form submission
-        $ajaxSelect = $modules->get('InputfieldSelect');
-        $ajaxSelect->label = $this->_('Ajax setting');
-        $ajaxSelect->description = $this->_('Choose whether you want to use Ajax form submission or not.');
-        if($this->needUpdate){
-            $ajaxSelect->notes = $this->_('Your version of FrontendForms does not support Ajax form submission. In order to use Ajax form submission, you need to update FrontendForms to the latest version.');
-            $ajaxSelect->attr('disabled', 'disabled');
-        }
-        $ajaxSelect->attr('name', 'input_useajax');
-        $ajaxSelect->addOptions([
-            'inherit' => $this->_('Inherit from FrontendForms'),
-            '1' => $this->_('Yes'),
-            '0' => $this->_('No')
-        ]);
-        $ajaxSelect->attr('value', $this->input_useajax);
-        $ajaxSelect->required = 1;
-        $generalfieldset->add($ajaxSelect);
+            // select if you want to log in with username and pass or email and pass
+            $loginSelect = $modules->get('InputfieldSelect');
+            $loginSelect->label = $this->_('Userdata for login');
+            $loginSelect->attr('name', 'input_selectlogin');
+            $loginSelect->addOptions([
+                'email' => $this->_('Login with email and password'),
+                'username' => $this->_('Login with username and password')
+            ]);
+            $loginSelect->attr('value', $this->input_selectlogin);
+            $loginSelect->required = 1;
+            $loginSelect->description = $this->_('Select your preferred login type.');
+            $loginSelect->columnWidth = 33;
+            $loginfieldset->add($loginSelect);
 
-        $inputfields->add($generalfieldset);
-
-        // Login settings
-        $loginfieldset = $modules->get('InputfieldFieldset');
-        $loginfieldset->label = $this->_('Login settings');
-        $loginfieldset->icon = 'fa-sign-in';
-        $loginfieldset->collapsed = 1;
-
-        // select if you want to log in with username and pass or email and pass
-        $loginSelect = $modules->get('InputfieldSelect');
-        $loginSelect->label = $this->_('Userdata for login');
-        $loginSelect->attr('name', 'input_selectlogin');
-        $loginSelect->addOptions([
-            'email' => $this->_('Login with email and password'),
-            'username' => $this->_('Login with username and password')
-        ]);
-        $loginSelect->attr('value', $this->input_selectlogin);
-        $loginSelect->required = 1;
-        $loginSelect->description = $this->_('Select your preferred login type.');
-        $loginSelect->columnWidth = 33;
-        $loginfieldset->add($loginSelect);
-
-        // select where you want to redirect after successful login
-        $redirectSuccess = $modules->get('InputfieldSelect');
-        $redirectSuccess->label = $this->_('Redirection');
-        $redirectSuccess->attr('name', 'input_redirectSuccess');
-        $redirectSuccess->addOption(-1, $this->_('Redirect to the previous visited page'));
-        // get all IDs of the pages that were created by this module, because these pages should be excluded
-        $templates = [];
-        $templatePages = $this->templatePages;
-        unset($templatePages['fl_profilepage']);
-        // allow the profile template
-        foreach ($templatePages as $templateName => $properties) {
-            $templates[] = $templateName;
-        }
-        $templateNames = implode('|', $templates);
-        foreach (wire('pages')->find('has_parent!=2,id!=2|7,template!=' . $templateNames . ',status<' . Page::statusTrash . ',include=all') as $page) {
-            $redirectSuccess->addOption($page->id, $page->title);
-        }
-        $redirectSuccess->attr('value', $this->input_redirectSuccess);
-        $redirectSuccess->required = 1;
-        $redirectSuccess->description = $this->_('Select the page where you want to redirect after successful login.');
-        $redirectSuccess->columnWidth = 33;
-        $loginfieldset->add($redirectSuccess);
-
-        // Enable or disable 2-factor authentication if installed
-        $useTFA = $modules->get('InputfieldCheckbox');
-        $useTFA->attr('name', 'input_tfa');
-        $useTFA->attr('checked', $this->input_tfa == '1' ? 'checked' : '');
-        $useTFA->label = $this->_('2-factor authentication');
-        $useTFA->label2 = $this->_('Enable 2-factor authentication');
-        $useTFA->description = $this->_('If the box is checked, then TfaEmail will be used as 2-factor authentication.');
-        // check if TfaEmail is installed
-        if (!wire('modules')->isInstalled('TfaEmail')) {
-            // https://processwire.com/modules/tfa-email/
-            $useTFA->notes = sprintf($this->_('TfaEmail is not installed. To use this feature you have to download and install %s first.'),
-                '[TfaEmail](https://processwire.com/modules/tfa-email/)');
-            $useTFA->attr('disabled', 'disabled');
-        } else {
-            $useTFA->notes = $this->_('TfaEmail is installed. For higher security it is recommended to use 2-factor authentication.');
-        }
-        $useTFA->columnWidth = 34;
-        $loginfieldset->add($useTFA);
-        $inputfields->add($loginfieldset);
-
-        //grab user fields from user template
-        $fields = wire('templates')->get('user')->fieldgroup;
-        // add title field to the fields, if username is chosen
-        $fields[] = 'title';
-
-        // Registration settings
-        $registrationfieldset = $modules->get('InputfieldFieldset');
-        $registrationfieldset->label = $this->_('Registration settings');
-        $registrationfieldset->icon = 'fa-th-list';
-        $registrationfieldset->showIf = "input_selectloginregister=loginregister";
-        $registrationfieldset->collapsed = 1;
-
-
-        // select after which time should the user be remembered to activate his account
-        $remember = $modules->get('InputfieldInteger');
-        $remember->label = $this->_('Sending reminder email');
-        $remember->attr('name', 'input_remind');
-        $remember->attr('value', $this->input_remind);
-        $remember->description = $this->_('Enter a period of time in days after which an email will be sent to the user to remind him to activate his account, if the activation is still pending.');
-        $remember->notes = $this->_('If you want to disable this feature, set the value to 0.');
-        $remember->required = 1;
-        $remember->min = 0;
-        $remember->inputType = 'number';
-        $remember->columnWidth = 34;
-        $registrationfieldset->add($remember);
-
-
-        // select after which time should the user be remembered to activate his account
-        $delete = $modules->get('InputfieldInteger');
-        $delete->label = $this->_('Delete inactive account');
-        $delete->attr('name', 'input_delete');
-        $delete->attr('value', $this->input_delete);
-        $delete->description = sprintf($this->_('Enter a period of time in days after which the user account will be deleted %s and the account verification is still pending.'),
-            '<span id="reminder-mail-text">' . $this->_(', after the reminder mail has been sent') . '</span>');
-        $delete->notes = $this->_('If you want to disable this feature, set the value to 0.');
-        $delete->required = 1;
-        $delete->min = 0;
-        $delete->inputType = 'number';
-        $delete->columnWidth = 33;
-        $registrationfieldset->add($delete);
-
-        // Enable or disable sending of email after user account has been deleted
-        $prevent_send_deletion_email = $modules->get('InputfieldCheckbox');
-        $prevent_send_deletion_email->attr('name', 'input_prevent_send_deletion_email');
-        $prevent_send_deletion_email->attr('checked', $this->input_prevent_send_deletion_email == '1' ? 'checked' : '');
-        $prevent_send_deletion_email->label = $this->_('Disable sending of the deletion confirmation email');
-        $prevent_send_deletion_email->label2 = $this->_('Disable sending the email');
-        $prevent_send_deletion_email->description = $this->_('Usually a user will be informed via email after his unverified account has been deleted. By checking the box, the sending of the email after account deletion will be disabled.');
-        $prevent_send_deletion_email->showIf = 'input_delete>0';
-        $prevent_send_deletion_email->columnWidth = 33;
-        $registrationfieldset->add($prevent_send_deletion_email);
-
-
-        // Roles field
-        $addRoles = $this->modules->get('InputfieldCheckboxes');
-        $addRoles->label = $this->_('Roles');
-        $addRoles->description = $this->_('Select the role(s) which should be added to newly registered users.');
-        $addRoles->name = 'input_roles';
-        // get all roles except superuser and guest
-        $roles = wire('roles')->find('name!=superuser|guest');
-        foreach ($roles as $role) {
-            $addRoles->addOption($role->id, $role->name);
-        }
-        $addRoles->value = $this->input_roles;
-        $addRoles->columnWidth = 33;
-        $registrationfieldset->add($addRoles);
-
-        // select which fields should be shown on the registration form
-        $registrationFields = $this->createFrontendFields('registration', $fields, 50);
-        $registrationFields->description = $this->_('Please select which fields should be displayed on the frontend registration form.');
-        $registrationFields->columnWidth = 33;
-        $registrationfieldset->add($registrationFields);
-
-        // privacy field on registratio form
-        $privacy_show = $this->wire()->modules->get('InputfieldSelect');
-        $privacy_show->label = $this->_('Add privacy text or privacy checkbox to the form');
-        $privacy_show->description = $this->_('Select if you want to show a privacy text only or a privacy checkbox above the submit button');
-        $options = [
-            $this->_('Do not show anything'),
-            $this->_('Show checkbox'),
-            $this->_('Show text')
-        ];
-        $privacy_show->addOptions($options);
-        $privacy_show->defaultValue = '2';
-        $privacy_show->attr('value', $this->input_privacy);
-        $privacy_show->attr('name', 'input_privacy');
-        $privacy_show->notes = $this->_('You can disable the display of the privacy text/checkbox, but you should be aware that this may lead to legal consequences if a privacy notice is required in your country.');
-        $privacy_show->columnWidth = 33;
-        $registrationfieldset->add($privacy_show);
-
-        $inputfields->add($registrationfieldset);
-
-        // Profile settings
-        $profilefieldset = $modules->get('InputfieldFieldset');
-        $profilefieldset->label = $this->_('Account settings');
-        $profilefieldset->icon = 'fa-user-circle-o';
-        $profilefieldset->collapsed = 1;
-
-        $deleteProfile = $this->modules->get('InputfieldCheckbox');
-        $deleteProfile->label = $this->_('Account deletion');
-        $deleteProfile->checkboxLabel = $this->_('Allow users to delete their account');
-        $deleteProfile->description = $this->_('If the box is checked, the user gets the opportunity to delete his account on his profile page if he is logged in.');
-        $deleteProfile->attr('name', 'input_deleteProfile');
-        $deleteProfile->columnWidth = 50;
-        $deleteProfile->attr('checked', $this->input_deleteProfile == '1' ? 'checked' : '');
-        $profilefieldset->add($deleteProfile);
-
-
-        $profileFields = $this->createFrontendFields('profile', $fields, 50);
-        $profileFields->description = $this->_('Please select which fields should be displayed on the frontend profile form.');
-        $profilefieldset->add($profileFields);
-        $inputfields->add($profilefieldset);
-
-        // Email text fields
-        $email_text_fieldset = $modules->get('InputfieldFieldset');
-        $email_text_fieldset->icon = 'fa-comment';
-        $email_text_fieldset->label = $this->_('Texts for the mails that are sent with this module');
-        $email_text_fieldset->description = $this->_('These fields contain the texts for the emails which will be send by this module. You can adapt them to your needs.');
-        $email_text_fieldset->collapsed = 1;
-
-        /* Text for the email containing the activation link after user has been registered for an account */
-        $activationemail = $modules->get('InputfieldCKEditor');
-        $activationemail->label = $this->_('Text for the verification email');
-        $activationemail->attr('name', 'input_activationtext');
-        $activationemail->attr('value', $this->input_activationtext);
-        $activationemail->useLanguages = true;
-        $activationemail->description = $this->_('Please enter the text for the confirmation email in which the user will receive a confirmation link to activate his account.');
-        $activationemail->info = [
-            '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
-            '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
-            '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
-            '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.'),
-        ];
-        $activation_notes = $this->_('You can adapt the text to your needs, but the placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
-        $activation_notes .= '<br>' . $this->_('All other placeholders are optional.');
-        $activationemail->notes = $activation_notes;
-        $activationemail->addTextAfterNotes = 'test';
-        $activationemail->required = 1;
-        $email_text_fieldset->add($activationemail);
-
-
-        /* Text for the email containing the TFA code if TFA is enabled */
-        $tfamail = $modules->get('InputfieldCKEditor');
-        $tfamail->label = $this->_('Text for the email including the TFA code');
-        $tfamail->attr('name', 'input_tfatext');
-        $tfamail->attr('value', $this->input_tfatext);
-        $tfamail->useLanguages = true;
-        $tfamail->description = $this->_('Enter the text for the email which contains the TFA code if TFA is enabled.');
-        $tfamail->info = [
-            '[[TFACODE]]' => $this->_('The TFA-code, that has to be entered on the login form to log.'),
-            '[[EXPIRATIONTIME]]' => $this->_('The time the code is valid including the unit (fe 5 minutes).')
-        ];
-        $tfamail_notes = $this->_('The placeholder [[TFACODE]] must be present inside the text, because it contains the TFA code.');
-        $tfamail_notes .= '<br>' . $this->_('All other placeholders are optional.');
-        $tfamail->notes = $tfamail_notes;
-        $tfamail->required = 1;
-        $email_text_fieldset->add($tfamail);
-
-        /* Text for the email to remain a user to activate his account */
-        $reminderemail = $modules->get('InputfieldCKEditor');
-        $reminderemail->label = $this->_('Text for the reminder email');
-        $reminderemail->attr('name', 'input_remindertext');
-        $reminderemail->attr('value', $this->input_remindertext);
-        $reminderemail->description = $this->_('Enter the text for the reminder email, which will be send to the user if the account verification is still pending.');
-        $reminderemail->info = [
-            '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
-            '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
-            '[[DELETEDATE]]' => $this->_('The date where an unverified account will be deleted.'),
-            '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
-            '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.')
-        ];
-        $reminderemail_notes = $this->_('The placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
-        $reminderemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
-        $reminderemail->notes = $reminderemail_notes;
-        $reminderemail->useLanguages = true;
-        $reminderemail->required = 1;
-        $email_text_fieldset->add($reminderemail);
-
-        /* The text for the email containing a link to create a new password */
-        $passwordforgottenemail = $modules->get('InputfieldCKEditor');
-        $passwordforgottenemail->label = $this->_('Text for the password forgotten email');
-        $passwordforgottenemail->attr('name', 'input_passwordforgottentext');
-        $passwordforgottenemail->attr('value', $this->input_passwordforgottentext);
-        $passwordforgottenemail->description = $this->_('Enter the text for the mail which contains a link to reset the password, if the user has forgotten his login data.');
-        $passwordforgottenemail->info = [
-            '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
-            '[[LOGINDATA]]' => $this->_('Text used depends on your settings: could be either password  or username and password.'),
-            '[[RESETTEXT]]' => $this->_('Text used depends on your settings: could be either password  or username and password.'),
-            '[[RECOVERPASSWORDLINK]]' => $this->_('Link which contains the recover code to create new login data for the account.')
-        ];
-        $passwordforgottenemail_notes = $this->_('The placeholder [[RECOVERPASSWORDLINK]] must be present inside the text, because it contains the link to create a new password.');
-        $passwordforgottenemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
-        $passwordforgottenemail->notes = $passwordforgottenemail_notes;
-        $passwordforgottenemail->useLanguages = true;
-        $passwordforgottenemail->required = 1;
-        $email_text_fieldset->add($passwordforgottenemail);
-
-        /* Text for the email containing the link for the account deletion */
-        $deleteaccountemail = $modules->get('InputfieldCKEditor');
-        $deleteaccountemail->label = $this->_('Text for the delete account email');
-        $deleteaccountemail->attr('name', 'input_deleteaccounttext');
-        $deleteaccountemail->attr('value', $this->input_deleteaccounttext);
-        $deleteaccountemail->description = $this->_('Enter the text for the email, which contains a link to delete the account.');
-        $deleteaccountemail->info = [
-            '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
-            '[[DELETEACCOUNTLINK]]' => $this->_('Link which contains the deletion code to delete the account permanently.'),
-        ];
-        $deleteaccountemail_notes = $this->_('The placeholder [[DELETEACCOUNTLINK]] must be present inside the text, because it contains the link to delete the account.');
-        $deleteaccountemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
-        $deleteaccountemail->notes = $deleteaccountemail_notes;
-        $deleteaccountemail->useLanguages = true;
-        $deleteaccountemail->required = 1;
-        $email_text_fieldset->add($deleteaccountemail);
-
-        /* Text for the deletion confirmation email */
-        $deletion_confirmation = $modules->get('InputfieldCKEditor');
-        $deletion_confirmation->label = $this->_('Text for the deletion confirmation account email');
-        $deletion_confirmation->attr('name', 'input_deletion_confirmation');
-        $deletion_confirmation->attr('value', $this->input_deletion_confirmation);
-        $deletion_confirmation->description = $this->_('Enter the text for the email, that will be send to the user after successful deletion of his account.');
-        $deletion_confirmation->info = [
-            '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
-            '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
-            '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
-            '[[REGISTERURL]]' => $this->_('The URL to the registration page.')
-        ];
-        $deletion_confirmation->useLanguages = true;
-        $deletion_confirmation->required = 1;
-        $email_text_fieldset->add($deletion_confirmation);
-
-        /* Text for the unlock account email */
-        $unlock_account = $modules->get('InputfieldCKEditor');
-        $unlock_account->label = $this->_('Text for the unlock account email');
-        $unlock_account->attr('name', 'input_unlock_account');
-        $unlock_account->attr('value', $this->input_unlock_account);
-        $unlock_account->description = $this->_('Enter the text for the email, that will be send to the user after the account was locked.');
-        $unlock_account->info = [
-            '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
-            '[[LOGINTYPE]] ' => $this->_('Depends on your settings: could be either email or username.'),
-            '[[UNLOCKACCOUNTLINK]]' => $this->_('Link which contains the unlock code to unlock the account if it was locked after to much failed login attempts.')
-        ];
-        $unlock_account_notes = $this->_('The placeholder [[UNLOCKACCOUNTLINK]] must be present inside the text, because it contains the link unlock the account.');
-        $unlock_account_notes .= '<br>' . $this->_('All other placeholders are optional.');
-        $unlock_account->notes = $unlock_account_notes;
-        $unlock_account->useLanguages = true;
-        $unlock_account->required = 1;
-        $email_text_fieldset->add($unlock_account);
-
-        $placeholders = new InputfieldMarkup();
-        $p_text = '<h3>' . $this->_('List of all additional placeholders, which can be used in the email texts') . '</h3>';
-        $p_text .= '<p>' . $this->_('If you want, you can use any of the following placeholders in your email texts.') . '</p>';
-        // create all general placeholders from Form class
-        $form = new Form('myid');
-        $p_text .= '<ul>';
-        foreach ($form->generalPlaceholders() as $placeholder => $value) {
-            $p_text .= '<li>[[' . strtoupper($placeholder) . ']]: ' . $value . '</li>';
-        }
-        $p_text .= '</ul>';
-        $placeholders->markupText = $p_text;
-        $email_text_fieldset->add($placeholders);
-
-        $inputfields->add($email_text_fieldset);
-
-        // Email settings
-        $emailfieldset = $modules->get('InputfieldFieldset');
-        $emailfieldset->icon = 'fa-envelope';
-        $emailfieldset->label = $this->_('Email settings');
-        $emailfieldset->collapsed = 1;
-
-        // select an email template or not
-        if ($this->frontendForms->getEmailTemplates()) {
-            $emailTemplate = $modules->get('InputfieldSelect');
-            $emailTemplate->label = $this->_('Email HTML template');
-            $emailTemplate->attr('name', 'input_emailTemplate');
-            // create options
+            // select where you want to redirect after successful login
+            $redirectSuccess = $modules->get('InputfieldSelect');
+            $redirectSuccess->label = $this->_('Redirection');
+            $redirectSuccess->attr('name', 'input_redirectSuccess');
+            $redirectSuccess->addOption(-1, $this->_('Redirect to the previous visited page'));
+            // get all IDs of the pages that were created by this module, because these pages should be excluded
             $templates = [];
-            $templates['inherit'] = $this->_('inherit from FrontendForms settings');
-            $templates['none'] = $this->_('no HTML template (plain text only)');
-            foreach ($this->frontendForms->getEmailTemplates() as $template) {
-                $templates[$template] = ucfirst($template);
+            $templatePages = $this->templatePages;
+            unset($templatePages['fl_profilepage']);
+            // allow the profile template
+            foreach ($templatePages as $templateName => $properties) {
+                $templates[] = $templateName;
             }
-            $emailTemplate->addOptions($templates);
-            $emailTemplate->attr('value', $this->input_emailTemplate);
-            $emailTemplate->required = 1;
-            $emailTemplate->description = $this->_('Please select an email template.');
-            $emailfieldset->add($emailTemplate);
-        }
-
-        // enter the email address from where the emails should be sent (fe. no-reply@mycompany.com)
-        $email = $modules->get('InputfieldEmail');
-        $email->label = $this->_('From email address');
-        $email->attr('name', 'input_email');
-        $email->attr('value', $this->input_email);
-        $email->required = true;
-        $email->description = $this->_('This email address will be displayed as the sender of the emails sent by this module.');
-        $email->columnWidth = 50;
-        $email->useLanguages = true;
-        $emailfieldset->add($email);
-
-        // enter the name of the sender of the emails (fe. My Company)
-        $sender = $modules->get('InputfieldText');
-        $sender->label = $this->_('From name');
-        $sender->attr('name', 'input_sender');
-        $sender->attr('value', $this->input_sender);
-        $sender->placeholder = $this->_('fe. My company');
-        $sender->description = $this->_('This name will be displayed as the sender of the emails sent by this module.');
-        $sender->notes = sprintf($this->_('If no sender name will be entered, than %s will be used as the sender name.'),
-            $this->input_email);
-        $sender->columnWidth = 50;
-        $sender->useLanguages = true;
-        $emailfieldset->add($sender);
-
-        $inputfields->add($emailfieldset);
-
-        // profile image fieldset
-        // Email settings
-        $imagefieldset = $modules->get('InputfieldFieldset');
-        $imagefieldset->icon = 'fa-image';
-        $imagefieldset->label = $this->_('Profile image settings');
-        $imagefieldset->collapsed = 1;
-
-        // size of the image inside the profile form
-        $size = $modules->get('InputfieldText');
-        $size->label = $this->_('Profile image size');
-        $size->attr('name', 'input_image_size');
-        $size->attr('value', $this->input_image_size);
-        $size->description = $this->_('Please specify the desired size of the profile image as it should be displayed on the profile page.');
-        $size->notes = $this->_('Please enter width and height of the image in px separated by a comma (fe 200,200) for a rectangular image or one value (fe 100) for a squared image.');
-        $size->columnWidth = 33;
-        $size->required = true;
-        $imagefieldset->add($size);
-
-        // max file size for uploaded images
-        $maxfilesize = $modules->get('InputfieldInteger');
-        $maxfilesize->label = $this->_('Set allowed max file size');
-        $maxfilesize->attr('name', 'input_max_filesize');
-        $maxfilesize->attr('value', $this->input_max_filesize);
-        $maxfilesize->description = $this->_('If you want to restrict the max file size of uploaded images, please enter a value in kB.');
-        $maxfilesize->notes = $this->_('0 means no restrictions.');
-        $maxfilesize->required = 1;
-        $maxfilesize->min = 0;
-        $maxfilesize->inputType = 'number';
-        $maxfilesize->columnWidth = 33;
-        $imagefieldset->add($maxfilesize);
-
-        // size of the image inside the profile form
-        $phpini = $modules->get('InputfieldCheckbox');
-        $phpini->label = $this->_('Disable php.ini max filesize validation');
-        $phpini->attr('name', 'input_phpini');
-        $phpini->attr('checked', $this->input_phpini == '1' ? 'checked' : '');
-        $phpini->checkboxLabel = $this->_('Disable check against php.ini max filesize');
-        $phpini->description = $this->_('By default, the size of the uploaded image is compared to the maximum allowed filesize as set inside the php.ini file. If you want to disable the check, please tick the box.');
-        $phpini->notes = $this->_('In some cases, it may be necessary to disable this check. Especially if you are in a development environment (fe XAMPP, WAMPP,..) and the maximum file size allowed is very small.');
-        $phpini->columnWidth = 33;
-        $imagefieldset->add($phpini);
-
-        // add CSS class to the image tag
-        $imageclass = $modules->get('InputfieldText');
-        $imageclass->label = $this->_('Custom class for the image tag');
-        $imageclass->attr('name', 'input_imageclass');
-        $imageclass->attr('value', $this->input_imageclass);
-        $imageclass->description = $this->_('Add further CSS classes to the image tag of the profile image separated by a white-space.');
-        $imageclass->placeholder = 'class1 class2';
-        $imageclass->notes = $this->_('By default, the image tag contains the CSS class "profile-image", but if you use fe a CSS-framework, you can add further classes to style the image.');
-        $imageclass->columnWidth = 50;
-        $imagefieldset->add($imageclass);
-
-        // add CSS class to the positioning container
-        $positionclass = $modules->get('InputfieldText');
-        $positionclass->label = $this->_('Custom class for the positioning container');
-        $positionclass->attr('name', 'input_positionclass');
-        $positionclass->attr('value', $this->input_positionclass);
-        $positionclass->description = $this->_('Add further CSS classes to the outer div container of the profile image separated by a white-space.');
-        $positionclass->placeholder = 'class1 class2';
-        $positionclass->notes = $this->_('By default, this div container contains the CSS class "positioning-container" and is especially designed to position the image (left, center, right). If you are using a CSS framework, you can add your custom classes to position the image.');
-        $positionclass->columnWidth = 50;
-        $imagefieldset->add($positionclass);
-
-        $inputfields->add($imagefieldset);
-
-        // open fieldset on error
-        foreach ($inputfields->getErrorInputfields() as $inputfield) {
-            $inputfield->collapsed = Inputfield::collapsedNo;
-            $parents = $inputfield->getParents();
-
-            foreach ($parents as $parent) {
-                $parent->collapsed = Inputfield::collapsedNo;
+            $templateNames = implode('|', $templates);
+            foreach (wire('pages')->find('has_parent!=2,id!=2|7,template!=' . $templateNames . ',status<' . Page::statusTrash . ',include=all') as $page) {
+                $redirectSuccess->addOption($page->id, $page->title);
             }
-        }
+            $redirectSuccess->attr('value', $this->input_redirectSuccess);
+            $redirectSuccess->required = 1;
+            $redirectSuccess->description = $this->_('Select the page where you want to redirect after successful login.');
+            $redirectSuccess->columnWidth = 33;
+            $loginfieldset->add($redirectSuccess);
 
-        // open fieldset profile on warning and add warning color to the given inputfield
-        if($this->wire('session')->get('fieldset_profile') == 'input_profile'){
-            $profilefieldset->collapsed = Inputfield::collapsedNo; // open fieldset profile
-            $profileFields->themeColor = 'warning';
-            $text = $this->_('You have chosen the login with username and password. Therefore, it is not necessary, but recommended to include the username field in the profile form as well.');
-            $warning_text = '<p class="InputfieldError ui-state-highlight"><i class="fa fa-fw fa-exclamation"></i><span>'.$text.'</span></p>';
-            $profileFields->prependMarkup = $warning_text;
-
-            $this->wire('session')->remove('fieldset_profile');
-        }
-
-    }
-
-    /**
-     * Create list of Asm-Select for template fields
-     * @param string $name
-     * @param Fieldgroup $fields
-     * @param int $colWidth
-     * @return _Module|Module|string
-     * @throws WirePermissionException|WireException
-     */
-    private function createFrontendFields(string $name, Fieldgroup $fields, int $colWidth = 100):_Module|Module|string
-    {
-        // Exclude these fields from the selectable fields in module configuration
-        $exclude = array_merge(array_keys($this->userFields), ['roles', 'admin_theme', 'tfa_type']);
-        $nameAttribute = 'input_' . $name;
-        $f = $this->wire('modules')->get("InputfieldAsmSelect");
-        $f->attr('name', $nameAttribute);
-        if ($colWidth != 100) {
-            $f->columnWidth = $colWidth;
-        }
-
-        // get array of all editable user template field
-        $profile = $this->wire('modules')->get('ProcessProfile');
-        $userfields = $profile->data['profileFields'];
-        //add username field
-        $userfields[] = 'title';
-
-        // allowed image field types
-        $allowed_imagefields = ['FieldtypeImage', 'FieldtypeCroppableImage3'];
-
-        // create asm select options for form fields
-        foreach ($fields as $id => $v) {
-            if(in_array($v->type, $allowed_imagefields)) {
-                if($v->get('maxFiles') != 1) {
-                    // no single upload field -> add it to the exclude array
-                    $exclude[] = $v->name;
-                }
-            }
-
-
-            if (!in_array($v->name, $exclude)) {
-                // allow only fields which are editable by the user
-                if (in_array($v->name, $userfields)) {
-
-                    $label = ($v->name == 'title') ? $this->_('Username') : $v->label;
-                    $f->addOption($id, $label);
-                }
-            }
-        }
-
-        if ($nameAttribute == 'input_registration') {
-            $f->attr('value', $this->input_registration);
-            $f->label = $this->_('Fields of the registration form');
-            $f->notes = $this->_('Email and password field are mandatory and have to be included in the form fields. All other fields are optional.');
-            if ($this->input_selectlogin == 'username') {
-                $f->notes = $this->_('Email, username and password field are mandatory and have to be included in the form fields. All other fields are optional.');
-            }
-        } else {
-            $f->attr('value', $this->input_profile);
-            $f->label = $this->_('Fields of the profile form');
-            $f->notes = $this->_('It is recommended to include at least email and password field.');
-            if ($this->input_selectlogin == 'username') {
-                $f->notes = $this->_('It is recommended to include at least email, username and password field.');
-            }
-        }
-        return $f;
-    }
-
-    /**
-     * Create an array containing all roles ids by given names
-     * @param array $fieldproperties
-     * @return array
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function createRolesArray(array $fieldproperties):array
-    {
-        $roles = [];
-        foreach ($fieldproperties as $name) {
-            $role = $this->wire('roles')->get('name=' . $name);
-            $roles[] = $role->id;
-        }
-        return $roles;
-    }
-
-    /**
-     * Method who runs during the installation process
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    public function install():void
-    {
-        // set array of all pages (templates), that should be set to unpublished on install
-        $unpublishedTemplates = [
-            'fl_deleteaccountpage',
-            'fl_deleterequestpage'
-        ];
-
-        $hiddenTemplates = [
-            'fl_deleteaccountpage'
-        ];
-
-        // Check if role "registered" exists for newly registered users - otherwise create it
-        if (!wire('roles')->get('registered')->id) {
-            $role = wire('roles')->add('registered');
-            $role->addPermission('page-view');
-            $role->save();
-        }
-
-        // get the id of the role "registered"
-        $registered_role = wire('roles')->get('registered')->id;
-
-        //save default module configurations on install
-        $data = self::getDefaultData();
-        $data['input_roles'] = [$registered_role];
-        $data['input_email'] = 'no-reply@' . wire('config')->httpHost;
-
-        // add the texts for the mails in the default language (en) if languages are installed
-        include($this->wire('config')->paths->$this . 'mailtexts/en.php');
-        // write mail texts in english to each textarea field in default language
-        foreach($this->textareas as $inputfield){
-            $data[$inputfield] = ${$inputfield};
-        }
-
-        // save the module configuration
-        wire('modules')->saveConfig($this, $data);
-
-        // Create fields and add them to the user template
-        foreach ($this->userFields as $name => $fieldproperties) {
-            if (!wire('fields')->get($name)) {
-                $field = new Field();
-                $field->type = wire('modules')->get($fieldproperties['fieldtype']);
-                if ($field->type == 'FieldtypeDatetime') {
-                    $field->dateInputFormat = 'Y-m-d';
-                    $field->dateOutputFormat = 'Y-m-d H:i:s';
-                    $field->yearFrom = date('Y');
-                }
-                $field->name = $name;
-                $field->label = $fieldproperties['label'];
-                $field->description = $fieldproperties['description'];
-                $field->useTags = 1;
-                $field->collapsed = 4;
-                $field->tags = $this->className();
-                $field->save();
-                wire('templates')->get('name=user')->fields->add($name);
-            }
-        }
-
-        wire('templates')->get('name=user')->fields->save();
-
-        $path_to_backup_dir = $this->wire('config')->paths->$this . 'backup/';
-        // create new templates for the pages
-
-        foreach ($this->templatePages as $templateName => $fieldproperties) {
-            // new fieldgroup
-            $fieldgroup = new Fieldgroup();
-            $fieldgroup->name = $templateName;
-            // needed title field
-            $fieldgroup->add(wire('fields')->get('title'));
-            $fieldgroup->add(wire('fields')->get('body'));
-            $fieldgroup->save();
-            // new template using the fieldgroup
-            $template = new Template();
-            $template->name = $templateName;
-            $template->tags = $this->className();
-            $template->noChildren = 1;
-            // not allowed to have children
-            $template->noParents = -1;
-            $template->noChangeTemplate = 1;
-
-            // not allowed to change template
-            $template->fieldgroup = $fieldgroup;
-            // add the fieldgroup
-
-            // templates with access restrictions only for logged-in users
-            // These templates and the pages can only be reached if user is logged in
-            $restrictedLoggedinTemplates = ['fl_deleteaccountpage', 'fl_profilepage', 'fl_logoutpage'];
-            if (in_array($template->name, $restrictedLoggedinTemplates)) {
-                $template->useRoles = 1;
-                $template->roles = [wire('roles')->get('registered')->id];
-            }
-
-            //check if module SeoMaestro is installed
-            $seo = Form::getSeoMaestro();
-            if ($seo) {
-                $fieldgroup->add($seo->name);
-                $fieldgroup->save();
-            }
-            $template->useRoles = 1;
-            $template->setRoles($this->createRolesArray($fieldproperties['roles']));
-            $template->save();
-            //open the file and write the content to it
-            $class = $fieldproperties['className'];
-
-            // first check if template file inside the backup folder exist with this name
-            $path_to_file = $path_to_backup_dir . $templateName . '.php';
-            if ($this->wire('files')->exists($path_to_file)) {
-                // grab the content of this file and add it to the variable $contents
-                $contents = $this->wire('files')->fileGetContents($path_to_file);
+            // Enable or disable 2-factor authentication if installed
+            $useTFA = $modules->get('InputfieldCheckbox');
+            $useTFA->attr('name', 'input_tfa');
+            $useTFA->attr('checked', $this->input_tfa == '1' ? 'checked' : '');
+            $useTFA->label = $this->_('2-factor authentication');
+            $useTFA->label2 = $this->_('Enable 2-factor authentication');
+            $useTFA->description = $this->_('If the box is checked, then TfaEmail will be used as 2-factor authentication.');
+            // check if TfaEmail is installed
+            if (!wire('modules')->isInstalled('TfaEmail')) {
+                // https://processwire.com/modules/tfa-email/
+                $useTFA->notes = sprintf($this->_('TfaEmail is not installed. To use this feature you have to download and install %s first.'),
+                    '[TfaEmail](https://processwire.com/modules/tfa-email/)');
+                $useTFA->attr('disabled', 'disabled');
             } else {
-                // create new content
+                $useTFA->notes = $this->_('TfaEmail is installed. For higher security it is recommended to use 2-factor authentication.');
+            }
+            $useTFA->columnWidth = 34;
+            $loginfieldset->add($useTFA);
+            $inputfields->add($loginfieldset);
 
-                $contents = <<<EOT
+            //grab user fields from user template
+            $fields = wire('templates')->get('user')->fieldgroup;
+            // add title field to the fields if username is chosen
+            $fields[] = 'title';
+
+            // Registration settings
+            $registrationfieldset = $modules->get('InputfieldFieldset');
+            $registrationfieldset->label = $this->_('Registration settings');
+            $registrationfieldset->icon = 'fa-th-list';
+            $registrationfieldset->showIf = "input_selectloginregister=loginregister";
+            $registrationfieldset->collapsed = 1;
+
+            // select after which time should the user be remembered to activate his account
+            $remember = $modules->get('InputfieldInteger');
+            $remember->label = $this->_('Sending reminder email');
+            $remember->attr('name', 'input_remind');
+            $remember->attr('value', $this->input_remind);
+            $remember->description = $this->_('Enter a period of time in days after which an email will be sent to the user to remind him to activate his account, if the activation is still pending.');
+            $remember->notes = $this->_('If you want to disable this feature, set the value to 0.');
+            $remember->required = 1;
+            $remember->min = 0;
+            $remember->inputType = 'number';
+            $remember->columnWidth = 34;
+            $registrationfieldset->add($remember);
+
+            // select after which time should the user be remembered to activate his account
+            $delete = $modules->get('InputfieldInteger');
+            $delete->label = $this->_('Delete inactive account');
+            $delete->attr('name', 'input_delete');
+            $delete->attr('value', $this->input_delete);
+            $delete->description = sprintf($this->_('Enter a period of time in days after which the user account will be deleted %s and the account verification is still pending.'),
+                '<span id="reminder-mail-text">' . $this->_(', after the reminder mail has been sent') . '</span>');
+            $delete->notes = $this->_('If you want to disable this feature, set the value to 0.');
+            $delete->required = 1;
+            $delete->min = 0;
+            $delete->inputType = 'number';
+            $delete->columnWidth = 33;
+            $registrationfieldset->add($delete);
+
+            // Enable or disable sending of email after a user account has been deleted
+            $prevent_send_deletion_email = $modules->get('InputfieldCheckbox');
+            $prevent_send_deletion_email->attr('name', 'input_prevent_send_deletion_email');
+            $prevent_send_deletion_email->attr('checked', $this->input_prevent_send_deletion_email == '1' ? 'checked' : '');
+            $prevent_send_deletion_email->label = $this->_('Disable sending of the deletion confirmation email');
+            $prevent_send_deletion_email->label2 = $this->_('Disable sending the email');
+            $prevent_send_deletion_email->description = $this->_('Usually a user will be informed via email after his unverified account has been deleted. By checking the box, the sending of the email after account deletion will be disabled.');
+            $prevent_send_deletion_email->showIf = 'input_delete>0';
+            $prevent_send_deletion_email->columnWidth = 33;
+            $registrationfieldset->add($prevent_send_deletion_email);
+
+            // Roles field
+            $addRoles = $this->modules->get('InputfieldCheckboxes');
+            $addRoles->label = $this->_('Roles');
+            $addRoles->description = $this->_('Select the role(s) which should be added to newly registered users.');
+            $addRoles->name = 'input_roles';
+            // get all roles except superuser and guest
+            $roles = wire('roles')->find('name!=superuser|guest');
+            foreach ($roles as $role) {
+                $addRoles->addOption($role->id, $role->name);
+            }
+            $addRoles->value = $this->input_roles;
+            $addRoles->columnWidth = 33;
+            $registrationfieldset->add($addRoles);
+
+            // select which fields should be shown on the registration form
+            $registrationFields = $this->createFrontendFields('registration', $fields, 50);
+            $registrationFields->description = $this->_('Please select which fields should be displayed on the frontend registration form.');
+            $registrationFields->columnWidth = 33;
+            $registrationfieldset->add($registrationFields);
+
+            // privacy field on the registration form
+            $privacy_show = $this->wire()->modules->get('InputfieldSelect');
+            $privacy_show->label = $this->_('Add privacy text or privacy checkbox to the form');
+            $privacy_show->description = $this->_('Select if you want to show a privacy text only or a privacy checkbox above the submit button');
+            $options = [
+                $this->_('Do not show anything'),
+                $this->_('Show checkbox'),
+                $this->_('Show text')
+            ];
+            $privacy_show->addOptions($options);
+            $privacy_show->defaultValue = '2';
+            $privacy_show->attr('value', $this->input_privacy);
+            $privacy_show->attr('name', 'input_privacy');
+            $privacy_show->notes = $this->_('You can disable the display of the privacy text/checkbox, but you should be aware that this may lead to legal consequences if a privacy notice is required in your country.');
+            $privacy_show->columnWidth = 33;
+            $registrationfieldset->add($privacy_show);
+
+            $inputfields->add($registrationfieldset);
+
+            // Profile settings
+            $profilefieldset = $modules->get('InputfieldFieldset');
+            $profilefieldset->label = $this->_('Account settings');
+            $profilefieldset->icon = 'fa-user-circle-o';
+            $profilefieldset->collapsed = 1;
+
+            $deleteProfile = $this->modules->get('InputfieldCheckbox');
+            $deleteProfile->label = $this->_('Account deletion');
+            $deleteProfile->checkboxLabel = $this->_('Allow users to delete their account');
+            $deleteProfile->description = $this->_('If the box is checked, the user gets the opportunity to delete his account on his profile page if he is logged in.');
+            $deleteProfile->attr('name', 'input_deleteProfile');
+            $deleteProfile->columnWidth = 50;
+            $deleteProfile->attr('checked', $this->input_deleteProfile == '1' ? 'checked' : '');
+            $profilefieldset->add($deleteProfile);
+
+            $profileFields = $this->createFrontendFields('profile', $fields, 50);
+            $profileFields->description = $this->_('Please select which fields should be displayed on the frontend profile form.');
+            $profilefieldset->add($profileFields);
+            $inputfields->add($profilefieldset);
+
+            // Email text fields
+            $email_text_fieldset = $modules->get('InputfieldFieldset');
+            $email_text_fieldset->icon = 'fa-comment';
+            $email_text_fieldset->label = $this->_('Texts for the mails that are sent with this module');
+            $email_text_fieldset->description = $this->_('These fields contain the texts for the emails which will be send by this module. You can adapt them to your needs.');
+            $email_text_fieldset->collapsed = 1;
+
+            /* Text for the email containing the activation link after user has been registered for an account */
+            $activationemail = $modules->get('InputfieldCKEditor');
+            $activationemail->label = $this->_('Text for the verification email');
+            $activationemail->attr('name', 'input_activationtext');
+            $activationemail->attr('value', $this->input_activationtext);
+            $activationemail->useLanguages = true;
+            $activationemail->description = $this->_('Please enter the text for the confirmation email in which the user will receive a confirmation link to activate his account.');
+            $activationemail->info = [
+                '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
+                '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
+                '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
+                '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.'),
+            ];
+            $activation_notes = $this->_('You can adapt the text to your needs, but the placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
+            $activation_notes .= '<br>' . $this->_('All other placeholders are optional.');
+            $activationemail->notes = $activation_notes;
+            $activationemail->addTextAfterNotes = 'test';
+            $activationemail->required = 1;
+            $email_text_fieldset->add($activationemail);
+
+            /* Text for the email containing the TFA code if TFA is enabled */
+            $tfamail = $modules->get('InputfieldCKEditor');
+            $tfamail->label = $this->_('Text for the email including the TFA code');
+            $tfamail->attr('name', 'input_tfatext');
+            $tfamail->attr('value', $this->input_tfatext);
+            $tfamail->useLanguages = true;
+            $tfamail->description = $this->_('Enter the text for the email which contains the TFA code if TFA is enabled.');
+            $tfamail->info = [
+                '[[TFACODE]]' => $this->_('The TFA-code, that has to be entered on the login form to log.'),
+                '[[EXPIRATIONTIME]]' => $this->_('The time the code is valid including the unit (fe 5 minutes).')
+            ];
+            $tfamail_notes = $this->_('The placeholder [[TFACODE]] must be present inside the text, because it contains the TFA code.');
+            $tfamail_notes .= '<br>' . $this->_('All other placeholders are optional.');
+            $tfamail->notes = $tfamail_notes;
+            $tfamail->required = 1;
+            $email_text_fieldset->add($tfamail);
+
+            /* Text for the email to remain a user to activate his account */
+            $reminderemail = $modules->get('InputfieldCKEditor');
+            $reminderemail->label = $this->_('Text for the reminder email');
+            $reminderemail->attr('name', 'input_remindertext');
+            $reminderemail->attr('value', $this->input_remindertext);
+            $reminderemail->description = $this->_('Enter the text for the reminder email, which will be send to the user if the account verification is still pending.');
+            $reminderemail->info = [
+                '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
+                '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
+                '[[DELETEDATE]]' => $this->_('The date where an unverified account will be deleted.'),
+                '[[VERIFICATIONLINK]]' => $this->_('Link which contains the verification code to activate the account.'),
+                '[[NOTREGISTEREDLINK]]' => $this->_('Link to delete the account if user has not registered for an account.')
+            ];
+            $reminderemail_notes = $this->_('The placeholder [[VERIFICATIONLINK]] must be present inside the text, because it contains the link to verify the account.');
+            $reminderemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
+            $reminderemail->notes = $reminderemail_notes;
+            $reminderemail->useLanguages = true;
+            $reminderemail->required = 1;
+            $email_text_fieldset->add($reminderemail);
+
+            /* The text for the email containing a link to create a new password */
+            $passwordforgottenemail = $modules->get('InputfieldCKEditor');
+            $passwordforgottenemail->label = $this->_('Text for the password forgotten email');
+            $passwordforgottenemail->attr('name', 'input_passwordforgottentext');
+            $passwordforgottenemail->attr('value', $this->input_passwordforgottentext);
+            $passwordforgottenemail->description = $this->_('Enter the text for the mail which contains a link to reset the password, if the user has forgotten his login data.');
+            $passwordforgottenemail->info = [
+                '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
+                '[[LOGINDATA]]' => $this->_('Text used depends on your settings: could be either password  or username and password.'),
+                '[[RESETTEXT]]' => $this->_('Text used depends on your settings: could be either password  or username and password.'),
+                '[[RECOVERPASSWORDLINK]]' => $this->_('Link which contains the recover code to create new login data for the account.')
+            ];
+            $passwordforgottenemail_notes = $this->_('The placeholder [[RECOVERPASSWORDLINK]] must be present inside the text, because it contains the link to create a new password.');
+            $passwordforgottenemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
+            $passwordforgottenemail->notes = $passwordforgottenemail_notes;
+            $passwordforgottenemail->useLanguages = true;
+            $passwordforgottenemail->required = 1;
+            $email_text_fieldset->add($passwordforgottenemail);
+
+            /* Text for the email containing the link for the account deletion */
+            $deleteaccountemail = $modules->get('InputfieldCKEditor');
+            $deleteaccountemail->label = $this->_('Text for the delete account email');
+            $deleteaccountemail->attr('name', 'input_deleteaccounttext');
+            $deleteaccountemail->attr('value', $this->input_deleteaccounttext);
+            $deleteaccountemail->description = $this->_('Enter the text for the email, which contains a link to delete the account.');
+            $deleteaccountemail->info = [
+                '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
+                '[[DELETEACCOUNTLINK]]' => $this->_('Link which contains the deletion code to delete the account permanently.'),
+            ];
+            $deleteaccountemail_notes = $this->_('The placeholder [[DELETEACCOUNTLINK]] must be present inside the text, because it contains the link to delete the account.');
+            $deleteaccountemail_notes .= '<br>' . $this->_('All other placeholders are optional.');
+            $deleteaccountemail->notes = $deleteaccountemail_notes;
+            $deleteaccountemail->useLanguages = true;
+            $deleteaccountemail->required = 1;
+            $email_text_fieldset->add($deleteaccountemail);
+
+            /* Text for the deletion confirmation email */
+            $deletion_confirmation = $modules->get('InputfieldCKEditor');
+            $deletion_confirmation->label = $this->_('Text for the deletion confirmation account email');
+            $deletion_confirmation->attr('name', 'input_deletion_confirmation');
+            $deletion_confirmation->attr('value', $this->input_deletion_confirmation);
+            $deletion_confirmation->description = $this->_('Enter the text for the email, that will be send to the user after successful deletion of his account.');
+            $deletion_confirmation->info = [
+                '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
+                '[[CURRENTDATETIMEVALUE]]' => $this->_('Outputs the current date and time (fe 02-01-2023 09:54).'),
+                '[[REGISTRATIONDATE]]' => $this->_('The date of the registration.'),
+                '[[REGISTERURL]]' => $this->_('The URL to the registration page.')
+            ];
+            $deletion_confirmation->useLanguages = true;
+            $deletion_confirmation->required = 1;
+            $email_text_fieldset->add($deletion_confirmation);
+
+            /* Text for the unlock account email */
+            $unlock_account = $modules->get('InputfieldCKEditor');
+            $unlock_account->label = $this->_('Text for the unlock account email');
+            $unlock_account->attr('name', 'input_unlock_account');
+            $unlock_account->attr('value', $this->input_unlock_account);
+            $unlock_account->description = $this->_('Enter the text for the email, that will be send to the user after the account was locked.');
+            $unlock_account->info = [
+                '[[DOMAINVALUE]]' => $this->_('The domain of your site (fe http://mysite.com).'),
+                '[[LOGINTYPE]] ' => $this->_('Depends on your settings: could be either email or username.'),
+                '[[UNLOCKACCOUNTLINK]]' => $this->_('Link which contains the unlock code to unlock the account if it was locked after to much failed login attempts.')
+            ];
+            $unlock_account_notes = $this->_('The placeholder [[UNLOCKACCOUNTLINK]] must be present inside the text, because it contains the link unlock the account.');
+            $unlock_account_notes .= '<br>' . $this->_('All other placeholders are optional.');
+            $unlock_account->notes = $unlock_account_notes;
+            $unlock_account->useLanguages = true;
+            $unlock_account->required = 1;
+            $email_text_fieldset->add($unlock_account);
+
+            $placeholders = new InputfieldMarkup();
+            $p_text = '<h3>' . $this->_('List of all additional placeholders, which can be used in the email texts') . '</h3>';
+            $p_text .= '<p>' . $this->_('If you want, you can use any of the following placeholders in your email texts.') . '</p>';
+            // create all general placeholders from Form class
+            $form = new Form('myid');
+            $p_text .= '<ul>';
+            foreach ($form->generalPlaceholders() as $placeholder => $value) {
+                $p_text .= '<li>[[' . strtoupper($placeholder) . ']]: ' . $value . '</li>';
+            }
+            $p_text .= '</ul>';
+            $placeholders->markupText = $p_text;
+            $email_text_fieldset->add($placeholders);
+
+            $inputfields->add($email_text_fieldset);
+
+            // Email settings
+            $emailfieldset = $modules->get('InputfieldFieldset');
+            $emailfieldset->icon = 'fa-envelope';
+            $emailfieldset->label = $this->_('Email settings');
+            $emailfieldset->collapsed = 1;
+
+            // select an email template or not
+            if ($this->frontendForms->getEmailTemplates()) {
+                $emailTemplate = $modules->get('InputfieldSelect');
+                $emailTemplate->label = $this->_('Email HTML template');
+                $emailTemplate->attr('name', 'input_emailTemplate');
+                // create options
+                $templates = [];
+                $templates['inherit'] = $this->_('inherit from FrontendForms settings');
+                $templates['none'] = $this->_('no HTML template (plain text only)');
+                foreach ($this->frontendForms->getEmailTemplates() as $template) {
+                    $templates[$template] = ucfirst($template);
+                }
+                $emailTemplate->addOptions($templates);
+                $emailTemplate->attr('value', $this->input_emailTemplate);
+                $emailTemplate->required = 1;
+                $emailTemplate->description = $this->_('Please select an email template.');
+                $emailfieldset->add($emailTemplate);
+            }
+
+            // enter the email address from where the emails should be sent (fe. no-reply@mycompany.com)
+            $email = $modules->get('InputfieldEmail');
+            $email->label = $this->_('From email address');
+            $email->attr('name', 'input_email');
+            $email->attr('value', $this->input_email);
+            $email->required = true;
+            $email->description = $this->_('This email address will be displayed as the sender of the emails sent by this module.');
+            $email->columnWidth = 50;
+            $email->useLanguages = true;
+            $emailfieldset->add($email);
+
+            // enter the name of the sender of the emails (fe. My Company)
+            $sender = $modules->get('InputfieldText');
+            $sender->label = $this->_('From name');
+            $sender->attr('name', 'input_sender');
+            $sender->attr('value', $this->input_sender);
+            $sender->placeholder = $this->_('fe. My company');
+            $sender->description = $this->_('This name will be displayed as the sender of the emails sent by this module.');
+            $sender->notes = sprintf($this->_('If no sender name will be entered, than %s will be used as the sender name.'),
+                $this->input_email);
+            $sender->columnWidth = 50;
+            $sender->useLanguages = true;
+            $emailfieldset->add($sender);
+
+            $inputfields->add($emailfieldset);
+
+            // profile image fieldset
+            // Email settings
+            $imagefieldset = $modules->get('InputfieldFieldset');
+            $imagefieldset->icon = 'fa-image';
+            $imagefieldset->label = $this->_('Profile image settings');
+            $imagefieldset->collapsed = 1;
+
+            // size of the image inside the profile form
+            $size = $modules->get('InputfieldText');
+            $size->label = $this->_('Profile image size');
+            $size->attr('name', 'input_image_size');
+            $size->attr('value', $this->input_image_size);
+            $size->description = $this->_('Please specify the desired size of the profile image as it should be displayed on the profile page.');
+            $size->notes = $this->_('Please enter width and height of the image in px separated by a comma (fe 200,200) for a rectangular image or one value (fe 100) for a squared image.');
+            $size->columnWidth = 33;
+            $size->required = true;
+            $imagefieldset->add($size);
+
+            // max file size for uploaded images
+            $maxfilesize = $modules->get('InputfieldInteger');
+            $maxfilesize->label = $this->_('Set allowed max file size');
+            $maxfilesize->attr('name', 'input_max_filesize');
+            $maxfilesize->attr('value', $this->input_max_filesize);
+            $maxfilesize->description = $this->_('If you want to restrict the max file size of uploaded images, please enter a value in kB.');
+            $maxfilesize->notes = $this->_('0 means no restrictions.');
+            $maxfilesize->required = 1;
+            $maxfilesize->min = 0;
+            $maxfilesize->inputType = 'number';
+            $maxfilesize->columnWidth = 33;
+            $imagefieldset->add($maxfilesize);
+
+            // size of the image inside the profile form
+            $phpini = $modules->get('InputfieldCheckbox');
+            $phpini->label = $this->_('Disable php.ini max filesize validation');
+            $phpini->attr('name', 'input_phpini');
+            $phpini->attr('checked', $this->input_phpini == '1' ? 'checked' : '');
+            $phpini->checkboxLabel = $this->_('Disable check against php.ini max filesize');
+            $phpini->description = $this->_('By default, the size of the uploaded image is compared to the maximum allowed filesize as set inside the php.ini file. If you want to disable the check, please tick the box.');
+            $phpini->notes = $this->_('In some cases, it may be necessary to disable this check. Especially if you are in a development environment (fe XAMPP, WAMPP,..) and the maximum file size allowed is very small.');
+            $phpini->columnWidth = 33;
+            $imagefieldset->add($phpini);
+
+            // add CSS class to the image tag
+            $imageclass = $modules->get('InputfieldText');
+            $imageclass->label = $this->_('Custom class for the image tag');
+            $imageclass->attr('name', 'input_imageclass');
+            $imageclass->attr('value', $this->input_imageclass);
+            $imageclass->description = $this->_('Add further CSS classes to the image tag of the profile image separated by a white-space.');
+            $imageclass->placeholder = 'class1 class2';
+            $imageclass->notes = $this->_('By default, the image tag contains the CSS class "profile-image", but if you use fe a CSS-framework, you can add further classes to style the image.');
+            $imageclass->columnWidth = 50;
+            $imagefieldset->add($imageclass);
+
+            // add CSS class to the positioning container
+            $positionclass = $modules->get('InputfieldText');
+            $positionclass->label = $this->_('Custom class for the positioning container');
+            $positionclass->attr('name', 'input_positionclass');
+            $positionclass->attr('value', $this->input_positionclass);
+            $positionclass->description = $this->_('Add further CSS classes to the outer div container of the profile image separated by a white-space.');
+            $positionclass->placeholder = 'class1 class2';
+            $positionclass->notes = $this->_('By default, this div container contains the CSS class "positioning-container" and is especially designed to position the image (left, center, right). If you are using a CSS framework, you can add your custom classes to position the image.');
+            $positionclass->columnWidth = 50;
+            $imagefieldset->add($positionclass);
+
+            $inputfields->add($imagefieldset);
+
+            // open fieldset on error
+            foreach ($inputfields->getErrorInputfields() as $inputfield) {
+                $inputfield->collapsed = Inputfield::collapsedNo;
+                $parents = $inputfield->getParents();
+
+                foreach ($parents as $parent) {
+                    $parent->collapsed = Inputfield::collapsedNo;
+                }
+            }
+
+            // open fieldset profile on warning and add warning color to the given inputfield
+            if ($this->wire('session')->get('fieldset_profile') == 'input_profile') {
+                $profilefieldset->collapsed = Inputfield::collapsedNo; // open fieldset profile
+                $profileFields->themeColor = 'warning';
+                $text = $this->_('You have chosen the login with username and password. Therefore, it is not necessary, but recommended to include the username field in the profile form as well.');
+                $warning_text = '<p class="InputfieldError ui-state-highlight"><i class="fa fa-fw fa-exclamation"></i><span>' . $text . '</span></p>';
+                $profileFields->prependMarkup = $warning_text;
+
+                $this->wire('session')->remove('fieldset_profile');
+            }
+
+        }
+
+        /**
+         * Create a list of Asm-Select for template fields
+         * @param string $name
+         * @param Fieldgroup $fields
+         * @param int $colWidth
+         * @return _Module|Module|string
+         * @throws WirePermissionException|WireException
+         */
+        private function createFrontendFields(string $name, Fieldgroup $fields, int $colWidth = 100): _Module|Module|string
+        {
+            // Exclude these fields from the selectable fields in module configuration
+            $exclude = array_merge(array_keys($this->userFields), ['roles', 'admin_theme', 'tfa_type']);
+            $nameAttribute = 'input_' . $name;
+            $f = $this->wire('modules')->get("InputfieldAsmSelect");
+            $f->attr('name', $nameAttribute);
+            if ($colWidth != 100) {
+                $f->columnWidth = $colWidth;
+            }
+
+            // get array of all editable user template fields
+            $profile = $this->wire('modules')->get('ProcessProfile');
+            $userfields = $profile->data['profileFields'];
+            //add username field
+            $userfields[] = 'title';
+
+            // allowed image field types
+            $allowed_imagefields = ['FieldtypeImage', 'FieldtypeCroppableImage3'];
+
+            // create asm select options for form fields
+            foreach ($fields as $id => $v) {
+                if (in_array($v->type, $allowed_imagefields)) {
+                    if ($v->get('maxFiles') != 1) {
+                        // no single upload field -> add it to the excluding array
+                        $exclude[] = $v->name;
+                    }
+                }
+
+                if (!in_array($v->name, $exclude)) {
+                    // allow only fields which are editable by the user
+                    if (in_array($v->name, $userfields)) {
+
+                        $label = ($v->name == 'title') ? $this->_('Username') : $v->label;
+                        $f->addOption($id, $label);
+                    }
+                }
+            }
+
+            if ($nameAttribute == 'input_registration') {
+                $f->attr('value', $this->input_registration);
+                $f->label = $this->_('Fields of the registration form');
+                $f->notes = $this->_('Email and password field are mandatory and have to be included in the form fields. All other fields are optional.');
+                if ($this->input_selectlogin == 'username') {
+                    $f->notes = $this->_('Email, username and password field are mandatory and have to be included in the form fields. All other fields are optional.');
+                }
+            } else {
+                $f->attr('value', $this->input_profile);
+                $f->label = $this->_('Fields of the profile form');
+                $f->notes = $this->_('It is recommended to include at least email and password field.');
+                if ($this->input_selectlogin == 'username') {
+                    $f->notes = $this->_('It is recommended to include at least email, username and password field.');
+                }
+            }
+            return $f;
+        }
+
+        /**
+         * Create an array containing all role IDs by given names
+         * @param array $fieldproperties
+         * @return array
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        protected function createRolesArray(array $fieldproperties): array
+        {
+            $roles = [];
+            foreach ($fieldproperties as $name) {
+                $role = $this->wire('roles')->get('name=' . $name);
+                $roles[] = $role->id;
+            }
+            return $roles;
+        }
+
+        /**
+         * Method, who runs during the installation process
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        public function install(): void
+        {
+            // set array of all pages (templates), that should be set to unpublished on installation
+            $unpublishedTemplates = [
+                'fl_deleteaccountpage',
+                'fl_deleterequestpage'
+            ];
+
+            $hiddenTemplates = [
+                'fl_deleteaccountpage'
+            ];
+
+            // Check if role "registered" exists for newly registered users - otherwise create it
+            if (!wire('roles')->get('registered')->id) {
+                $role = wire('roles')->add('registered');
+                $role->addPermission('page-view');
+                $role->save();
+            }
+
+            // get the id of the role "registered"
+            $registered_role = wire('roles')->get('registered')->id;
+
+            //save default module configurations on install
+            $data = self::getDefaultData();
+            $data['input_roles'] = [$registered_role];
+            $data['input_email'] = 'no-reply@' . wire('config')->httpHost;
+
+            // add the texts for the mails in the default language (en) if languages are installed
+            include($this->wire('config')->paths->$this . 'mailtexts/en.php');
+            // write mail texts in english to each textarea field in default language
+            foreach ($this->textareas as $inputfield) {
+                $data[$inputfield] = ${$inputfield};
+            }
+
+            // save the module configuration
+            wire('modules')->saveConfig($this, $data);
+
+            // Create fields and add them to the user template
+            foreach ($this->userFields as $name => $fieldproperties) {
+                if (!wire('fields')->get($name)) {
+                    $field = new Field();
+                    $field->type = wire('modules')->get($fieldproperties['fieldtype']);
+                    if ($field->type == 'FieldtypeDatetime') {
+                        $field->dateInputFormat = 'Y-m-d';
+                        $field->dateOutputFormat = 'Y-m-d H:i:s';
+                        $field->yearFrom = date('Y');
+                    }
+                    $field->name = $name;
+                    $field->label = $fieldproperties['label'];
+                    $field->description = $fieldproperties['description'];
+                    $field->useTags = 1;
+                    $field->collapsed = 4;
+                    $field->tags = $this->className();
+                    $field->save();
+                    wire('templates')->get('name=user')->fields->add($name);
+                }
+            }
+
+            wire('templates')->get('name=user')->fields->save();
+
+            $path_to_backup_dir = $this->wire('config')->paths->$this . 'backup/';
+            // create new templates for the pages
+
+            foreach ($this->templatePages as $templateName => $fieldproperties) {
+                // new fieldgroup
+                $fieldgroup = new Fieldgroup();
+                $fieldgroup->name = $templateName;
+                // needed title field
+                $fieldgroup->add(wire('fields')->get('title'));
+                $fieldgroup->add(wire('fields')->get('body'));
+                $fieldgroup->save();
+                // new template using the fieldgroup
+                $template = new Template();
+                $template->name = $templateName;
+                $template->tags = $this->className();
+                $template->noChildren = 1;
+                // not allowed to have children
+                $template->noParents = -1;
+                $template->noChangeTemplate = 1;
+
+                // not allowed to change template
+                $template->fieldgroup = $fieldgroup;
+                // add the fieldgroup
+
+                // templates with access restrictions only for logged-in users
+                // These templates and the pages can only be reached if user is logged in
+                $restrictedLoggedinTemplates = ['fl_deleteaccountpage', 'fl_profilepage', 'fl_logoutpage'];
+                if (in_array($template->name, $restrictedLoggedinTemplates)) {
+                    $template->useRoles = 1;
+                    $template->roles = [wire('roles')->get('registered')->id];
+                }
+
+                //check if module SeoMaestro is installed
+                $seo = Form::getSeoMaestro();
+                if ($seo) {
+                    $fieldgroup->add($seo->name);
+                    $fieldgroup->save();
+                }
+                $template->useRoles = 1;
+                $template->setRoles($this->createRolesArray($fieldproperties['roles']));
+                $template->save();
+                //open the file and write the content to it
+                $class = $fieldproperties['className'];
+
+                // first check if the template file inside the backup folder exists with this name
+                $path_to_file = $path_to_backup_dir . $templateName . '.php';
+                if ($this->wire('files')->exists($path_to_file)) {
+                    // grab the content of this file and add it to the variable $contents
+                    $contents = $this->wire('files')->fileGetContents($path_to_file);
+                } else {
+                    // create new content
+
+                    $contents = <<<EOT
             <?php 
             namespace ProcessWire;
         
@@ -1531,396 +1517,394 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             echo \$modules->get('FrontendLoginRegister')->$class();
             echo '</div>';
 EOT;
-            }
-            $file = wire('config')->paths->templates . $templateName . '.php';
-            wire('files')->filePutContents($file, trim($contents));
-            //create new page using this template under the homepage
-            $p = new Page();
-            // create new page object
-            $p->template = $templateName;
-            // set status to unpublished on certain pages by default
-            if (in_array($templateName, $unpublishedTemplates)) {
-                $p->addStatus(Page::statusUnpublished);
-            }
-            // set status to hidden on certain pages by default
-            if (in_array($templateName, $hiddenTemplates)) {
-                $p->addStatus(Page::statusHidden);
-            }
-            // set parent page
-            $p->parent = wire('pages')->get(1);
-            // set homepage with id 1 as the parent page
-            $p->title = $fieldproperties['title'];
-            $p->name = $fieldproperties['title'];
-            $p->body = $fieldproperties['body'];
-            // add page status if set
-            if (array_key_exists('status', $fieldproperties)) {
-                $p->addStatus($fieldproperties['status']);
-            }
-            // set all installed languages as active on multi-language site
-            if ($this->wire('languages')) {
-                foreach (wire('languages') as $lang) {
-                    if ($lang->isDefault()) {
-                        continue;
+                }
+                $file = wire('config')->paths->templates . $templateName . '.php';
+                wire('files')->filePutContents($file, trim($contents));
+                //create a new page using this template under the homepage
+                $p = new Page();
+                // create a new page object
+                $p->template = $templateName;
+                // set status to unpublished on certain pages by default
+                if (in_array($templateName, $unpublishedTemplates)) {
+                    $p->addStatus(Page::statusUnpublished);
+                }
+                // set status to hidden on certain pages by default
+                if (in_array($templateName, $hiddenTemplates)) {
+                    $p->addStatus(Page::statusHidden);
+                }
+                // set parent page
+                $p->parent = wire('pages')->get(1);
+                // set homepage with id 1 as the parent page
+                $p->title = $fieldproperties['title'];
+                $p->name = $fieldproperties['title'];
+                $p->body = $fieldproperties['body'];
+                // add page status if set
+                if (array_key_exists('status', $fieldproperties)) {
+                    $p->addStatus($fieldproperties['status']);
+                }
+                // set all installed languages as active on multi-language site
+                if ($this->wire('languages')) {
+                    foreach (wire('languages') as $lang) {
+                        if ($lang->isDefault()) {
+                            continue;
+                        }
+                        $p->set("status$lang", 1);
                     }
-                    $p->set("status$lang", 1);
                 }
-            }
 
-
-            // check if SeoMaestro module is installed and if yes add some page data to it
-            if (($seo) && ($seo->name)) {
-                $seoField = $seo->name;
-                // Set Meta values
-                $p->$seoField->meta->title = $fieldproperties['title'];
-                $p->$seoField->meta->description = $fieldproperties['description'];
-                // Set Opengraph values
-                $p->$seoField->opengraph->title = $fieldproperties['title'];
-                $p->$seoField->opengraph->description = $fieldproperties['description'];
-                // Include/exclude the page in the sitemap and bump its priority.
-                $p->$seoField->sitemap->include = $fieldproperties['sitemap'];
-                $p->$seoField->sitemap->priority = $fieldproperties['priority'];
-                // Set robots: index and follow
-                $p->$seoField->robots->noIndex = $fieldproperties['noIndex'];
-                $p->$seoField->robots->noFollow = $fieldproperties['noFollow'];
-            }
-            $p->save();
-
-        }
-
-        // remove the backup directory from the module
-        $this->wire('files')->rmdir($path_to_backup_dir, true);
-
-        /**
-         * add field activation date to User list (ProcessUser)
-         * In the user overview a new table column will be added to show the date, when the account was verified
-         */
-        $data = wire('modules')->getConfig('ProcessUser');
-
-
-        $data['showFields'][] = 'fl_activationdatetime';
-        wire('modules')->saveConfig('ProcessUser', $data);
-
-    }
-
-    /**
-     * Method to run during uninstall process
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    public function uninstall():void
-    {
-
-        // remove field activation date from User list (ProcessUser)
-        $data = wire('modules')->getConfig('ProcessUser');
-
-        $key = array_search('fl_activationdatetime', $data['showFields']);
-        if ($key) {
-            unset($data['showFields'][$key]);
-        }
-        wire('modules')->saveConfig('ProcessUser', $data);
-
-        // create a backup of all pages and save it inside the newly created directory "backup"
-
-        // create directory first
-        $dir_path = $this->wire('config')->paths->$this . 'backup/';
-        $this->wire('files')->mkdir($dir_path);
-
-        // get all module template files under inside the template directory
-        $path = $this->wire('config')->paths->templates;
-        $module_template_files = glob($path . 'fl_*.php');
-
-        // copy all template files to the backup folder
-        foreach ($module_template_files as $path) {
-            $this->wire('files')->copy($path, $dir_path);
-        }
-
-        // remove fields from templates -> usually only from user template
-        foreach ($this->wire('templates') as $template) {
-            foreach ($this->userFields as $name => $fieldproperties) {
-                if ($template->hasField(wire('fields')->get($name))) {
-                    $template->fields->remove(wire('fields')->get($name));
-                    $template->fields->save();
-                }
-            }
-        }
-
-        // delete all on the installation process created user fields
-        foreach ($this->userFields as $name => $fieldproperties) {
-            if ($this->wire('fields')->get($name)) {
-                $this->wire('fields')->delete($this->wire('fields')->get($name));
-            }
-        }
-
-        // delete all pages and templates
-        foreach ($this->templatePages as $template => $title) {
-            // delete pages first
-            $p = wire('pages')->get('template=' . $template);
-            if ($p->id) {
-                $p->delete();
-            }
-
-            // delete template and fieldgroup of template
-            $template = $this->templates->get($template);
-            if ($template) {
-                $fieldgroup = $template->fieldgroup;
-            }
-
-            // run only if template exists
-            if ($template) {
-                if ($template->getNumPages() > 0) {
-                    throw new WireException("Can't uninstall because template been used by some pages.");
-                } else {
-                    wire('templates')->delete($template);
-                    wire('fieldgroups')->delete($fieldgroup);
-                }
-            }
-
-            // delete physical file in templates folder
-            $file = wire('config')->paths->templates . $template . '.php';
-            if (file_exists($file)) {
-                unlink($file);
-            }
-        }
-    }
-
-    /**
-     * Sets the status of pages using the fl_register, fl_activation or fl_deleteaccount template to hidden or not, depending on the settings in the module config
-     * If module should only contain a login and not a user registration, the registration and activation pages will be set to hidden
-     * If configuration of deleting the account is enabled, than status hidden will be removed
-     * @param HookEvent $e
-     * @return void
-     */
-    protected function setPageStatus(HookEvent $e):void
-    {
-        $class = $e->arguments(0);
-        // run only on the FrontendLoginRegister module
-        if($class == 'FrontendLoginRegister') {
-            $pages = wire('pages')->find('template=fl_registerpage|fl_activationpage|fl_deleteaccountpage|fl_deleterequestpage',
-                ['findAll' => true]);
-            foreach ($pages as $p) {
-                $p->setOutputFormatting(false);
-                switch ($p->template->name) {
-                    // show/hide registration and activation page
-                    case('fl_registerpage'):
-                    case('fl_activationpage'):
-                        if (isset($e->arguments(1)['input_selectloginregister'])) {
-                            if ($e->arguments(1)['input_selectloginregister'] == 'login') {
-                                $p->addStatus(Page::statusUnpublished);
-                                if ($p->template->name == 'fl_registerpage') {
-                                    $p->addStatus(Page::statusHidden);
-                                }
-                            } else {
-                                $p->removeStatus(Page::statusUnpublished);
-                                if ($p->template->name == 'fl_registerpage') {
-                                    $p->removeStatus(Page::statusHidden);
-                                }
-                            }
-                        }
-                        break;
-                    case('fl_deleteaccountpage'):
-                    case('fl_deleterequestpage'):
-                        if (isset($e->arguments(1)['input_deleteProfile'])) {
-                            if ($e->arguments(1)['input_deleteProfile']) {
-
-                                $p->removeStatus(Page::statusUnpublished);
-                                if ($p->template->name == 'fl_deleterequestpage') {
-                                    $p->removeStatus(Page::statusHidden);
-                                }
-                            } else {
-                                $p->addStatus(Page::statusUnpublished);
-                                $p->addStatus(Page::statusHidden);
-
-                            }
-                        }
-                        break;
+                // check if SeoMaestro module is installed and if yes, add some page data to it
+                if (($seo) && ($seo->name)) {
+                    $seoField = $seo->name;
+                    // Set Meta values
+                    $p->$seoField->meta->title = $fieldproperties['title'];
+                    $p->$seoField->meta->description = $fieldproperties['description'];
+                    // Set Opengraph values
+                    $p->$seoField->opengraph->title = $fieldproperties['title'];
+                    $p->$seoField->opengraph->description = $fieldproperties['description'];
+                    // Include/exclude the page in the sitemap and bump its priority.
+                    $p->$seoField->sitemap->include = $fieldproperties['sitemap'];
+                    $p->$seoField->sitemap->priority = $fieldproperties['priority'];
+                    // Set robots: index and follow
+                    $p->$seoField->robots->noIndex = $fieldproperties['noIndex'];
+                    $p->$seoField->robots->noFollow = $fieldproperties['noFollow'];
                 }
                 $p->save();
+
             }
-        }
-    }
 
-    /**
-     * Sets email field to be unique, because this module sends email
-     * This is necessary - otherwise it will not work
-     * @param HookEvent
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function setEmailUnique(HookEvent $event):void
-    {
-        $class = $event->arguments(0);
-        // run only on the FrontendLoginRegister module
-        if($class == 'FrontendLoginRegister') {
-            $email = wire('fields')->get('email');
-            if (!isset($email->flagUnique)) {
-                $email->flagUnique = 1;
-                $email->save('flagUnique');
-                wire('session')->message($this->_('Field email was set to unique, because this is necessary for sending emails to the right user.'));
+            // remove the backup directory from the module
+            $this->wire('files')->rmdir($path_to_backup_dir, true);
+
+            /**
+             * add field activation date to a User list (ProcessUser)
+             * In the user overview a new table column will be added to show the date, when the account was verified
+             */
+            $data = wire('modules')->getConfig('ProcessUser');
+
+            $data['showFields'][] = 'fl_activationdatetime';
+            wire('modules')->saveConfig('ProcessUser', $data);
+
+        }
+
+        /**
+         * Method to run during an uninstalling process
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        public function uninstall(): void
+        {
+
+            // remove field activation date from the User list (ProcessUser)
+            $data = wire('modules')->getConfig('ProcessUser');
+
+            $key = array_search('fl_activationdatetime', $data['showFields']);
+            if ($key) {
+                unset($data['showFields'][$key]);
             }
-        }
-    }
+            wire('modules')->saveConfig('ProcessUser', $data);
 
-    /**
-     * Change status of DeleteRequestPage and DeleteAccountPage depending on input_deleteProfile
-     * inside module configuration
-     * box not checked -> set status unpublished
-     * box checked -> remove status unpublished
-     * @param HookEvent $event
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function setDeletePagesStatus(HookEvent $event):void
-    {
-        $config = $this->wire('modules')->getConfig($this);
-        $class = $event->arguments(0);
-        // run only on the FrontendLoginRegister module
-        if($class == 'FrontendLoginRegister'){
-            $deleteAccountPage = $this->wire('pages')->get('template=fl_deleteaccountpage');
-            $deleteRequestPage = $this->wire('pages')->get('template=fl_deleterequestpage');
+            // create a backup of all pages and save it inside the newly created directory "backup"
 
-            if ($config['input_deleteProfile']) {
-                // remove unpublished status
-                $deleteAccountPage->removeStatus(Page::statusUnpublished);
-                $deleteRequestPage->removeStatus(Page::statusUnpublished);
-            } else {
-                // add unpublished status
-                $deleteAccountPage->addStatus(Page::statusUnpublished);
-                $deleteRequestPage->addStatus(Page::statusUnpublished);
+            // create directory first
+            $dir_path = $this->wire('config')->paths->$this . 'backup/';
+            $this->wire('files')->mkdir($dir_path);
+
+            // get all module template files under inside the template directory
+            $path = $this->wire('config')->paths->templates;
+            $module_template_files = glob($path . 'fl_*.php');
+
+            // copy all template files to the backup folder
+            foreach ($module_template_files as $path) {
+                $this->wire('files')->copy($path, $dir_path);
             }
-        }
 
-    }
-
-    /**
-     * Get array of fieldnames from fields that are missing
-     * @param Inputfield $field
-     * @param array $mandatory_fields
-     * @param array $fields_values
-     * @return array
-     */
-    private function getMissingFields(Module|Wire|WireArray|WireData $field, array $mandatory_fields, array $fields_values):array
-    {
-        $keys = array_keys($mandatory_fields);
-        $result = array_diff($keys, $fields_values);
-        $filtered = [];
-        if ($result) {
-            $filtered = array_intersect_key($mandatory_fields, array_flip($result));
-        }
-        return $filtered;
-    }
-
-
-    /**
-     * @param HookEvent $event
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function validateFormFields(HookEvent $event):void
-    {
-        $field = $event->object;
-
-        if (($field->name == 'input_registration') || ($field->name == 'input_profile')) {
-            $login_type = $_POST['input_selectlogin'];
-            $values = $event->arguments(0);
-            $registration_values = $values->input_registration;
-            $profile_values = $values->input_profile;
-            $required_text = $this->_('The following fields have to be added to the form field "%s": %s');
-            $recommended_text = $this->_('It is not required, but recommended to include the following fields to the form field "%s" too: %s');
-            // get ids of username, email and password fields
-            $username_id = $this->wire('fields')->get('name=title');
-            $email_id = $this->wire('fields')->get('name=email');
-            $password_id = $this->wire('fields')->get('name=pass');
-
-            if ($login_type == 'username') {
-                $mandatory_fields = [
-                    $username_id->id => $this->_('Username'),
-                    $password_id->id => $password_id->label,
-                    $email_id->id => $email_id->label
-                ];
-                if ($field->name == 'input_registration') {
-                    // registration form fields input -> error
-                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $registration_values);
-                    if ($missing_fields) {
-                        $field->error(sprintf($required_text, $field->label, implode(', ', $missing_fields)));
-                    }
-                } else {
-                    // profile form fields input -> warning
-                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
-                    if ($missing_fields) {
-                        $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
-                        $this->wire('session')->set('fieldset_profile','input_profile');
-                    } else {
-                        $this->wire('session')->remove('fieldset_profile');
-                    }
-                }
-            } else {
-                $mandatory_fields = [
-                    $password_id->id => $password_id->name,
-                    $email_id->id => $email_id->name
-                ];
-                if ($field->name == 'input_registration') {
-                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $registration_values);
-                    if ($missing_fields) {
-                        $field->error(sprintf($required_text, $field->label, implode(', ', $missing_fields)));
-                    }
-                } else {
-                    $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
-                    // profile form fields input -> warning
-                    if ($missing_fields) {
-                        $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
-                        $this->wire('session')->set('fieldset_profile','input_profile');
-                    } else {
-                        $this->wire('session')->remove('fieldset_profile');
+            // remove fields from templates -> usually only from user template
+            foreach ($this->wire('templates') as $template) {
+                foreach ($this->userFields as $name => $fieldproperties) {
+                    if ($template->hasField(wire('fields')->get($name))) {
+                        $template->fields->remove(wire('fields')->get($name));
+                        $template->fields->save();
                     }
                 }
             }
 
+            // delete all on the installation process created user fields
+            foreach ($this->userFields as $name => $fieldproperties) {
+                if ($this->wire('fields')->get($name)) {
+                    $this->wire('fields')->delete($this->wire('fields')->get($name));
+                }
+            }
+
+            // delete all pages and templates
+            foreach ($this->templatePages as $template => $title) {
+                // delete pages first
+                $p = wire('pages')->get('template=' . $template);
+                if ($p->id) {
+                    $p->delete();
+                }
+
+                // delete template and fieldgroup of template
+                $template = $this->templates->get($template);
+                if ($template) {
+                    $fieldgroup = $template->fieldgroup;
+                }
+
+                // run only if template exists
+                if ($template) {
+                    if ($template->getNumPages() > 0) {
+                        throw new WireException("Can't uninstall because template been used by some pages.");
+                    } else {
+                        wire('templates')->delete($template);
+                        wire('fieldgroups')->delete($fieldgroup);
+                    }
+                }
+
+                // delete physical file in templates folder
+                $file = wire('config')->paths->templates . $template . '.php';
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
         }
-        $event->return = $event;
+
+        /**
+         * Sets the status of pages using the fl_register, fl_activation or fl_deleteaccount template to hidden or not,
+         * depending on the settings in the module config If module should only contain a login and not a user
+         * registration, the registration and activation pages will be set to hidden If configuration of deleting the
+         * account is enabled, than status hidden will be removed
+         * @param HookEvent $e
+         * @return void
+         */
+        protected function setPageStatus(HookEvent $e): void
+        {
+            $class = $e->arguments(0);
+            // run only on the FrontendLoginRegister module
+            if ($class == 'FrontendLoginRegister') {
+                $pages = wire('pages')->find('template=fl_registerpage|fl_activationpage|fl_deleteaccountpage|fl_deleterequestpage',
+                    ['findAll' => true]);
+                foreach ($pages as $p) {
+                    $p->setOutputFormatting(false);
+                    switch ($p->template->name) {
+                        // show/hide registration and activation page
+                        case('fl_registerpage'):
+                        case('fl_activationpage'):
+                            if (isset($e->arguments(1)['input_selectloginregister'])) {
+                                if ($e->arguments(1)['input_selectloginregister'] == 'login') {
+                                    $p->addStatus(Page::statusUnpublished);
+                                    if ($p->template->name == 'fl_registerpage') {
+                                        $p->addStatus(Page::statusHidden);
+                                    }
+                                } else {
+                                    $p->removeStatus(Page::statusUnpublished);
+                                    if ($p->template->name == 'fl_registerpage') {
+                                        $p->removeStatus(Page::statusHidden);
+                                    }
+                                }
+                            }
+                            break;
+                        case('fl_deleteaccountpage'):
+                        case('fl_deleterequestpage'):
+                            if (isset($e->arguments(1)['input_deleteProfile'])) {
+                                if ($e->arguments(1)['input_deleteProfile']) {
+
+                                    $p->removeStatus(Page::statusUnpublished);
+                                    if ($p->template->name == 'fl_deleterequestpage') {
+                                        $p->removeStatus(Page::statusHidden);
+                                    }
+                                } else {
+                                    $p->addStatus(Page::statusUnpublished);
+                                    $p->addStatus(Page::statusHidden);
+
+                                }
+                            }
+                            break;
+                    }
+                    $p->save();
+                }
+            }
+        }
+
+        /**
+         * Sets email field to be unique, because this module sends email
+         * This is necessary - otherwise it will not work
+         * @param HookEvent $event
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        protected function setEmailUnique(HookEvent $event): void
+        {
+            $class = $event->arguments(0);
+            // run only on the FrontendLoginRegister module
+            if ($class == 'FrontendLoginRegister') {
+                $email = wire('fields')->get('email');
+                if (!isset($email->flagUnique)) {
+                    $email->flagUnique = 1;
+                    $email->save('flagUnique');
+                    wire('session')->message($this->_('Field email was set to unique, because this is necessary for sending emails to the right user.'));
+                }
+            }
+        }
+
+        /**
+         * Change status of DeleteRequestPage and DeleteAccountPage depending on input_deleteProfile
+         * inside module configuration
+         * box not checked -> set status unpublished
+         * box checked -> remove status unpublished
+         * @param HookEvent $event
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        protected function setDeletePagesStatus(HookEvent $event): void
+        {
+            $config = $this->wire('modules')->getConfig($this);
+            $class = $event->arguments(0);
+            // run only on the FrontendLoginRegister module
+            if ($class == 'FrontendLoginRegister') {
+                $deleteAccountPage = $this->wire('pages')->get('template=fl_deleteaccountpage');
+                $deleteRequestPage = $this->wire('pages')->get('template=fl_deleterequestpage');
+
+                if ($config['input_deleteProfile']) {
+                    // remove unpublished status
+                    $deleteAccountPage->removeStatus(Page::statusUnpublished);
+                    $deleteRequestPage->removeStatus(Page::statusUnpublished);
+                } else {
+                    // add unpublished status
+                    $deleteAccountPage->addStatus(Page::statusUnpublished);
+                    $deleteRequestPage->addStatus(Page::statusUnpublished);
+                }
+            }
+
+        }
+
+        /**
+         * Get array of fieldnames from fields that are missing
+         * @param \ProcessWire\Module|\ProcessWire\Wire|\ProcessWire\WireArray|\ProcessWire\WireData $field
+         * @param array $mandatory_fields
+         * @param array $fields_values
+         * @return array
+         */
+        private function getMissingFields(Module|Wire|WireArray|WireData $field, array $mandatory_fields, array $fields_values): array
+        {
+            $keys = array_keys($mandatory_fields);
+            $result = array_diff($keys, $fields_values);
+            $filtered = [];
+            if ($result) {
+                $filtered = array_intersect_key($mandatory_fields, array_flip($result));
+            }
+            return $filtered;
+        }
+
+        /**
+         * @param HookEvent $event
+         * @return void
+         * @throws WireException
+         * @throws WirePermissionException
+         */
+        protected function validateFormFields(HookEvent $event): void
+        {
+            $field = $event->object;
+
+            if (($field->name == 'input_registration') || ($field->name == 'input_profile')) {
+                $login_type = $_POST['input_selectlogin'];
+                $values = $event->arguments(0);
+                $registration_values = $values->input_registration;
+                $profile_values = $values->input_profile;
+                $required_text = $this->_('The following fields have to be added to the form field "%s": %s');
+                $recommended_text = $this->_('It is not required, but recommended to include the following fields to the form field "%s" too: %s');
+                // get ids of username, email and password fields
+                $username_id = $this->wire('fields')->get('name=title');
+                $email_id = $this->wire('fields')->get('name=email');
+                $password_id = $this->wire('fields')->get('name=pass');
+
+                if ($login_type == 'username') {
+                    $mandatory_fields = [
+                        $username_id->id => $this->_('Username'),
+                        $password_id->id => $password_id->label,
+                        $email_id->id => $email_id->label
+                    ];
+                    if ($field->name == 'input_registration') {
+                        // registration form fields input -> error
+                        $missing_fields = $this->getMissingFields($field, $mandatory_fields, $registration_values);
+                        if ($missing_fields) {
+                            $field->error(sprintf($required_text, $field->label, implode(', ', $missing_fields)));
+                        }
+                    } else {
+                        // profile form fields input -> warning
+                        $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
+                        if ($missing_fields) {
+                            $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
+                            $this->wire('session')->set('fieldset_profile', 'input_profile');
+                        } else {
+                            $this->wire('session')->remove('fieldset_profile');
+                        }
+                    }
+                } else {
+                    $mandatory_fields = [
+                        $password_id->id => $password_id->name,
+                        $email_id->id => $email_id->name
+                    ];
+                    if ($field->name == 'input_registration') {
+                        $missing_fields = $this->getMissingFields($field, $mandatory_fields, $registration_values);
+                        if ($missing_fields) {
+                            $field->error(sprintf($required_text, $field->label, implode(', ', $missing_fields)));
+                        }
+                    } else {
+                        $missing_fields = $this->getMissingFields($field, $mandatory_fields, $profile_values);
+                        // profile form fields input -> warning
+                        if ($missing_fields) {
+                            $field->warning(sprintf($recommended_text, $field->label, implode(', ', $missing_fields)));
+                            $this->wire('session')->set('fieldset_profile', 'input_profile');
+                        } else {
+                            $this->wire('session')->remove('fieldset_profile');
+                        }
+                    }
+                }
+
+            }
+            $event->return = $event;
+        }
+
+        /**
+         * Add additional labels to various input fields
+         * Not really necessary - but it looks good ;-)
+         * @param HookEvent $event
+         * @return void
+         */
+        protected function addLabelsToInputfields(HookEvent $event): void
+        {
+            $inputfield = $event->object;
+            if (($inputfield->name === 'input_remind') || ($inputfield->name === 'input_delete')) {
+                $input = $event->return;
+                $event->return = '<div class="label">' . $input . ' ' . $this->_('Days') . '</div>';
+            }
+            if ($inputfield->name === 'input_delete') {
+                $input = $event->return;
+                $additional_text = '<p id="input_delete_text" class="description">' . sprintf($this->_('According to your settings, an unverified user account will be deleted %s day(s) after the registration.'),
+                        '<span id="days-to-delete"></span>') . '</p>';
+                $event->return = $input . $additional_text;
+            }
+            if ($inputfield->name === 'input_max_filesize') {
+                $input = $event->return;
+                $event->return = '<div class="label">' . $input . ' ' . $this->_('kB') . '</div>';
+            }
+
+        }
+
+        /**
+         * Allow HTML in the description text of the input_delete input field
+         * @param HookEvent $event
+         * @return void
+         */
+        protected function insertText(HookEvent $event): void
+        {
+            $field = $event->object;
+            if ($field->name != 'input_delete') {
+                return;
+            }
+            $field->entityEncodeText = false;
+        }
+
     }
-
-    /**
-     * Add additional labels to various input fields
-     * Not really necessary - but it looks good ;-)
-     * @param HookEvent $event
-     * @return void
-     */
-    protected function addLabelsToInputfields(HookEvent $event):void
-    {
-        $inputfield = $event->object;
-        if (($inputfield->name === 'input_remind') || ($inputfield->name === 'input_delete')) {
-            $input = $event->return;
-            $event->return = '<div class="label">' . $input . ' ' . $this->_('Days') . '</div>';
-        }
-        if ($inputfield->name === 'input_delete') {
-            $input = $event->return;
-            $additional_text = '<p id="input_delete_text" class="description">' . sprintf($this->_('According to your settings, an unverified user account will be deleted %s day(s) after the registration.'),
-                    '<span id="days-to-delete"></span>') . '</p>';
-            $event->return = $input . $additional_text;
-        }
-        if ($inputfield->name === 'input_max_filesize') {
-            $input = $event->return;
-            $event->return = '<div class="label">' . $input . ' ' . $this->_('kB') . '</div>';
-        }
-
-    }
-
-    /**
-     * Allow HTML in the description text of the input_delete input field
-     * @param HookEvent $event
-     * @return void
-     */
-    protected function insertText(HookEvent $event):void
-    {
-        $field = $event->object;
-        if ($field->name != 'input_delete') {
-            return;
-        }
-        $field->entityEncodeText = false;
-    }
-
-}
