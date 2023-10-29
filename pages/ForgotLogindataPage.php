@@ -19,7 +19,6 @@
     use FrontendForms\Email as Email;
     use ProcessWire\WireException;
     use ProcessWire\WireMail;
-    use ProcessWire\WirePermissionException;
 
     class ForgotLogindataPage extends FrontendLoginRegisterPages
     {
@@ -60,7 +59,9 @@
 
         /**
          * @return string
-         * @throws WireException
+         * @throws \DOMException
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
          */
         public function __toString(): string
         {
@@ -70,12 +71,13 @@
         /**
          * Render the form
          * @return string
-         * @throws WireException
-         * @throws WirePermissionException
+         * @throws \DOMException
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
          */
         public function render(): string
         {
-            if ($this->isValid()) {
+            if ($this->___isValid()) {
                 $content = '';
 
                 // create the recovery code
