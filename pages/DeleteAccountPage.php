@@ -146,7 +146,7 @@
          */
         public function render(): string
         {
-            if ($this->isValid()) {
+            if ($this->___isValid()) {
                 $content = '';
                 // delete the user
                 if (!$this->wire('users')->delete($this->user)) {
