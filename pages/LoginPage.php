@@ -2,7 +2,7 @@
     declare(strict_types=1);
 
     namespace FrontendLoginRegister;
-    //checked 27.3
+
     /*
      * Class to create a login form
      * Supports TfaEmail too if enabled in the configuration settings
@@ -41,7 +41,7 @@
         protected int|string $lock_number = 5; // number after how many attempts a user account should be locked if maxAttempts is not set
 
         /**
-         * Every form must have an id, so let's add it via the constructor
+         * Every form must have an ID, so let's add it via the constructor
          * @throws WireException
          */
         public function __construct(string $id = 'login-form')
@@ -207,7 +207,7 @@
              to be able to delete his account permanently.
              */
             if ($this->wire('session')->get('deletion')) {
-                // user comes from the redirect of delete account page, but was not logged in
+                // user comes from the redirect of the "delete account page", but was not logged in
                 $alert = $this->getAlert();
                 $alert->setText($this->_('You have to log in to delete your account.'));
                 $alert->setCSSClass('alert_warningClass');
@@ -250,7 +250,6 @@
                 $this->setAttribute('action', $this->wire('page')->url . '?tfa=' . $this->tfa->getSessionKey(true));
                 $this->disableCaptcha(); // disable Captcha by default - no need for it
 
-
                 // authentication code input field
                 $tfaCode = new InputText('tfa_code');
                 $tfaCode->setLabel($this->tfa->inputLabel);
@@ -273,19 +272,17 @@
                 // log failed attempts if enabled
                 $this->addLogFailedLoginAttempt();
 
-
-                if($this->getSubmitWithAjax()){
+                if ($this->getSubmitWithAjax()) {
                     // redirect to the page, which has been selected inside the module configuration
                     $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
                 }
 
                 if ($this->isValid()) {
 
-
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
 
-                    if($this->getSubmitWithAjax()){
+                    if ($this->getSubmitWithAjax()) {
                         $this->showForm = true;
                         // redirect to the page, which has been selected inside the module configuration
                         //$this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
@@ -311,20 +308,11 @@
                     // show info only if it will be submitted in time and the user is not logged in
                     $secondsLeft = $this->_('seconds left'); //plural
                     $secondLeft = $this->_('second left'); // singular
-                    $timerMarkup = '<span id="minTime" data-time="' . $expireTime . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . FormValidation::secondsToReadable($expireTime) . '</span><span id="timecounter" class="expiration-counter">180 '.$secondsLeft.'</span>';
+                    $timerMarkup = '<span id="minTime" data-time="' . $expireTime . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . FormValidation::secondsToReadable($expireTime) . '</span><span id="timecounter" class="expiration-counter">180 ' . $secondsLeft . '</span>';
                     $msg .= '<br>' . sprintf($this->_('This code is valid for %s.'), $timerMarkup);
-                            //'<span id="expirationcounter">' . $expireTime . '</span>');
+                    //'<span id="expirationcounter">' . $expireTime . '</span>');
                 }
                 $this->getAlert()->setText($msg);
-
-                // !! Important: To load the next form properly with Ajax, the previous wrapper container has to be added
-                // TODO event. nicht notwendig
-                /*
-                if($this->getSubmitWithAjax()){
-                    $content .=  '<div id="login-form-ajax-wrapper">'.$this->render().'</div>';
-                } else {
-                    $content .= $this->render();
-                }*/
 
             } else {
                 // login form
@@ -374,15 +362,13 @@
                 $this->addLogFailedLoginAttempt();
 
                 // Set the redirect url for the Javascript redirect if Tfa is not enabled
-                if($this->getSubmitWithAjax()){
+                if ($this->getSubmitWithAjax()) {
                     if (!$this->loginregisterConfig['input_tfa']) {
                         $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
                     }
                 }
 
                 if ($this->isValid()) {
-
-
 
                     if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
                         // login with email
@@ -414,7 +400,6 @@
                             if ($this->loginregisterConfig['input_tfa']) {
                                 // check if TFA is enabled for the given user
                                 if ($user->hasTfa()) {
-                                    bd('user has tfa');
                                     // set session for the outputting message that a code was sent by email
                                     $this->wire('session')->set('type', 'TfaEmail');
                                     $this->tfa->start($user->name, $this->getValue('pass')); // redirects if Ajax is not enabled
@@ -508,7 +493,7 @@
                 // create error messages from session if present
                 if ($this->wire('session')->get('error')) {
                     $errorMsg = json_decode($this->wire('session')->get('error'), true);
-                    // get the first key in error array
+                    // get the first key in the error array
                     reset($errorMsg);
                     $key = key($errorMsg);
                     $this->getAlert()->setText($errorMsg[$key]);
@@ -516,15 +501,12 @@
                     $this->wire('session')->remove('error');
                 }
 
-
             }
             // render the form on the frontend
             $content .= parent::render();
 
             return $content;
         }
-
-
 
         /**
          * Get all username/email inputs of the unsuccessful login attempts
@@ -561,7 +543,7 @@
          */
         protected function addLogFailedLoginAttempt(): void
         {
-            // check if logging is enabled and max attempts is set
+            // check if logging is enabled and max attempts are set
             if (($this->frontendForms->input_logFailedAttempts) && ($this->getMaxAttempts())) {
                 // check if the max number of attempts is reached
                 if (($this->getMaxAttempts()) && ($this->frontendForms->input_logFailedAttempts)) {
@@ -640,7 +622,7 @@
             if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
                 $redirectUrl = $this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string;
                 // set data attribute if Ajax call
-                if($this->getSubmitWithAjax()){
+                if ($this->getSubmitWithAjax()) {
                     $this->setRedirectUrlAfterAjax($redirectUrl);
                 } else {
                     // otherwise redirect to a given page
@@ -650,61 +632,14 @@
                 $redirectUrl = $this->wire('pages')->get($id)->url . $query_string;
             }
             // set data attribute if Ajax call
-            if($this->getSubmitWithAjax()){
+            if ($this->getSubmitWithAjax()) {
                 $this->setRedirectUrlAfterAjax($redirectUrl);
             } else {
                 // otherwise redirect to a given page
-                bd('normal');
                 $this->wire('session')->redirect($redirectUrl);
             }
 
-
         }
-
-
-        /**
-         * Redirect after successful login to a pre-defined page from the settings
-         * @return void
-         * @throws WireException
-         * @throws WirePermissionException
-         */
-        /*
-        protected function redirectAfterLogin(): void
-        {
-
-            $query_string = '';
-            // check if 'deletion' session is present
-            if ($this->wire('session')->get('deletion')) {
-                $query_string = '?' . $this->wire('session')->get('deletion');
-                $id = $this->delete_page->id;
-            } else {
-                // get redirect page from module configuration settings
-                $current_page_id = $this->wire('pages')->get('template=fl_loginpage')->id;
-
-                switch (true) {
-                    case($this->loginregisterConfig['input_redirectSuccess'] == -1):
-                        if ($this->wire('session')->get('prevPage') > 0) {
-                            $id = (int)$this->wire('session')->get('prevPage');
-                            $this->wire('session')->remove('prevPage');
-                        } else {
-                            $id = $current_page_id;
-                        }
-                        break;
-                    case($this->loginregisterConfig['input_redirectSuccess'] > 0):
-                        $id = (int)$this->loginregisterConfig['input_redirectSuccess'];
-                        break;
-                    default:
-                        $id = $current_page_id;
-                }
-            }
-
-            $this->wire('session')->set('loginID', $id);
-            if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
-                $this->wire('session')->redirect($this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string);
-            } else {
-                $this->wire('session')->redirect($this->wire('pages')->get($id)->url . $query_string);
-            }
-        }*/
 
         /**
          * This method replaces the start method from the Tfa class completely,
@@ -863,7 +798,6 @@
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
             $code_sent = $m->send();
 
-
             if ($code_sent) {
                 // create alert text to enter the code on the screen
                 $alert = $this->getAlert();
@@ -889,8 +823,9 @@
 
         /**
          * @return string
+         * @throws \ProcessWire\WireException
          */
-        public function __toString():string
+        public function __toString(): string
         {
             return $this->render();
         }
