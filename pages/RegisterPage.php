@@ -127,7 +127,7 @@ class RegisterPage extends FrontendLoginRegisterPages
         if(array_key_exists('input_privacy',$this->loginregisterConfig)){
             $privacyType = (int)$this->loginregisterConfig['input_privacy'];
         }
-        bd($privacyType);
+
         // create and add the privay notice type
         switch ($privacyType) {
             case(1): // checkbox has been selected
@@ -143,8 +143,6 @@ class RegisterPage extends FrontendLoginRegisterPages
                 $this->remove($this->privacyText);
                 $this->remove($this->privacy);
         }
-
-        bd($this->formElements);
 
         if ($this->isValid()) {
 
