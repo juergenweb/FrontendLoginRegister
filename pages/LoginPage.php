@@ -277,7 +277,7 @@
                     $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
                 }
 
-                if ($this->isValid()) {
+                if ($this->___isValid()) {
 
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
@@ -368,7 +368,7 @@
                     }
                 }
 
-                if ($this->isValid()) {
+                if ($this->___isValid()) {
 
                     if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
                         // login with email
