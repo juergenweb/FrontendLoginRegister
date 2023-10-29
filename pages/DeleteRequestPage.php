@@ -74,7 +74,7 @@
         public function render(): string
         {
 
-            if ($this->isValid()) {
+            if ($this->___isValid()) {
 
                 $content = '';
 
