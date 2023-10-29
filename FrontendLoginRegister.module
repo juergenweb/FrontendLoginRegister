@@ -25,6 +25,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     // Declaration  of configuration properties
     protected array $input_registration = ['3', '92']; // Fields that should be displayed on the registration form
     protected array $input_profile = ['3', '92']; // Fields that should be displayed on the profile form
+    protected string|int $input_privacy = 2;
     protected string|int $input_delete = 3; // The time in days after which the user will be deleted
     protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
     protected string|int|null $input_prevent_send_deletion_email = ''; // prevent sending of email after user account has been deleted
@@ -48,7 +49,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     protected string|int|null $input_phpini = ''; // disable the validation against the php.ini max-filesize
     protected string $input_image_size = ''; // the width and height of the profile image
     protected int $input_max_filesize = 0; // max file size for image upload in kb
-    protected string|int|null $input_showPrev = '';
+    protected string|int|null $input_showPrev = 2;
     protected string|int $input_useajax = 'inherit'; // whether to use Ajax for form submission or not
 
     // Declaration of configuration properties for templates and user fields
@@ -101,6 +102,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         if($this->config){
             $this->input_registration = $this->config['input_registration'];
             $this->input_profile = $this->config['input_profile'];
+            $this->input_showPrev = $this->config['input_showPrev'];
             $this->input_delete = $this->config['input_delete'];
             $this->input_remind = $this->config['input_remind'];
             $this->input_prevent_send_deletion_email = $this->config['input_prevent_send_deletion_email'];
@@ -189,7 +191,6 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         return [
             'input_registration' => ['3', '92'],
             'input_profile' => ['3', '92'],
-            'input_privacy' => '2',
             'userFields' => [],
             'templatePages' => [],
             'userSettings' => [],
@@ -208,7 +209,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'input_phpini' => '',
             'input_image_size' => '200',
             'input_max_filesize' => 0,
-            'input_showPrev' => 1,
+            'input_showPrev' => 2,
             'input_useajax' => 'inherit'
         ];
     }
