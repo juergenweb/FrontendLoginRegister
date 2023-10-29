@@ -17,6 +17,7 @@ namespace FrontendLoginRegister;
 use Exception;
 use FrontendForms\Button as Button;
 use FrontendForms\Privacy as Privacy;
+use FrontendForms\PrivacyText as PrivacyText;
 use ProcessWire\TfaEmail;
 use ProcessWire\User;
 use ProcessWire\WireException;
@@ -25,6 +26,9 @@ use ProcessWire\WirePermissionException;
 
 class RegisterPage extends FrontendLoginRegisterPages
 {
+    protected Privacy $privacy; // the privacy field object with the checkbox
+    protected PrivacyText $privacyText; // the privacy hint text only
+
 
     /**
      * @throws WireException
@@ -44,12 +48,15 @@ class RegisterPage extends FrontendLoginRegisterPages
         $this->setMaxTime(3600);
         $this->setSubmitWithAjax($this->useAjax);
 
+        // create privacy objects and add them to the form object
+        $this->privacy = new Privacy('privacy');
+        $this->add($this->privacy);
+        $this->privacyText = new PrivacyText('privacy-text');
+        $this->add($this->privacyText);
+
+
         // add the various form fields dynamically depending on the settings in the backend
         $this->createFormFields('input_registration', $this);
-
-        // add checkbox to accept privacy policy
-        $privacy = new Privacy('privacy');
-        $this->add($privacy);
 
         // add the button
         $button = new Button('submit');
@@ -114,6 +121,30 @@ class RegisterPage extends FrontendLoginRegisterPages
      */
     public function render():string
     {
+
+        // add privacy notice if set
+        $privacyType = 1;
+        if(array_key_exists('input_privacy',$this->loginregisterConfig)){
+            $privacyType = (int)$this->loginregisterConfig['input_privacy'];
+        }
+        bd($privacyType);
+        // create and add the privay notice type
+        switch ($privacyType) {
+            case(1): // checkbox has been selected
+                // remove PrivacyText element
+                $this->remove($this->privacyText);
+                break;
+            case(2): // text only has been selected
+                // remove Privacy element
+                $this->remove($this->privacy);
+                break;
+            default: // show none of them has been selected
+                // remove both
+                $this->remove($this->privacyText);
+                $this->remove($this->privacy);
+        }
+
+        bd($this->formElements);
 
         if ($this->isValid()) {
 
