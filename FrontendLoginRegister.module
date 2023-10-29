@@ -102,6 +102,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         if($this->config){
             $this->input_registration = $this->config['input_registration'];
             $this->input_profile = $this->config['input_profile'];
+            $this->input_privacy = $this->config['input_privacy'];
             $this->input_showPrev = $this->config['input_showPrev'];
             $this->input_delete = $this->config['input_delete'];
             $this->input_remind = $this->config['input_remind'];
@@ -191,6 +192,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         return [
             'input_registration' => ['3', '92'],
             'input_profile' => ['3', '92'],
+            'input_privacy' => '2',
             'userFields' => [],
             'templatePages' => [],
             'userSettings' => [],
