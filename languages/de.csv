@@ -71,6 +71,12 @@ Redirection,Weiterleitung,,site/modules/FrontendLoginRegister/FrontendLoginRegis
 Roles,Rollen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,a5cd3ed116608dac017f14c046ea56bf
 "Select the role(s) which should be added to newly registered users.","Wählen Sie die Rolle(n) aus, welche einem neu registrierten Benutzer zugewiesen werden sollen.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,fb006e4ada7f7ff5a3ece9e053779372
 "Please select which fields should be displayed on the frontend registration form.","Bitte wählen Sie aus, welche Eingabe-Felder im Registrierungs-Formular im Frontend angezeigt werden sollen.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,80c53233639ee052db80d2cfa861dbc5
+"Add privacy text or privacy checkbox to the form","Datenschutztext oder Datenschutz-Checkbox zum Formular hinzufügen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,52b7eac43569326f5fd14232ef8c8994
+"Select if you want to show a privacy text only or a privacy checkbox above the submit button","Wählen Sie aus, ob Sie nur einen Datenschutztext oder eine Datenschutz-Checkbox über der Schaltfläche ""Senden"" anzeigen möchten.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,f25ff33f3e8c3f873dc85b3a401809eb
+"Do not show anything","Nichts anzeigen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,89ca52172700db318a89a30e1b677ddc
+"Show checkbox","Checkbox anzeigen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,0e99c9e8c94dc2a1c42561e4862923ae
+"Show text","Text anzeigen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,823dbdeca8e8e353dde97aa7708ff251
+"You can disable the display of the privacy text/checkbox, but you should be aware that this may lead to legal consequences if a privacy notice is required in your country.","Sie können die Anzeige des Datenschutztextes bzw. des Kontrollkästchens deaktivieren, aber Sie sollten sich darüber im Klaren sein, dass dies zu rechtlichen Konsequenzen führen kann, wenn in Ihrem Land ein Datenschutzhinweis erforderlich ist.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,57e0942ea0dc40513cfa36f66cf8a29c
 "Account settings",Konto-Einstellungen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,8af703b2bf59cc9742883ae7f4cb0e5b
 "Account deletion",Konto-Löschung,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,dee12d83249dd7abd9012ae73fc3b012
 "Allow users to delete their account","Nutzer erlauben deren Account zu löschen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,26f7656eed87edec09b69c177ac8f5df
@@ -158,6 +164,22 @@ Days,Tage,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,e807d
 "According to your settings, an unverified user account will be deleted %s day(s) after the registration.","Entsprechend Ihrer Einstellungen wird ein nicht bestätigtes Benutzerkonto nach %s Tag(en) gelöscht.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,81ab11fbe84d59b70b91cfa26e671874
 kB,=,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,3e56c011b37f0bc78fb9eb175c1181c6
 en,de,description,file,hash
+"I have registered for an account - activate my account now","Ich habe mich für einen Account registriert - Meinen Account jetzt aktivieren",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,8c81405575ad2673b1ca89ebcd7125ad
+"I have not registered for an account - delete the account","Ich habe mich nicht für einen Account registriert - Diesen Account jetzt löschen",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c6a483b1849ccedc51f459b897bd48bc
+"Action required to activate your account","Aktion erforderlich zur Aktivierung Ihres Benutzer-Kontos",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,fc6b228c1c76a11ae16c0ae5cfdd61c8
+"Have you forgotten to verify your account?","Haben Sie vergessen, Ihr Benutzer-Konto zu bestätigen?",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,dd79d2ddc57b56fbb60b6e534495e2b7
+"Your account has been deleted","Ihr Benutzer-Konto wurde gelöscht",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,220d4fb4dc0df6ce398ab2143fe1b991
+"Good bye!",Aufwiedersehen!,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,45dbe67ab9d69929dc41b8bfe83ce764
+"A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.","Beim Speichern der Benutzerdaten ist ein technisches Problem aufgetreten, so dass die Benutzerdaten nicht gespeichert werden konnten. Bitte versuchen Sie es noch einmal. Sollte das Problem weiterhin bestehen, wenden Sie sich bitte an den Webmaster dieser Seite.",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c21061f89026131a859929bf526452e4
+Login?,Anmelden?,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,3d60e1651d302a5aaf33325d3f7d6298
+"Change password","Password ändern",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,0b39c5aca15b84b1ad53a94d6b3feb78
+"Old password","Altes Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,062d2b8bc2cfac7772c75ae8090fb9d1
+"New password","Neues Passwort",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,3544848f820b9d94a3f3871a382cf138
+TFA,=,,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,61bca12cd76652bf2fe763b5c4952066
+"User image of %s","Profilbild von %s",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,014fe1878c312d890ced94491f20695c
+"Remove this image","Dieses Bild entfernen",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,73c8a0a1101c3a8b45d2115a99c7c9c7
+"Sorry, but no user was found with this code.","Es tut uns leid, aber es wurde kein Nutzer mit diesem Code gefunden.",,site/modules/FrontendLoginRegister/pages/FrontendLoginRegisterPages.php,c0b573f315326f74c6dd9e211f1c5973
+en,de,description,file,hash
 Cancel,Abbrechen,,site/modules/FrontendLoginRegister/pages/LoginPage.php,ea4788705e6873b424c65e91c2846b19
 "Forgot login data?","Zugangsdaten vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,688a8c015589eb6d8210fa3de138e784
 "Forgot password?","Passwort vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,8458bad978f4fd6d6c7f8ec2ec0824b4
@@ -205,6 +227,7 @@ en,de,description,file,hash
 "If you have forgotten your username too, you can enter a new one here. Otherwise, let this field empty and fill out only the password fields.","Wenn Sie auch Ihren Benutzernamen vergessen haben sollten, dann können Sie hier einen neuen eingeben. Andernfalls lassen Sie dieses Feld leer und füllen Sie nur die Passwortfelder aus.",,site/modules/FrontendLoginRegister/pages/RecoveryLogindataPage.php,e9a62c5a0be3e2208f8f4d2449013e05
 "Your new password has been saved, and you can log in into your account now.","Ihr neues Passwort wurde gespeichert und Sie können sich jetzt bei Ihrem Konto anmelden.",,site/modules/FrontendLoginRegister/pages/RecoveryLogindataPage.php,91796a2b52a53c9c898142cf4361c5a2
 "Show password confirmation","Passwortbestätigung anzeigen",,site/modules/FrontendLoginRegister/pages/RecoveryLogindataPage.php,c015c2977a6ad7af1e7fef14a0db7870
+"Save new password","Neues Passwort speichern",,site/modules/FrontendLoginRegister/pages/RecoveryLogindataPage.php,6c9025c5d284889adb27111824de57e0
 "Save new login data","Neue Zugangsdaten speichern",,site/modules/FrontendLoginRegister/pages/RecoveryLogindataPage.php,1515644564af6fed29f9e39ca610d017
 en,de,description,file,hash
 Register,Registrieren,,site/modules/FrontendLoginRegister/pages/RegisterPage.php,0ba7583639a274c434bbe6ef797115a4
