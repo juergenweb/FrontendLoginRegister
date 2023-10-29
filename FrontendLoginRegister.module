@@ -189,6 +189,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
         return [
             'input_registration' => ['3', '92'],
             'input_profile' => ['3', '92'],
+            'input_privacy' => '2',
             'userFields' => [],
             'templatePages' => [],
             'userSettings' => [],
