@@ -170,10 +170,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-            'version' => '1.2.5',
+            'version' => '1.2.6',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.36', 'LazyCron'],
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.51', 'LazyCron'],
             'icon' => 'sign-in'
         ];
     }
@@ -632,7 +632,7 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
     }
 
     /**
-     * Add JS for the seconds counter to the frontend, but only on the login page
+     * Add JavaScript and CSS file to the frontend
      * @param HookEvent $event
      * @return void
      */
@@ -974,13 +974,32 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             $addRoles->addOption($role->id, $role->name);
         }
         $addRoles->value = $this->input_roles;
-        $addRoles->columnWidth = 50;
+        $addRoles->columnWidth = 33;
         $registrationfieldset->add($addRoles);
 
         // select which fields should be shown on the registration form
         $registrationFields = $this->createFrontendFields('registration', $fields, 50);
         $registrationFields->description = $this->_('Please select which fields should be displayed on the frontend registration form.');
+        $registrationFields->columnWidth = 33;
         $registrationfieldset->add($registrationFields);
+
+        // privacy field on registratio form
+        $privacy_show = $this->wire()->modules->get('InputfieldSelect');
+        $privacy_show->label = $this->_('Add privacy text or privacy checkbox to the form');
+        $privacy_show->description = $this->_('Select if you want to show a privacy text only or a privacy checkbox above the submit button');
+        $options = [
+            $this->_('Do not show anything'),
+            $this->_('Show checkbox'),
+            $this->_('Show text')
+        ];
+        $privacy_show->addOptions($options);
+        $privacy_show->defaultValue = '2';
+        $privacy_show->attr('value', $this->input_privacy);
+        $privacy_show->attr('name', 'input_privacy');
+        $privacy_show->notes = $this->_('You can disable the display of the privacy text/checkbox, but you should be aware that this may lead to legal consequences if a privacy notice is required in your country.');
+        $privacy_show->columnWidth = 33;
+        $registrationfieldset->add($privacy_show);
+
         $inputfields->add($registrationfieldset);
 
         // Profile settings
