@@ -105,7 +105,7 @@
         public function render(): string
         {
 
-            if ($this->isValid()) {
+            if ($this->___isValid()) {
                 $content = '';
                 // grab the user and store the new password
                 $this->user->setOutputFormatting(false);
