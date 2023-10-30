@@ -75,7 +75,7 @@ HEREA;
 $input_unlock_account = <<<HEREA
 <p>Lieber Nutzer</p>
 <p>Sie erhalten diese E-Mail, weil wir verdächtige Aktivitäten auf Ihrem Benutzerkonto bei [[DOMAINVALUE]] festgestellt haben.<br />
-Jemand hat erfolglos versucht, sich in Ihr Konto einzuloggen, indem er Ihren [[LOGINTYPE]] in Kombination mit verschiedenen Passwörtern verwendet hat.<br />
+Jemand hat erfolglos versucht, sich in Ihr Konto einzuloggen, indem er [[LOGINTYPE]] in Kombination mit verschiedenen Passwörtern verwendet hat.<br />
 Aus Sicherheitsgründen haben wir Ihr Konto nun gesperrt.<br />
 Bitte klicken Sie auf den Link und folgen Sie den Anweisungen auf der weitergeleiteten Seite, um Ihr Konto zu entsperren.<br />
 Danach können Sie sich wieder normal einloggen.</p>
