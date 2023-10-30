@@ -71,8 +71,6 @@
                 $this->deletionCode = '?' . $this->wire('session')->get('deletion');
             }
 
-            bd($this->deletionCode);
-
         }
 
         /**
