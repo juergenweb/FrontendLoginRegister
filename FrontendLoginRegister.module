@@ -152,7 +152,7 @@
             $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/traits');
 
             // set upload path for profile image
-            $this->frontendForms->setUploadPath($this->tmp_profile_image_dir_path);
+            $this->setUploadPath($this->tmp_profile_image_dir_path);
         }
 
         /**
