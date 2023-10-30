@@ -24,9 +24,9 @@ en,de,description,file,hash
 "Recover password","Passwort wiederherstellen",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,50e63ff81efd77612d085e41e76f81d3
 "Request login data","Zugangsdaten anfordern",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,cde45d6d9673c9fcb5a15c29b9af486a
 "It seems that you have already registered for an account,  but your account is still pending approval. To activate your account, please follow the instructions inside the mail that have been sent to you. After that you can create your new login data.","Anscheinend haben Sie sich bereits für ein Konto registriert, aber die Bestätigung ist noch ausständig. Um Ihr Konto zu aktivieren, folgen Sie bitte den Anweisungen in der E-Mail, die Sie soeben zu Ihnen gesendet wurde. Danach können Sie Ihre neuen Zugangsdaten erstellen.",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,dee2e98698aeacd93932380e90114ac9
-"login data (password and/or username)","Zugangsdaten (Password und/oder Nutzername)",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,eba58d3e17dc85feda5375d1a0df5744
-password,Passwort,,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,5f4dcc3b5aa765d61d8327deb882cf99
-"login data",Zugangsdaten,,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,cc81b9a7fbad434daee43bf70c9e1ac7
+"the login data (password and/or username)","die Zugangsdaten (Passwort und/oder Benutzername)",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,ac65b18179b5dea639f4c505ab9e7938
+"the password","das Passwort",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,25e2fccf9401ff0d9e20dbc86e2e71e4
+"the login data","die Zugangsdaten",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,58f00a47f8006f0aebf4a40c67963d99
 "Action required to reset your %s","Aktion erforderlich, um Ihre %s zurückzusetzen",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,a9617c66ee842332161c7b2522094baa
 "Create a new %s","%s erstellen",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,43767dfa93591b6111c17054981dd8ed
 en,de,description,file,hash
