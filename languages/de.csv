@@ -31,7 +31,7 @@ en,de,description,file,hash
 "Create a new %s","%s erstellen",,site/modules/FrontendLoginRegister/pages/ForgotLogindataPage.php,43767dfa93591b6111c17054981dd8ed
 en,de,description,file,hash
 "Description of the placeholders used","Beschreibung der verwendeten Platzhalter",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,eb4f4fc856f569649e5a1d880cc7100e
-"Import the text for the emails too if they are available in the given language.","Die Text für die E-Mails auch in der ausgewählten Sprache importieren, sofern sie vorhanden sind.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,30775a779767a86161c5c81715d1b262
+"Import the text for the emails too if they are available in the given language.","Die Texte für die E-Mails auch in der ausgewählten Sprache importieren, sofern diese vorhanden sind.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,30775a779767a86161c5c81715d1b262
 "Please note: This will overwrite all of your previous entered texts for the emails in the given language.","Bitte beachten Sie: Diese Aktion wird alle Ihre bisher eingegebenen Texte für die E-Mails in der ausgewählten Sprache überschreiben.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,cefb9ff4d39117eef90d8f7bef4893b1
 "General settings","Allgemeine Einstellungen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,de62775a71fc2bf7a13d7530ae24a7ed
 Login/registration,Anmeldung/Registrierung,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,73b89b7c5c780ac257ed9c427cdf9f95
