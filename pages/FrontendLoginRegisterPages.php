@@ -56,7 +56,6 @@
         protected Field $image_field; // the profile image field
         protected array $image_fields = []; // array containing all names of the image fields if present
         protected string $moduleversion = ''; // get the current version of FrontendForms
-        protected bool $needUpdate = false; // should FrontendForms be updated to support certain functions?
 
         /**
          * Every form must have an ID, so let's add it via the constructor
@@ -67,12 +66,6 @@
         {
             parent::__construct($id);
 
-            $this->moduleversion = $this->wire('modules')->getModuleInfo('FrontendForms')['version'];
-
-            $versionCompare = version_compare($this->moduleversion, '2.1.51');
-            if ($versionCompare < 0) {
-                $this->needUpdate = true;
-            }
 
             // set tmp_profile_image_dir_path
             $this->tmp_profile_image_dir_path = $this->wire('config')->paths->siteModules . 'FrontendLoginRegister/tmp_profile_image/';
@@ -116,11 +109,6 @@
                 $ajax = (bool)$ajax;
             }
             $this->useAjax = $ajax;
-
-            // Ajax form submission will not be supported by the current FrontendForms version
-            if ($this->needUpdate) {
-                $this->useAjax = false;
-            }
         }
 
         /**
@@ -529,6 +517,10 @@
         {
             if ($this->loginregisterConfig['input_sender']) {
                 $name = $this->loginregisterConfig['input_sender'];
+                // set multilanguage value if language support is installed
+                if ($this->wire('languages')) {
+
+                }
             } else {
                 $name = 'noreply@' . $this->wire('config')->httpHost;
             }
