@@ -287,7 +287,7 @@
 
                 if ($this->___isValid()) {
                     $this->wire('session')->remove('showed');
-                    $this->wire('session')->remove('deletion');
+
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
                     $this->redirectAfterLogin(); // redirect after login if submission was not done via Ajax
@@ -407,7 +407,9 @@
                                     $this->tfa->start($user->name, $this->getValue('pass')); // redirects if Ajax is not enabled
                                 } else {
                                     $this->wire('session')->remove('showed');
-                                    $this->wire('session')->remove('deletion');
+
+                                    // check if a deletion session is present
+
                                     $this->defaultLogin($user);
                                 }
                             } else {
@@ -626,12 +628,15 @@
             $this->wire('session')->set('loginID', $id);
             if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
                 $redirectUrl = $this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string;
+
+                $this->wire('session')->set('red', $redirectUrl);
                 // set data attribute if Ajax call
                 if ($this->getSubmitWithAjax()) {
                     $this->setRedirectUrlAfterAjax($redirectUrl);
                 } else {
                     // otherwise redirect to a given page
-                    $this->wire('session')->redirect($this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string);
+                    $this->wire('session')->redirect($redirectUrl);
+                    //$this->wire('session')->redirect($this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string);
                 }
             } else {
                 $redirectUrl = $this->wire('pages')->get($id)->url . $query_string;
@@ -643,7 +648,6 @@
                 // otherwise redirect to a given page
                 $this->wire('session')->redirect($redirectUrl);
             }
-
         }
 
         /**
