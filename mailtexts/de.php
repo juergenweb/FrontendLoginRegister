@@ -19,7 +19,7 @@ $input_activationtext = <<<HEREA
 <p>Sie erhalten diese E-Mail, weil Sie sich für ein Konto bei [[DOMAINVALUE]] am [[CURRENTDATETIMEVALUE]] registriert haben.<br />
 Um zu bestätigen, dass Sie die Person sind, die sich auf dieser Website registriert hat, klicken Sie bitte auf den nachfolgenden Link, um Ihr Konto zu aktivieren.</p>
 <p>[[VERIFICATIONLINK]]</p>
-<p>Nach dieser Überprüfung ist Ihr Konto aktiviert, und Sie können sich mit Ihren Anmeldedaten anmelden.</p>
+<p>Nach dieser Überprüfung ist Ihr Konto aktiviert, und Sie können sich mit Ihren Zugangsdaten anmelden.</p>
 <p>Wenn Sie sich nicht für ein Konto registriert haben, ignorieren Sie bitte diese E-Mail oder klicken Sie auf den folgenden Link, um das Benutzerkonto zu löschen und keine weiteren E-Mails zu erhalten.</p>
 <p>[[NOTREGISTEREDLINK]]</p>
 HEREA;
@@ -50,7 +50,7 @@ $input_passwordforgottentext = <<<HEREA
 <p>Sie erhalten diese E-Mail, weil jemand [[LOGINDATA]] für Ihr Konto bei [[DOMAINVALUE]] angefordert hat.<br />
 Aus Sicherheitsgründen versenden wir [[LOGINDATA]] nicht, daher müssen Sie die Zugangsdaten neu erstellen, indem Sie auf den folgenden Link klicken:</p>
 <p>[[RECOVERPASSWORDLINK]]</p>
-<p>Wenn Sie keine Rücksetzung der Anmeldedaten angefordert haben, ignorieren Sie bitte diese E-Mail.</p>
+<p>Wenn Sie keine Rücksetzung der Zugangsdaten angefordert haben, ignorieren Sie bitte diese E-Mail.</p>
 HEREA;
 
 // text for the email containing a link to delete the account
