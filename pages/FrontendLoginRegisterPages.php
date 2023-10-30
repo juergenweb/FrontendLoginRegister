@@ -545,7 +545,7 @@
          */
         protected function setSenderEmail(WireMail $mail): void
         {
-            $senderEmail = $this->setLanguageMailValue($mail, 'input_sender');
+            $senderEmail = $this->setLanguageMailValue($mail, 'input_email');
             if(is_null($senderEmail)){
                 $senderEmail = 'noreply@' . $this->wire('config')->httpHost;
             }
