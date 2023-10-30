@@ -47,6 +47,8 @@
                 $this->wire('session')->redirect($this->login_page->url);
             }
 
+            $this->wire('session')->remove('deletion');
+
             if ($this->checkForUser('deleteaccountcode')) // check if user exists first
             {
 
@@ -147,7 +149,6 @@
         public function render(): string
         {
             if ($this->___isValid()) {
-
                 $content = '';
                 // delete the user
                 if (!$this->wire('users')->delete($this->user)) {
