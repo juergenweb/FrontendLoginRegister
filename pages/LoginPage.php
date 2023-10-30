@@ -147,7 +147,7 @@
 
             $m = wireMail();
             $m->to($user->email);
-            $m->from($this->loginregisterConfig['input_email']);
+            $this->setSenderEmail($m);
             $this->setSenderName($m);
             $m->subject($this->_('We have detected suspicious activity on your user account'));
             $m->title($this->_('Action required to unlock your account'));
@@ -781,7 +781,7 @@
             $m->title($this->_('Use this code to login into your account'));
 
             $m->to($email);
-            $m->from($this->loginregisterConfig['input_email']);
+            $this->setSenderEmail($m);
             $this->setSenderName($m);
 
             if ($this->wire('modules')->isInstalled('LanguageSupport')) {
