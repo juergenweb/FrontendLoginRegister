@@ -418,6 +418,8 @@
                             }
                         }
                     }
+                    // remove deletion session
+                    $this->wire('session')->remove('deletion');
                 } else {
                     // grab the username or email field: depends on the login type set
                     $user_field_name = $this->getAttribute('id') . '-' . $this->loginregisterConfig['input_selectlogin'];
