@@ -207,10 +207,12 @@
              to be able to delete his account permanently.
              */
             if ($this->wire('session')->get('deletion')) {
+
                 // user comes from the redirect of the "delete account page", but was not logged in
                 $alert = $this->getAlert();
                 $alert->setText($this->_('You have to log in to delete your account.'));
                 $alert->setCSSClass('alert_warningClass');
+
             }
 
             // check if the tfa session is active and render the second form
@@ -363,10 +365,15 @@
 
                 // Set the redirect url for the Javascript redirect if Tfa is not enabled
                 if ($this->getSubmitWithAjax()) {
-                    if (!$this->loginregisterConfig['input_tfa']) {
-                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
+                    if ((!$this->loginregisterConfig['input_tfa']) || (($this->wire('session')->get('deletion')))) {
+                        $code = '';
+                        if($this->wire('session')->get('deletion')){
+                            $code = '?'.$this->wire('session')->get('deletion');
+                        }
+                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url.$code );
                     }
                 }
+
 
                 if ($this->___isValid()) {
 
