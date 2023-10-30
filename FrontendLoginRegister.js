@@ -16,12 +16,11 @@ function showPreview(event) {
         let old_img = document.getElementById(id + "-image");
         let preview_wrapper = document.getElementById(id + "-preview");
         if (old_img) {
-            let old_src = old_img.src;
             // write it as data-attribute to the preview wrapper container
-            preview_wrapper.dataset.oldsrc = old_src;
+            preview_wrapper.dataset.oldsrc = old_img.src;
         }
         let file = event.target.files[0];
-        // check if file is present and it is an image
+        // check if the file is present and it is an image
         if (file && file["type"].split('/')[0] === "image") {
             let src = URL.createObjectURL(event.target.files[0]);
             if (old_img) {
@@ -36,7 +35,7 @@ function showPreview(event) {
 }
 
 /**
- * Show or hide the image depending on if checkbox is checked or not
+ * Show or hide the image depending on if the checkbox is checked or not
  * @param checkbox
  */
 function removePreview(checkbox) {
@@ -47,16 +46,16 @@ function removePreview(checkbox) {
 
     if (preview) {
         if (checkbox.checked) {
-            preview.style = "display:none"; // hide the image
+            preview.style.display = "none"; // hide the image
         } else {
-            preview.style = "display:block"; // show the image again
+            preview.style.display = "block"; // show the image again
         }
     }
 }
 
 
 /**
- * Remove the image preview if empty upload field link is clicked
+ * Remove the image preview if the empty upload field link is clicked
  * @param event
  */
 function removeImageTag(event) {
