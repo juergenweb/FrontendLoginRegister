@@ -122,10 +122,10 @@
 
                         // create placeholder variables
                         $this->setMailPlaceholder('logindata', $requestText);
-                        if($this->loginregisterConfig['input_selectlogin'] == 'username'){
-                            $resetText = $this->_('the login data')
+                        if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
+                            $resetText = $this->_('the login data');
                         } else {
-                            $resetText = $this->_('the password')
+                            $resetText = $this->_('the password');
                         }
                         $this->setMailPlaceholder('resettext', $resetText);
                         $this->setMailPlaceholder('recoverPasswordlink',
