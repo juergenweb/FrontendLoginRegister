@@ -129,7 +129,7 @@
 
                         $m = new WireMail();
                         $m->to($user->email);
-                        $m->from($this->loginregisterConfig['input_email']);
+                        $this->setSenderEmail($m);
                         $this->setSenderName($m);
                         $m->subject(sprintf($this->_('Action required to reset your %s'), $resetText));
                         $m->title(sprintf($this->_('Create a new %s'), $requestText));
