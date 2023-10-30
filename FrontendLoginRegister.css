@@ -2,7 +2,9 @@
 CSS file for FrontendLoginRegister module
 */
 
-.expiration-counter {padding-left: 4px;}
+.expiration-counter {
+    padding-left: 4px;
+}
 
 .expiration-counter::before {
     content: '(';
