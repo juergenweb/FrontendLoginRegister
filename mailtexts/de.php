@@ -57,7 +57,7 @@ HEREA;
 $input_deleteaccounttext = <<<HEREA
 <p>Lieber Nutzer</p>
 <p>Sie erhalten diese E-Mail, weil Sie einen Löschungslink für Ihr Konto bei [[DOMAINVALUE]] angefordert haben.<br />
-Bitte klicken Sie auf den Link, um Ihr Konto zu löschen. Bitte beachten Sie, dass dieser Link nur 5 Minuten lang gültig ist und nur funktioniert, wenn Sie eingeloggt sind.</p>
+Bitte klicken Sie auf den Link, um Ihr Konto zu löschen. Bitte beachten Sie, dass dieser Link nur 5 Minuten lang gültig ist und nur funktioniert, wenn Sie angemeldet sind.</p>
 <p>[[DELETEACCOUNTLINK]]</p>
 HEREA;
 
@@ -81,3 +81,4 @@ Bitte klicken Sie auf den Link und folgen Sie den Anweisungen auf der weitergele
 Danach können Sie sich wieder normal einloggen.</p>
 <p>[[UNLOCKACCOUNTLINK]]</p>
 HEREA;
+
