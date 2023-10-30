@@ -20,7 +20,7 @@ $input_activationtext = <<<HEREA
 Um zu bestätigen, dass Sie die Person sind, die sich auf dieser Website registriert hat, klicken Sie bitte auf den nachfolgenden Link, um Ihr Konto zu aktivieren.</p>
 <p>[[VERIFICATIONLINK]]</p>
 <p>Nach dieser Überprüfung ist Ihr Konto aktiviert, und Sie können sich mit Ihren Zugangsdaten anmelden.</p>
-<p>Wenn Sie sich nicht für ein Konto registriert haben, ignorieren Sie bitte diese E-Mail oder klicken Sie auf den folgenden Link, um das Benutzerkonto zu löschen und keine weiteren E-Mails zu erhalten.</p>
+<p>Wenn Sie sich nicht für ein Konto registriert haben, ignorieren Sie bitte diese E-Mail oder klicken Sie auf den folgenden Link, um das Benutzerkonto zu löschen und keine weiteren E-Mails mehr zu erhalten.</p>
 <p>[[NOTREGISTEREDLINK]]</p>
 HEREA;
 
@@ -81,4 +81,3 @@ Bitte klicken Sie auf den Link und folgen Sie den Anweisungen auf der weitergele
 Danach können Sie sich wieder normal einloggen.</p>
 <p>[[UNLOCKACCOUNTLINK]]</p>
 HEREA;
-
