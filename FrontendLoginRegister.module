@@ -30,7 +30,6 @@
         protected string|int $input_remind = 1; // The time in days after which the user will be reminded to activate his account
         protected string|int|null $input_prevent_send_deletion_email = ''; // prevent sending of email after the user account has been deleted
         protected string $input_selectlogin = 'email'; // Select between login with username or email
-        protected string|int|null $input_removeJS = ''; // Whether to add the JS before the closing body tag or not
         protected string $input_selectloginregister = 'loginregister'; // Select if login only or login and register
         protected string $input_emailTemplate = 'inherit'; // The HTML template that should be used for emails
         protected string $input_email = ''; // The email for this page, that will be used to send emails (fe. noreplay@mycompany.com)
@@ -51,14 +50,14 @@
         protected int $input_max_filesize = 0; // max file size for image upload in kb
         protected string|int|null $input_showPrev = 2;
         protected string|int $input_useajax = 'inherit'; // whether to use Ajax for form submission or not
-
+        protected string|int|null $input_removeCSS = 0; // whether to remove the frontend CSS file or not
+        protected string|int|null $input_removeJS = 0; // whether to remove the frontend JS file or not
+        protected string $version = ''; // the current module version
         // Declaration of configuration properties for templates and user fields
         protected array $userFields = []; // Array of all user fields
         protected array $templatePages = []; // Array of all template pages
         protected array $textareas = []; // array of all textarea input fields for the mail textes
         protected array $userSettings = []; // Holds the data for the specific user
-        protected string $moduleversion = ''; // get the current version of FrontendForms
-        protected bool $needUpdate = false; // should FrontendForms be updated to support certain functions?
 
         // Declaration of class objects used
         protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
@@ -83,14 +82,11 @@
         {
             parent::__construct();
 
+            // set the current module version
+            $this->version = $this->getModuleInfo()['version'];
+
             // Get FrontendForms module
             $this->frontendForms = wire('modules')->get('FrontendForms');
-            $this->moduleversion = wire('modules')->getModuleInfo('FrontendForms')['version'];
-
-            $versionCompare = version_compare($this->moduleversion, '2.1.47');
-            if ($versionCompare < 0) {
-                $this->needUpdate = true;
-            }
 
             // set configuration values from the database
             $this->config = $this->wire('modules')->getConfig($this); // get the module config values from the db
@@ -125,6 +121,8 @@
                 $this->input_image_size = $this->config['input_image_size'] ?? '200';// add fallback
                 $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;// add fallback
                 $this->input_useajax = $this->config['input_useajax'] ?? 'inherit'; // add fallback
+                $this->input_removeJS = $this->config['input_removeJS'] ?? 0; // add fallback
+                $this->input_removeCSS = $this->config['input_removeCSS'] ?? 0; // add fallback
             }
 
             // array of the names of all mail text input fields
@@ -145,7 +143,7 @@
                 $this->$key = $value;
             }
 
-            // templates and pages (template name as key and page properties as assoc. array)
+            // templates and pages (template name as key and page properties as an associative array)
             include('config/templatePages.php');
 
             //  Include all classes with PW autoload function
@@ -154,7 +152,7 @@
             $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/traits');
 
             // set upload path for profile image
-            $this->setUploadPath($this->tmp_profile_image_dir_path);
+            $this->frontendForms->setUploadPath($this->tmp_profile_image_dir_path);
         }
 
         /**
@@ -195,7 +193,6 @@
                 'input_remind' => 1,
                 'input_prevent_send_deletion_email' => '',
                 'input_selectlogin' => 'email',
-                'input_removeJS' => '',
                 'input_selectloginregister' => 'loginregister',
                 'input_emailTemplate' => 'inherit',
                 'input_email' => '',
@@ -207,7 +204,9 @@
                 'input_image_size' => '200',
                 'input_max_filesize' => 0,
                 'input_showPrev' => 2,
-                'input_useajax' => 'inherit'
+                'input_useajax' => 'inherit',
+                'input_removeCSS' => 0,
+                'input_removeJS' => 0
             ];
         }
 
@@ -248,8 +247,7 @@
             $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
 
             // add CSS and JS to the backend
-            $version = $this->getModuleInfo()['version'] . '-' . time();
-            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $version);
+            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $this->version);
 
             $this->wire->addHookBefore('Modules::saveConfig', function (HookEvent $event) {
                 $event->message("You saved the module config");
@@ -300,7 +298,7 @@
         }
 
         /**
-         * Send a mail to the user, to inform him that the account has been deleted
+         * Send mail to the user, to inform him that the account has been deleted
          * @return void
          * @throws \DOMException
          * @throws \ProcessWire\WireException
@@ -644,12 +642,11 @@
             // load only on frontend
             if ($page->template->name !== 'admin') {
                 if (!$this->input_removeJS) {
-                    $js = '<script src="' . $assets . $this->className() . '.js"></script>' . PHP_EOL;
+                    $js = '<script src="' . $assets . $this->className() . '.js?v=' . $this->version . '"></script>' . PHP_EOL;
                 }
-                // TODO
-                $this->input_removeCSS = false;
+
                 if (!$this->input_removeCSS) {
-                    $css = '<link rel="stylesheet" type="text/css" href="' . $assets . $this->className() . '.css"/>' . PHP_EOL;
+                    $css = '<link rel="stylesheet" type="text/css" href="' . $assets . $this->className() . '.css?v=' . $this->version . '"/>' . PHP_EOL;
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
                 }
             }
@@ -812,7 +809,7 @@
             $loginSelect = $modules->get('InputfieldSelect');
             $loginSelect->label = $this->_('Login/registration');
             $loginSelect->description = $this->_('Choose whether you want a user login only or you want to offer the possibility of registration too.');
-            $loginSelect->attr('name', 'input_selectloginregister');
+            $loginSelect->name = 'input_selectloginregister';
             $loginSelect->addOptions([
                 'loginregister' => $this->_('Login and registration'),
                 'login' => $this->_('Login only')
@@ -827,10 +824,6 @@
             $ajaxSelect = $modules->get('InputfieldSelect');
             $ajaxSelect->label = $this->_('Ajax setting');
             $ajaxSelect->description = $this->_('Choose whether you want to use Ajax form submission or not.');
-            if ($this->needUpdate) {
-                $ajaxSelect->notes = $this->_('Your version of FrontendForms does not support Ajax form submission. In order to use Ajax form submission, you need to update FrontendForms to the latest version.');
-                $ajaxSelect->attr('disabled', 'disabled');
-            }
             $ajaxSelect->attr('name', 'input_useajax');
             $ajaxSelect->addOptions([
                 'inherit' => $this->_('Inherit from FrontendForms'),
@@ -1280,6 +1273,34 @@
             $imagefieldset->add($positionclass);
 
             $inputfields->add($imagefieldset);
+
+
+            $fieldsetAssets = $this->wire('modules')->get('InputfieldFieldset');
+            $fieldsetAssets->label = $this->_('Remove stylesheets and scripts');
+            $fieldsetAssets->icon = 'fa-code';
+            $fieldsetAssets->collapsed = 1;
+
+            // Remove JS on Frontend
+            $removeJS = $this->wire('modules')->get('InputfieldCheckbox');
+            $removeJS->attr('name', 'input_removeJS');
+            $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
+            $removeJS->label = $this->_('Javascript setting');
+            $removeJS->label2 = $this->_('Remove frontendloginregister.js from the template');
+            $removeJS->notes = $this->_('A small JavaScript, which will be needed for some features of the module, will added before the closing body tag on the frontend by default . You can remove the embedding of the script file by checking the box.');
+            $removeJS->columnWidth = 50;
+            $fieldsetAssets->add($removeJS, $inputfields);
+
+            // Remove CSS on Frontend
+            $removeCSS = $this->wire('modules')->get('InputfieldCheckbox');
+            $removeCSS->attr('name', 'input_removeCSS');
+            $removeCSS->attr('checked', $this->input_removeCSS === 1 ? 'checked' : '');
+            $removeCSS->label = $this->_('CSS setting');
+            $removeCSS->label2 = $this->_('Remove frontendloginregister.css from the template');
+            $removeCSS->notes = $this->_('A small CSS file for the forms will be added to the template by default. You can remove the embedding of the CSS file by checking the box.');
+            $removeCSS->columnWidth = 50;
+            $fieldsetAssets->add($removeCSS, $inputfields);
+
+            $inputfields->add($fieldsetAssets);
 
             // open fieldset on error
             foreach ($inputfields->getErrorInputfields() as $inputfield) {
@@ -1780,7 +1801,7 @@ EOT;
         }
 
         /**
-         * Get array of fieldnames from fields that are missing
+         * Get an array of fieldnames from fields that are missing
          * @param \ProcessWire\Module|\ProcessWire\Wire|\ProcessWire\WireArray|\ProcessWire\WireData $field
          * @param array $mandatory_fields
          * @param array $fields_values
