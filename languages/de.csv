@@ -190,8 +190,8 @@ Cancel,Abbrechen,,site/modules/FrontendLoginRegister/pages/LoginPage.php,ea47887
 "Forgot login data?","Zugangsdaten vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,688a8c015589eb6d8210fa3de138e784
 "Forgot password?","Passwort vergessen?",,site/modules/FrontendLoginRegister/pages/LoginPage.php,8458bad978f4fd6d6c7f8ec2ec0824b4
 "No Account? Register now!","Noch kein Konto? Jetzt registrieren!",,site/modules/FrontendLoginRegister/pages/LoginPage.php,87a145d11f017601d8d00c49d25bebbb
-email,E-Mail,,site/modules/FrontendLoginRegister/pages/LoginPage.php,0c83f57c786a0b4a39efab23731c7ebc
-username,Benutzername,,site/modules/FrontendLoginRegister/pages/LoginPage.php,14c4b06b824ec593239362517f538b29
+"your email","Ihre E-Mail-Adresse",,site/modules/FrontendLoginRegister/pages/LoginPage.php,c240f1720ed8361caf329d7e173987fe
+"your username","Ihren Benutzernamen",,site/modules/FrontendLoginRegister/pages/LoginPage.php,91fb98e1ac4cf76b7a5b8bae09051e2a
 "We have detected suspicious activity on your user account","Es wurden verdächtige Aktivitäten bei Ihren Benutzerkonto festgestellt",,site/modules/FrontendLoginRegister/pages/LoginPage.php,660acb414ea4d0603341716843025c8a
 "Action required to unlock your account","Aktion erforderlich, um das Konto zu entsperren",,site/modules/FrontendLoginRegister/pages/LoginPage.php,c66051c0fcf6e7eac451ac787fde3eb6
 "We are sorry, but an unexpected error occurred. Please try it once more and if the problem persists, please inform the webmaster of this site.","Es tut uns leid, aber ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es noch einmal und wenn das Problem weiterhin besteht, informieren Sie bitte den Webmaster dieser Seite.",,site/modules/FrontendLoginRegister/pages/LoginPage.php,8f94762382d792b80cf60366d8ce3a0d
