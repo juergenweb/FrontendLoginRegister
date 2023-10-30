@@ -198,7 +198,7 @@
                     // send an email with the activation link to the user
                     $m = new WireMail();
                     $m->to($newUser->email);
-                    $m->from($this->loginregisterConfig['input_email']);
+                    $this->setSenderEmail($m);
                     $this->setSenderName($m);
                     $m->subject($this->_('Action required to activate your account'));
                     $m->title($this->_('Please click the link to verify your registration'));
