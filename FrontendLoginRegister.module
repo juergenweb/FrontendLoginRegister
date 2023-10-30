@@ -1284,7 +1284,7 @@
             $removeJS = $this->wire('modules')->get('InputfieldCheckbox');
             $removeJS->attr('name', 'input_removeJS');
             $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
-            $removeJS->label = $this->_('Javascript setting');
+            $removeJS->label = $this->_('JavaScript setting');
             $removeJS->label2 = $this->_('Remove frontendloginregister.js from the template');
             $removeJS->notes = $this->_('A small JavaScript, which will be needed for some features of the module, will added before the closing body tag on the frontend by default . You can remove the embedding of the script file by checking the box.');
             $removeJS->columnWidth = 50;
