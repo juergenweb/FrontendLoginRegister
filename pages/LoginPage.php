@@ -144,9 +144,9 @@
             $this->setMailPlaceholder('unlockaccountlink', $this->createCodeLink('fl_unlockaccountpage', $code));
             // set text for the placeholder login type
             if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
-                $type = $this->_('email');
+                $type = $this->_('your email');
             } else {
-                $type = $this->_('username');
+                $type = $this->_('your username');
             }
             $this->setMailPlaceholder('logintype', $type);
 
@@ -284,10 +284,8 @@
                     $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url . $this->deletionCode);
                 }
 
-
                 if ($this->___isValid()) {
                     $this->wire('session')->remove('showed');
-
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
                     $this->redirectAfterLogin(); // redirect after login if submission was not done via Ajax
