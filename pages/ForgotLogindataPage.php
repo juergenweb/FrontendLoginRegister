@@ -115,14 +115,18 @@
                     } else {
                         // email the user in his stored user language, which contains a link to set new login data
                         if ($this->loginregisterConfig['input_selectlogin'] == 'username') {
-                            $requestText = $this->_('login data (password and/or username)');
+                            $requestText = $this->_('the login data (password and/or username)');
                         } else {
-                            $requestText = $this->_('password');
+                            $requestText = $this->_('the password');
                         }
 
                         // create placeholder variables
                         $this->setMailPlaceholder('logindata', $requestText);
-                        $resetText = ($this->loginregisterConfig['input_selectlogin'] == 'username') ? $this->_('login data') : $this->_('password');
+                        if($this->loginregisterConfig['input_selectlogin'] == 'username'){
+                            $resetText = $this->_('the login data')
+                        } else {
+                            $resetText = $this->_('the password')
+                        }
                         $this->setMailPlaceholder('resettext', $resetText);
                         $this->setMailPlaceholder('recoverPasswordlink',
                             $this->createCodeLink('fl_recoverylogindatapage', $recoveryCode));
