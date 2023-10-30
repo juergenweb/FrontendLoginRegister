@@ -98,7 +98,7 @@
                 // send an email with the deletion link to the user in the stored user language, not the site language
                 $m = new WireMail();
                 $m->to($this->user->email);
-                $m->from($this->loginregisterConfig['input_email']);
+                $this->setSenderEmail($m);
                 $this->setSenderName($m);
                 $m->subject($this->_('Action required to delete your account'));
                 $m->title($this->_('Please click the link inside the mail'));
