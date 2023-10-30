@@ -32,6 +32,7 @@
 
     class LoginPage extends FrontendLoginRegisterPages
     {
+        protected string|null $deletionCode = '';
 
         protected Tfa $tfa; // Tfa object
         protected Link $cl; // cancel link object
@@ -65,6 +66,12 @@
 
             // Hook to replace emailCode method entirely
             $this->addHookBefore('TfaEmail::emailCode', $this, 'emailCode');
+
+            if ($this->wire('session')->get('deletion')) {
+                $this->deletionCode = '?' . $this->wire('session')->get('deletion');
+            }
+
+            bd($this->deletionCode);
 
         }
 
@@ -206,13 +213,13 @@
              then he will be redirected from the deletion page to this page, where he has to log in first
              to be able to delete his account permanently.
              */
-            if ($this->wire('session')->get('deletion')) {
 
+            if (($this->deletionCode) && (!$this->wire('session')->get('showed'))) {
+                $this->wire('session')->set('showed', '1');
                 // user comes from the redirect of the "delete account page", but was not logged in
                 $alert = $this->getAlert();
                 $alert->setText($this->_('You have to log in to delete your account.'));
                 $alert->setCSSClass('alert_warningClass');
-
             }
 
             // check if the tfa session is active and render the second form
@@ -276,26 +283,16 @@
 
                 if ($this->getSubmitWithAjax()) {
                     // redirect to the page, which has been selected inside the module configuration
-                    $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
+                    $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url . $this->deletionCode);
                 }
 
-                if ($this->___isValid()) {
 
+                if ($this->___isValid()) {
+                    $this->wire('session')->remove('showed');
+                    $this->wire('session')->remove('deletion');
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
-
-                    if ($this->getSubmitWithAjax()) {
-                        $this->showForm = true;
-                        // redirect to the page, which has been selected inside the module configuration
-                        $code = '';
-                        if($this->wire('session')->get('deletion')){
-                            $code = '?'.$this->wire('session')->get('deletion');
-                        }
-                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url.$code );
-                    } else {
-                        $this->redirectAfterLogin(); // redirect after login if submission was not done via Ajax
-                    }
-
+                    $this->redirectAfterLogin(); // redirect after login if submission was not done via Ajax
                 }
 
                 $msg = $this->getAlert()->getText() ? $this->getAlert()->getText() : ''; // grab alert text if present
@@ -369,12 +366,8 @@
 
                 // Set the redirect url for the Javascript redirect if Tfa is not enabled
                 if ($this->getSubmitWithAjax()) {
-                    if ((!$this->loginregisterConfig['input_tfa']) || (($this->wire('session')->get('deletion')))) {
-                        $code = '';
-                        if($this->wire('session')->get('deletion')){
-                            $code = '?'.$this->wire('session')->get('deletion');
-                        }
-                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url.$code );
+                    if ((!$this->loginregisterConfig['input_tfa']) || ($this->deletionCode)) {
+                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url . $this->deletionCode);
                     }
                 }
 
@@ -415,6 +408,8 @@
                                     $this->wire('session')->set('type', 'TfaEmail');
                                     $this->tfa->start($user->name, $this->getValue('pass')); // redirects if Ajax is not enabled
                                 } else {
+                                    $this->wire('session')->remove('showed');
+                                    $this->wire('session')->remove('deletion');
                                     $this->defaultLogin($user);
                                 }
                             } else {
