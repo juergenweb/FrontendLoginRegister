@@ -47,8 +47,8 @@ HEREA;
 // text for the email containing a link to reset the login data
 $input_passwordforgottentext = <<<HEREA
 <p>Lieber Nutzer</p>
-<p>Sie erhalten diese E-Mail, weil jemand die [[LOGINDATA]] für Ihr Konto bei [[DOMAINVALUE]] angefordert hat.<br />
-Aus Sicherheitsgründen versenden wir die [[LOGINDATA]] nicht, daher müssen Sie neue [[RESETTEXT]] erstellen, indem Sie auf den folgenden Link klicken:</p>
+<p>Sie erhalten diese E-Mail, weil jemand [[LOGINDATA]] für Ihr Konto bei [[DOMAINVALUE]] angefordert hat.<br />
+Aus Sicherheitsgründen versenden wir [[LOGINDATA]] nicht, daher müssen Sie die Zugangsdaten neu erstellen, indem Sie auf den folgenden Link klicken:</p>
 <p>[[RECOVERPASSWORDLINK]]</p>
 <p>Wenn Sie keine Rücksetzung der Anmeldedaten angefordert haben, ignorieren Sie bitte diese E-Mail.</p>
 HEREA;
