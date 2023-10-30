@@ -66,7 +66,6 @@
         {
             parent::__construct($id);
 
-
             // set tmp_profile_image_dir_path
             $this->tmp_profile_image_dir_path = $this->wire('config')->paths->siteModules . 'FrontendLoginRegister/tmp_profile_image/';
 
@@ -79,6 +78,8 @@
             foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
                 $this->loginregisterConfig[$key] = $value;
             }
+
+
 
             // set FrontendForms object
             $this->frontendForms = $this->wire('modules')->get('FrontendForms');
@@ -400,7 +401,7 @@
 
             $m = new WireMail();
             $m->to($user->email);
-            $m->from($this->loginregisterConfig['input_email']);
+            $this->setSenderEmail($m);
             $this->setSenderName($m);
             $m->subject($this->_('Action required to activate your account'));
             $m->title($this->_('Have you forgotten to verify your account?'));
@@ -462,7 +463,7 @@
                 // create mail
                 $m = new WireMail();
                 $m->to($user->email);
-                $m->from($this->loginregisterConfig['input_email']);
+                $this->setSenderEmail($m);
                 $this->setSenderName($m);
                 $m->subject($this->_('Your account has been deleted'));
                 $m->title($this->_('Good bye!'));
@@ -507,6 +508,20 @@
             $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.'));
         }
 
+        protected function setLanguageMailValue(WireMail $mail, string $fieldName): string|null
+        {
+            $value = null;
+            if ($this->loginregisterConfig[$fieldName]) {
+                $value = $this->loginregisterConfig[$fieldName];
+                // set multi-language value if language support is installed
+                if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                    $value = $this->getLangValueOfConfigField($fieldName, $this->loginregisterConfig,
+                        $this->user->language->id);
+                }
+            }
+            return $value;
+        }
+
         /**
          * Set the mail sender name to the mail
          * @param WireMail $mail
@@ -515,16 +530,26 @@
          */
         protected function setSenderName(WireMail $mail): void
         {
-            if ($this->loginregisterConfig['input_sender']) {
-                $name = $this->loginregisterConfig['input_sender'];
-                // set multilanguage value if language support is installed
-                if ($this->wire('languages')) {
-
-                }
-            } else {
-                $name = 'noreply@' . $this->wire('config')->httpHost;
+            $senderName = $this->setLanguageMailValue($mail, 'input_sender');
+            if(is_null($senderName)){
+                $senderName = 'noreply@' . $this->wire('config')->httpHost;
             }
-            $mail->fromName($name);
+            $mail->fromName($senderName);
+        }
+
+        /**
+         * Set the mail sender email to the mail
+         * @param \ProcessWire\WireMail $mail
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        protected function setSenderEmail(WireMail $mail): void
+        {
+            $senderEmail = $this->setLanguageMailValue($mail, 'input_sender');
+            if(is_null($senderEmail)){
+                $senderEmail = 'noreply@' . $this->wire('config')->httpHost;
+            }
+            $mail->from($senderEmail);
         }
 
         /**
