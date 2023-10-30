@@ -287,7 +287,11 @@
                     if ($this->getSubmitWithAjax()) {
                         $this->showForm = true;
                         // redirect to the page, which has been selected inside the module configuration
-                        //$this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
+                        $code = '';
+                        if($this->wire('session')->get('deletion')){
+                            $code = '?'.$this->wire('session')->get('deletion');
+                        }
+                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url.$code );
                     } else {
                         $this->redirectAfterLogin(); // redirect after login if submission was not done via Ajax
                     }
@@ -418,8 +422,7 @@
                             }
                         }
                     }
-                    // remove deletion session
-                    $this->wire('session')->remove('deletion');
+
                 } else {
                     // grab the username or email field: depends on the login type set
                     $user_field_name = $this->getAttribute('id') . '-' . $this->loginregisterConfig['input_selectlogin'];
