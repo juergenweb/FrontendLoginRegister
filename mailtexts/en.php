@@ -73,7 +73,7 @@ HEREA;
 $input_unlock_account = <<<HEREA
 <p>Dear user</p>
 <p>You will receive this email, because we have detected suspicious activity on your user account account at [[DOMAINVALUE]].<br />
-Someone has tried unsuccessfully to login into your account by using your [[LOGINTYPE]] in combination with various passwords.<br />
+Someone has tried unsuccessfully to login into your account by using [[LOGINTYPE]] in combination with various passwords.<br />
 For security reasons we have locked your account now.<br />
 Please click the link and follow the instructions on the redirected page to unlock your account.<br />
 After that you can log in normally again.</p>
