@@ -148,9 +148,6 @@
         {
             if ($this->___isValid()) {
 
-                // remove deletion session
-                $this->wire('session')->remove('deletion');
-
                 $content = '';
                 // delete the user
                 if (!$this->wire('users')->delete($this->user)) {
