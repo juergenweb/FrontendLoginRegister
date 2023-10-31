@@ -67,6 +67,7 @@
                     // password
                     $pass = new Password('pass');
                     $pass->setRule('checkPasswordOfUser', $this->user);
+                    $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
                     $this->add($pass);
 
                     // create info box for account deletion
