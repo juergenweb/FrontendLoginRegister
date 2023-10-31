@@ -152,8 +152,7 @@
             }
 
             // render the form on the frontend
-            $content .= $content.parent::render();
-            return $content;
+            return $content.parent::render();
         }
 
     }
