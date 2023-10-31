@@ -53,7 +53,7 @@
 
             //pass
             $pass = new Password('password');
-            $pass->showPasswordToggle(); // add a checkbox below the input field to toggle show/hide the password in plain text
+            $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
             $pass->setRule('required');
             $pass->setRule('checkPasswordOfUser', $this->user);
             $this->add($pass);
