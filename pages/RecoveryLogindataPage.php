@@ -105,6 +105,9 @@
         public function render(): string
         {
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             if ($this->___isValid()) {
                 // grab the user and store the new password
                 $this->user->setOutputFormatting(false);
@@ -118,11 +121,13 @@
                 $this->user->save();
                 $this->user->setOutputFormatting();
             } else {
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
 
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
     }
