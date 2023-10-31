@@ -342,7 +342,7 @@ If you want to change the visibility on a specific page, you can use this method
 
 This can be done on any template!
 
-Please note: This will only have an effect if the form will not be displayed after a successful form submission. If the form is still visible (like in the profile page), this will not work.
+Please note: This will only have an effect if the form will not be displayed after a successful form submission. If the form is still visible (like in the profile page), this will not work. It also does not have an effect, if a redirection was set.
 
 Just to mention: On the "Unlock your account" page, I have set "prependBody" by default to true, because it fits better, in my opinion, with the body text. If you disagree with me, you can set it to false inside the template, as described above.
 
