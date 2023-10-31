@@ -148,19 +148,18 @@
          */
         public function render(): string
         {
+            $content = '';
             if ($this->___isValid()) {
-                $content = '';
                 // delete the user
                 if (!$this->wire('users')->delete($this->user)) {
                     // problem deleting the user - set an alert to inform the user
                     $this->getAlert()->setCSSClass('alert_dangerClass')->setText($this->_('Unfortunately there was a technical problem deleting your account. Please try it once more or contact the webmaster of the site.'));
                 }
             } else {
-                $content = $this->wire('page')->body;
+                $content .= $this->prependBody();
             }
             // render the form on the frontend
-            $content .= parent::render();
-            return $content;
+            return $content.parent::render();
         }
 
     }
