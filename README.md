@@ -36,14 +36,14 @@ This module creates pages and templates during the installation for faster devel
 
 ## Table of contents
 
-- [Installation](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#installation)
-- [Configuration](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#configuration)
-- [What happens during the installation process?](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#what-happens-during-the-installation-process)
-- [Sending emails](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#sending-emails)
-- [Customizing email texts](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#customizing-the-email-texts)
-- [Security features](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#security-features)
-- [Support for custom user fields](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#support-for-custom-user-fields)
-- [Multi-language](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#multi-language)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [What happens during the installation process?](#what-happens-during-the-installation-process)
+- [Sending emails](#sending-emails)
+- [Customizing email texts](#customizing-the-email-texts)
+- [Security features](#security-features)
+- [Support for custom user fields](#support-for-custom-user-fields)
+- [Multi-language](#multi-language)
 - [Show body text after successful form submission or not](#show-body-field-content-after-successful-form-submission-or-not)
 
 ## Installation
