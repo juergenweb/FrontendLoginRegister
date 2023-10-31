@@ -78,6 +78,9 @@
         public function render(): string
         {
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             if ($this->___isValid()) {
 
                 // create the recovery code
@@ -174,10 +177,12 @@
                     }
                 }
             } else {
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
     }
