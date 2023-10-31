@@ -74,9 +74,8 @@
         public function render(): string
         {
 
+            $content = '';
             if ($this->___isValid()) {
-
-                $content = '';
 
                 if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                     // get the ID of the user language as stored inside the db
@@ -135,11 +134,10 @@
                     $this->generateEmailSentErrorAlert();
                 }
             } else {
-                $content = $this->wire('page')->body;
+                $content .= $this->prependBody();
             }
             // render the form on the frontend
-            $content .= parent::render();
-            return $content;
+            return $content.parent::render();
         }
 
     }
