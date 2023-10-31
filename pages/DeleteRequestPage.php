@@ -75,6 +75,9 @@
         {
 
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             if ($this->___isValid()) {
 
                 if ($this->wire('modules')->isInstalled('LanguageSupport')) {
@@ -134,10 +137,12 @@
                     $this->generateEmailSentErrorAlert();
                 }
             } else {
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
     }
