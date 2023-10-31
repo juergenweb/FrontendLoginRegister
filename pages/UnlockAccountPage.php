@@ -43,7 +43,7 @@
 
             // default settings
             $this->setMaxAttempts(5);
-            $this->setMinTime(2); // 3 seconds
+            $this->setMinTime(2); // 2 seconds
             $this->setMaxTime(600); // 10 minutes
             $this->setSubmitWithAjax($this->useAjax);
             $this->setAttribute('action', $this->wire('page')->url . '?unlockaccountcode=' . $this->queryString);
@@ -80,17 +80,15 @@
         public function render(): string
         {
             if ($this->___isValid()) {
-                $content = '';
                 // grab the user and remove the lock code from the database
                 $this->user->setOutputFormatting(false);
                 $this->user->fl_unlockaccount = ''; // delete the lock code in the database
                 $this->user->save();
                 $this->user->setOutputFormatting();
             } else {
-                $content = $this->wire('page')->body;
+                $this->prepend($this->wire('page')->body);
             }
-            $content .= parent::render();
-            return $content;
+            return parent::render();
         }
 
     }
