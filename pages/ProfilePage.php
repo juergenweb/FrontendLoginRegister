@@ -102,6 +102,9 @@
         public function render(): string
         {
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             // Show the link for account deletion, if enabled in the settings
             if ($this->loginregisterConfig['input_deleteProfile']) {
                 $this->add($this->___deleteAccountLink());
@@ -143,7 +146,9 @@
                 $this->getFormelementByName('profile-form-pass-confirm')->setAttribute('value', '');
 
             } else {
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
 
             if ($this->wire('session')->get('valid')) {
@@ -152,7 +157,7 @@
             }
 
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
     }
