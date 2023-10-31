@@ -49,6 +49,7 @@
             $this->setAttribute('action', $this->wire('page')->url . '?unlockaccountcode=' . $this->queryString);
             $successMsg = $this->_('Your account is now unlocked.');
             $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
+            $this->setPrependBody(true); // this disables the display of the body text after successfull form submission
 
             //pass
             $pass = new Password('password');
@@ -80,6 +81,9 @@
         public function render(): string
         {
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             if ($this->___isValid()) {
                 // grab the user and remove the lock code from the database
                 $this->user->setOutputFormatting(false);
@@ -87,9 +91,11 @@
                 $this->user->save();
                 $this->user->setOutputFormatting();
             } else {
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
     }
