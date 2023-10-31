@@ -56,6 +56,10 @@
             // add the various form fields dynamically depending on the settings in the backend
             $this->createFormFields('input_registration', $this);
 
+            // show or hide the display of the toggle checkbox next to password fields
+            $this->getFormelementByName('pass')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+            $this->getFormelementByName('pass-confirm')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+
             // add the button
             $button = new Button('submit');
             $button->setAttribute('value', $this->_('Register'));
