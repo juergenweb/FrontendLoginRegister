@@ -204,7 +204,9 @@
         {
 
             $content = '';
-
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             /*
              Check if "deletion" session from deletion link is active
              This is the case if a user clicks on the deletion link inside the email and is not logged in,
@@ -492,7 +494,9 @@
                             }
                         }
                     }
-                    $content .= $this->prependBody();
+                    if ($this->setSubmitWithAjax()) {
+                        $content .= $this->prependBody();
+                    }
                 }
 
                 // create error messages from session if present
@@ -508,7 +512,7 @@
 
             }
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
         /**
