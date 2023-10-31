@@ -492,7 +492,7 @@
                             }
                         }
                     }
-                    $content .= $this->wire('page')->body;
+                    $content .= $this->prependBody();
                 }
 
                 // create error messages from session if present
@@ -508,9 +508,7 @@
 
             }
             // render the form on the frontend
-            $content .= parent::render();
-
-            return $content;
+            return $content.parent::render();
         }
 
         /**
