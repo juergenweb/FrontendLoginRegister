@@ -44,7 +44,7 @@ This module creates pages and templates during the installation for faster devel
 - [Security features](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#security-features)
 - [Support for custom user fields](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#support-for-custom-user-fields)
 - [Multi-language](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.md#multi-language)
-- [Show body text after successful form submission or not](https://github.com/juergenweb/FrontendLoginRegister/blob/main/README.#show-body-field-content-after-successful-form-submission-or-not)
+- 
 
 ## Installation
 Please download and install FrontendForms first. You do not have to change configuration settings in FrontendForms to run this module. Only install it. Later on, you can change some parameters to suit your needs, but it is not necessary to get this module working properly.
