@@ -104,9 +104,8 @@
          */
         public function render(): string
         {
-
+            $content = '';
             if ($this->___isValid()) {
-                $content = '';
                 // grab the user and store the new password
                 $this->user->setOutputFormatting(false);
                 $this->user->fl_recoverylogindata = ''; // delete the recovery code
@@ -119,12 +118,11 @@
                 $this->user->save();
                 $this->user->setOutputFormatting();
             } else {
-                $content = $this->wire('page')->body;
+                $content .= $this->prependBody();
             }
 
             // render the form on the frontend
-            $content .= parent::render();
-            return $content;
+            return $content.parent::render();
         }
 
     }
