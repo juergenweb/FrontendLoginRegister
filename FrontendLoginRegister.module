@@ -50,6 +50,7 @@
         protected int $input_max_filesize = 0; // max file size for image upload in kb
         protected string|int|null $input_showPrev = 2;
         protected string|int $input_useajax = 'inherit'; // whether to use Ajax for form submission or not
+        protected string|int|bool $input_hide_passwordtoggle = 0; // disable the display of the toggle checkbox beside each password field
         protected string|int|null $input_removeCSS = 0; // whether to remove the frontend CSS file or not
         protected string|int|null $input_removeJS = 0; // whether to remove the frontend JS file or not
         protected string $version = ''; // the current module version
@@ -121,6 +122,7 @@
                 $this->input_image_size = $this->config['input_image_size'] ?? '200';// add fallback
                 $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;// add fallback
                 $this->input_useajax = $this->config['input_useajax'] ?? 'inherit'; // add fallback
+                $this->input_hide_passwordtoggle = $this->config['input_hide_passwordtoggle'] ?? 0; // add fallback
                 $this->input_removeJS = $this->config['input_removeJS'] ?? 0; // add fallback
                 $this->input_removeCSS = $this->config['input_removeCSS'] ?? 0; // add fallback
             }
@@ -205,6 +207,7 @@
                 'input_max_filesize' => 0,
                 'input_showPrev' => 2,
                 'input_useajax' => 'inherit',
+                'input_hide_passwordtoggle'  => 0,
                 'input_removeCSS' => 0,
                 'input_removeJS' => 0
             ];
@@ -833,6 +836,15 @@
             $ajaxSelect->attr('value', $this->input_useajax);
             $ajaxSelect->required = 1;
             $generalfieldset->add($ajaxSelect);
+
+            // Enable or disable the display of a checkbox beside a password field to show the entered data in clear text
+            $hidePasswordToggle = $modules->get('InputfieldCheckbox');
+            $hidePasswordToggle->attr('name', 'input_hide_passwordtoggle');
+            $hidePasswordToggle->attr('checked', $this->input_hide_passwordtoggle == '1' ? 'checked' : '');
+            $hidePasswordToggle->label = $this->_('Hide checkbox next to the password fields, which allows you to display the password in plain text.');
+            $hidePasswordToggle->label2 = $this->_('Hide the checkbox beside the password fields');
+            $hidePasswordToggle->description = $this->_('By default, a checkbox is displayed next to each password field that allows you to view the password in plain text. If you select this check box, you can disable this behavior.');
+            $generalfieldset->add($hidePasswordToggle);
 
             $inputfields->add($generalfieldset);
 
