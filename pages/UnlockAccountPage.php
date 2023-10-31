@@ -79,6 +79,7 @@
          */
         public function render(): string
         {
+            $content = '';
             if ($this->___isValid()) {
                 // grab the user and remove the lock code from the database
                 $this->user->setOutputFormatting(false);
@@ -86,9 +87,9 @@
                 $this->user->save();
                 $this->user->setOutputFormatting();
             } else {
-                $this->prepend($this->wire('page')->body);
+                $content .= $this->prependBody();
             }
-            return parent::render();
+            return $content.parent::render();
         }
 
     }
