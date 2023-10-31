@@ -343,7 +343,7 @@
                 } else {
                     $password->setRule('matchUsername', 'username');
                 }
-                $password->showPasswordToggle();
+                $password->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
                 $this->add($password);
 
                 // button
