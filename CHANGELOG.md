@@ -33,3 +33,8 @@ New configuration setting to remove JS and CSS file on the frontend.
 
 By default, a CSS and JS file for this module will be added on the frontend. If you want to disable the embedding of these files, you can do it via a new configuration setting in the backend.
 A usecase for this scenario could be, that you want to copy the content of these files and include it in your own CSS and JS files.
+
+## [1.2.8] 23-10-31
+Minor bug fixes and new method setPrependBody() added
+
+This is the finale version before the module will be added to the module directory of ProcessWire. I have optimized some code and text and I have added the new method setPrependBody(), which allows you to enable/disable the visibility of the body text after successful form submission.
