@@ -318,6 +318,33 @@ If you are select fe de for the German language, and you will mark the checkbox 
 
 At the moment there is unfortunately only one file for the German texts and not for other languages, but maybe other users send me some translations that I can add in the future.
 
+## Show body field content after successful form submission or not.
+Every template for each page contains a body field, where you can enter some text if you want. By default, the text of the body will always be displayed on the frontend. This is ok in most cases, but sometimes you do not want to show the body text after a successful form submission, because it does not fit there.
+To hide the display after the form has been submitted validly, I have created a method where you can enable/disable the display of the body text, depending on the form submission status.
+
+```php
+echo $form->setPrependBody(true); // true or false
+```
+* true: the body text will be appended to the form and is no longer visible after successful form submission
+* false: the body text will not be appended to the form and is always visible (default)
+
+If you want to change the visibility on a specific page, you can use this method inside the template. Have a look at the example below, where this behaviour will be changed on the registration page:
+
+```php
+// This is the code of the fl_registerpage.php which includes the registration form
+            echo '<div id="content">';
+            $form = $modules->get('FrontendLoginRegister')->RegisterPage()->getForm();
+            $form->setPrependBody(true);
+            echo $form->render();
+            echo '</div>';
+```
+
+This can be done on any template!
+
+Please note: This will only have an effect if the form will not be displayed after a successful form submission. If the form is still visible (like in the profile page), this will not work.
+
+Just to mention: On the "Unlock your account" page, I have set "prependBody" by default to true, because it fits better, in my opinion, with the body text. If you disagree with me, you can set it to false inside the template, as described above.
+
 ## Restrictions
 
 - Only TfaEmail can be used for the TFA 
