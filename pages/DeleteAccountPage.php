@@ -149,6 +149,9 @@
         public function render(): string
         {
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             if ($this->___isValid()) {
                 // delete the user
                 if (!$this->wire('users')->delete($this->user)) {
@@ -156,10 +159,12 @@
                     $this->getAlert()->setCSSClass('alert_dangerClass')->setText($this->_('Unfortunately there was a technical problem deleting your account. Please try it once more or contact the webmaster of the site.'));
                 }
             } else {
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
 
     }
