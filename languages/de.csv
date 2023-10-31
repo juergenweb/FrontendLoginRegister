@@ -44,6 +44,9 @@ Login/registration,Anmeldung/Registrierung,,site/modules/FrontendLoginRegister/F
 "Inherit from FrontendForms","Von FrontendForms übernehmen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,5bfe6a369b802afdb9bb4909ac726c2d
 Yes,Ja,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,93cba07454f06a4a960172bbd6e2a435
 No,Nein,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,bafd7322c6e97d25b6299b5d6fe8920b
+"Hide checkbox next to the password fields, which allows you to display the password in plain text.","Die Checkbox, welche es ermöglicht das Passwort im Klartext anzeigen zu lassen, neben alle Passwortfeldern nicht anzeigen.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,8934c484186afcbadb6e2239d072fec5
+"Hide the checkbox beside the password fields","Die Checkbox neben den Passwortfeldern nicht anzeigen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,f17d53beaafba6df586480be94fca2f1
+"By default, a checkbox is displayed next to each password field that allows you to view the password in plain text. If you select this check box, you can disable this behavior.","Standardmäßig wird neben jedem Passwortfeld eine Checkbox angezeigt, mit dem Sie das Kennwort im Klartext anzeigen lassen können. Wenn Sie diese Checkbox aktivieren, können Sie dieses Verhalten deaktivieren.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,e1da7ac4c63a4454a17697f66e2588a7
 "Login settings",Anmelde-Einstellungen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,c50bcdf91916f47e39976a3fc267faae
 "Userdata for login","Benutzerdaten für die Anmeldung",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,397135ffd1127e35c2bfda9db3d3b42f
 "Login with email and password","Anmeldung mit E-Mail und Passwort",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,f3d57aeef905677f6e19ce929fcd712f
