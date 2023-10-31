@@ -101,7 +101,7 @@
          */
         public function render(): string
         {
-
+            $content = '';
             // Show the link for account deletion, if enabled in the settings
             if ($this->loginregisterConfig['input_deleteProfile']) {
                 $this->add($this->___deleteAccountLink());
@@ -142,6 +142,8 @@
                 $this->getFormelementByName('profile-form-pass')->setAttribute('value', '');
                 $this->getFormelementByName('profile-form-pass-confirm')->setAttribute('value', '');
 
+            } else {
+                $content .= $this->prependBody();
             }
 
             if ($this->wire('session')->get('valid')) {
@@ -150,8 +152,7 @@
             }
 
             // render the form on the frontend
-            $content = $this->wire('page')->body;
-            $content .= parent::render();
+            $content .= $content.parent::render();
             return $content;
         }
 
