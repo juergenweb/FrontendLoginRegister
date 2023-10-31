@@ -56,6 +56,7 @@
         protected Field $image_field; // the profile image field
         protected array $image_fields = []; // array containing all names of the image fields if present
         protected string $moduleversion = ''; // get the current version of FrontendForms
+        protected bool|string|int $prependBody = false; // select if the body text should be prepended to the form or not
 
         /**
          * Every form must have an ID, so let's add it via the constructor
@@ -78,8 +79,6 @@
             foreach ($this->wire('modules')->getConfig('FrontendLoginRegister') as $key => $value) {
                 $this->loginregisterConfig[$key] = $value;
             }
-
-
 
             // set FrontendForms object
             $this->frontendForms = $this->wire('modules')->get('FrontendForms');
@@ -111,6 +110,38 @@
             }
             $this->useAjax = $ajax;
         }
+
+        /**
+         * Select if you want to prepend the body to the form or not
+         * If you prepend it, then the body text will not be displayed after successful form submission
+         * @param bool $prepend
+         * @return $this
+         */
+        public function setPrependBody(bool $prepend): self
+        {
+            $this->prependBody = $prepend;
+            return $this;
+        }
+
+        /**
+         * Method to prepend the body to the form by using the prepend() method.
+         * This is more a type of experimental function
+         * @return string
+         * @throws \ProcessWire\WireException
+         */
+        protected function prependBody(): string
+        {
+            $content = '';
+            if($this->wire('page')->hasField('body')){
+                if($this->prependBody){
+                    $this->prepend($this->wire('page')->body);
+                } else {
+                    $content = $this->wire('page')->body;
+                }
+            }
+            return $content;
+        }
+
 
         /**
          * Save an uploaded image to an user
