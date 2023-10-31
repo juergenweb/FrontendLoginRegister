@@ -122,6 +122,9 @@
         public function render(): string
         {
             $content = '';
+            if (!$this->setSubmitWithAjax()) {
+                $content .= $this->prependBody();
+            }
             // add privacy notice if set
             $privacyType = 1;
             if (array_key_exists('input_privacy', $this->loginregisterConfig)) {
@@ -264,9 +267,11 @@
                         }
                     }
                 }
-                $content .= $this->prependBody();
+                if ($this->setSubmitWithAjax()) {
+                    $content .= $this->prependBody();
+                }
             }
             // render the form on the frontend
-            return $content.parent::render();
+            return $content . parent::render();
         }
     }
