@@ -48,6 +48,7 @@
             // remove unnecessary validation rules
             $pass->removeRule('safePassword');
             $pass->removeRule('meetsPasswordConditions');
+            $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
             $this->add($pass);
 
             // button object
