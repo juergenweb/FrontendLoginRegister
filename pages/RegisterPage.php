@@ -121,7 +121,7 @@
          */
         public function render(): string
         {
-
+            $content = '';
             // add privacy notice if set
             $privacyType = 1;
             if (array_key_exists('input_privacy', $this->loginregisterConfig)) {
@@ -264,11 +264,9 @@
                         }
                     }
                 }
-
+                $content .= $this->prependBody();
             }
             // render the form on the frontend
-            $content = $this->wire('page')->body;
-            $content .= parent::render();
-            return $content;
+            return $content.parent::render();
         }
     }
