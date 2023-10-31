@@ -53,7 +53,8 @@
             // show or hide the display of the toggle checkbox next to password fields
             $this->getFormelementByName('pass')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
             $this->getFormelementByName('pass-confirm')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
-
+            $this->getFormelementByName('oldpass')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+            
             // create and add the submission button to the form
             $button = new Button('submit');
             $button->setAttribute('value', $this->_('Update'));
