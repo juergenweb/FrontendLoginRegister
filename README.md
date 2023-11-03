@@ -354,6 +354,5 @@ Just to mention: On the "Unlock your account" page, I have set "prependBody" by 
 
 ## ToDo
 * Testing, testing, testing....
-* Adding image preview on upload field
 
 This read me file will be extended time after time - so please be patient ;-)
