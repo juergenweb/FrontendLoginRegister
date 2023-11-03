@@ -28,7 +28,7 @@ This module creates pages and templates during the installation for faster devel
 - Select, which fields of the user template should be displayed on the registration and profile forms (beside the mandatory fields). Fields and order can be changed via drag and drop functionality
 - Offer users the possibility to delete their account in the members area using a deletion link with a time expiration
 - Customize the texts of the emails that will be sent by this module
-- Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights) (fe. CAPTCHA, various security settings,...)
+- Usage of all the benefits of [FrontendForms](https://github.com/juergenweb/FrontendForms#highlights) (fe. CAPTCHA, various security settings, support for UIKit and Bootstrap framework, ...)
 - Support for SeoMaestro if installed
 - Lock accounts if suspicious login attempts are made
 - Allow users to upload a profile image for their account
