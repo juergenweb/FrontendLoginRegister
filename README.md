@@ -334,7 +334,7 @@ If you want to change the visibility on a specific page, you can use this method
 ```php
 // This is the code of the fl_registerpage.php which includes the registration form
             echo '<div id="content">';
-            $form = $modules->get('FrontendLoginRegister')->RegisterPage()->getForm();
+            $form = $modules->get('FrontendLoginRegister')->RegisterPage();
             $form->setPrependBody(true);
             echo $form->render();
             echo '</div>';
