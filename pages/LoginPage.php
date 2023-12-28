@@ -193,6 +193,56 @@
         }
 
         /**
+         * Convert seconds to human readable format (fe 200 seconds will be converted to 3 minutes and 20 seconds)
+         * @param int $ss
+         * @return string
+         */
+        public function secondsToReadable(int $ss): string
+        {
+            $bit = [
+                'month' => floor($ss / 2592000),
+                'week' => floor(($ss % 2592000) / 604800),
+                'day' => floor(($ss % 604800) / 86400),
+                'hour' => floor(($ss % 86400) / 3600),
+                'minute' => floor(($ss % 3600) / 60),
+                'second' => $ss % 60
+            ];
+
+            $labelSingular = [
+                'month' => $this->_('month'),
+                'week' => $this->_('week'),
+                'day' => $this->_('day'),
+                'hour' => $this->_('hour'),
+                'minute' => $this->_('minute'),
+                'second' => $this->_('second')
+            ];
+
+            $labelPlural = [
+                'month' => $this->_('months'),
+                'week' => $this->_('weeks'),
+                'day' => $this->_('days'),
+                'hour' => $this->_('hours'),
+                'minute' => $this->_('minutes'),
+                'second' => $this->_('seconds')
+            ];
+
+            $ret = [];
+            foreach ($bit as $k => $v) {
+                $number = explode(' ', (string)$v);
+                if ($number[0] != 0) {
+                    $label = $this->_n($labelSingular[$k], $labelPlural[$k], $v);
+                    $ret[] = $v . ' ' . $label;
+                }
+            }
+
+            if (count($ret) > 1) {
+                array_splice($ret, count($ret) - 1, 0, $this->_('and'));
+            }
+            return implode(' ', $ret);
+        }
+
+
+        /**
          * Render the form
          * Renders 2 forms - one for password and email/username and another for entering the authentication code if
          * enabled
@@ -309,7 +359,7 @@
                     // show info only if it will be submitted in time and the user is not logged in
                     $secondsLeft = $this->_('seconds left'); //plural
                     $secondLeft = $this->_('second left'); // singular
-                    $timerMarkup = '<span id="minTime" data-time="' . $expireTime . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . FormValidation::secondsToReadable($expireTime) . '</span><span id="timecounter" class="expiration-counter">180 ' . $secondsLeft . '</span>';
+                    $timerMarkup = '<span id="minTime" data-time="' . $expireTime . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . $this->secondsToReadable($expireTime) . '</span><span id="timecounter" class="expiration-counter">180 ' . $secondsLeft . '</span>';
                     $msg .= '<br>' . sprintf($this->_('This code is valid for %s.'), $timerMarkup);
                     //'<span id="expirationcounter">' . $expireTime . '</span>');
                 }
