@@ -39,3 +39,6 @@ Minor bug fixes, a new method setPrependBody() added and new configuration setti
 
 This is the finale version before the module will be added to the module directory of ProcessWire. I have optimized some code and text and I have added the new method setPrependBody(), which allows you to enable/disable the visibility of the body text after successful form submission.
 The last addition is a new configuration setting, which let you disable the toggle checkbox next to each password fields. This toggle checkbox let you display entered passwords in plain text. With this new feature, you can remove this checkbox from each password field inside this module.
+
+## [1.2.9] 23-12-28
+Due to problems of the static method secondsToReadable() in certain IDEs, I have switched to a non-static method. This method is originally from the FrontendForms module. I have copied this function to this module. Be aware to update this module first (or contemporaneously with FrontendForms) before you update FrontendForms. Otherwise you will run into problems if you are using TfaEmail 2-factor authentification and have not updated this module, but you are running the latest FrontendForms the version.
