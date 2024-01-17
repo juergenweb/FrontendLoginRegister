@@ -33,6 +33,7 @@ This module creates pages and templates during the installation for faster devel
 - Lock accounts if suspicious login attempts are made
 - Allow users to upload a profile image for their account
 - Support of Ajax form submission
+- Support for following 3rd party mail modules: WireMailPostmarkApp, WireMailPostmark
 
 ## Table of contents
 
@@ -72,6 +73,7 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`Select email template`** Select which HTML email template should be used for sending emails
 * **`From email address`** Enter the email address, which should be displayed as the sender email address for emails
 * **`Sender name`** Enter the name, which should be displayed as the sender of the emails
+* **`Select using an external mail service for sending mails`** If you have installed 3rd party modules for sending mails and these modules are compatible with this module, you can select if you want to use one of these modules for sending the mails of this module or not.
 * **`Email Texts`** You can customize the text of each email that will be sent by this module using a CKEditor field
 * **`Set image size`** You can set the size of the user image as it should be displayed on the user profile page
 * **`Restrict user image file size`** You can restrict the maximum file size of the user image for the upload to prevent the upload of huge files
@@ -261,6 +263,11 @@ There are also some other placeholder that can be used:
 ![alt text](https://github.com/juergenweb/FrontendLoginRegister/blob/main/images/generalplaceholders.png?raw=true)
 
 You will find this list at the bottom of the configuration page.
+
+## Support for external mail services
+By default, all mails will be sent via the PHP WireMail. If you have installed on the supported external mail service, you can select to send all mails via this mail service.
+
+For a full list of supported 3rd party mail sending modules please take a look [here]().
 
 ## Support for custom user fields
 If you have added additional input fields to the user template (fe name, surname, ...), they will also be selectable for the registration and profile form on the frontend. 
