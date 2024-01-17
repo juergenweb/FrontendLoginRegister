@@ -48,7 +48,7 @@ Support for [Postmark mail service](https://postmarkapp.com/) added.
 
 Due to a user request by mayks in the support forum (https://processwire.com/talk/topic/28352-frontendloginregister-a-configurable-module-for-fast-implementation-of-an-user-management-system-based-on-frontendforms/?do=findComment&comment=238466), where he asked about to add support for sending mails with Postmark, I have added this feature now.
 
-There are 2 ProcessWire Modules in the modules directory which implement the Postmark service in Processwire:
+There are 2 ProcessWire modules in the modules directory which implement the Postmark service in Processwire:
 
 - [WireMailPostmark](https://processwire.com/modules/wire-mail-postmark/) by Netcarver
 - [WireMailPostmarkApp](https://processwire.com/modules/wire-mail-postmark-app/) by NB Communication
