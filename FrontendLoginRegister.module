@@ -171,7 +171,7 @@
                 'version' => '1.2.9',
                 'singular' => true,
                 'autoload' => true,
-                'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.52', 'LazyCron'],
+                'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.57', 'LazyCron'],
                 'icon' => 'sign-in'
             ];
         }
