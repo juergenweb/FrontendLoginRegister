@@ -267,7 +267,7 @@ You will find this list at the bottom of the configuration page.
 ## Support for external mail services
 By default, all mails will be sent via the PHP WireMail. If you have installed on the supported external mail service, you can select to send all mails via this mail service.
 
-For a full list of supported 3rd party mail sending modules please take a look [here]().
+For a full list of supported 3rd party mail sending modules please take a look at the list [here](#highlights).
 
 ## Support for custom user fields
 If you have added additional input fields to the user template (fe name, surname, ...), they will also be selectable for the registration and profile form on the frontend. 
