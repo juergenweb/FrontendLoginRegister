@@ -42,3 +42,25 @@ The last addition is a new configuration setting, which let you disable the togg
 
 ## [1.2.9] 23-12-28
 Due to problems of the static method secondsToReadable() in certain IDEs, I have switched to a non-static method. This method is originally from the FrontendForms module. I have copied this function to this module. Be aware to update this module first (or contemporaneously with FrontendForms) before you update FrontendForms. Otherwise you will run into problems if you are using TfaEmail 2-factor authentification and have not updated this module, but you are running the latest FrontendForms the version.
+
+## [1.3.0] 24-01-17
+Support for [Postmark mail service](https://postmarkapp.com/) added.
+
+Due to a user request by mayks in the support forum (https://processwire.com/talk/topic/28352-frontendloginregister-a-configurable-module-for-fast-implementation-of-an-user-management-system-based-on-frontendforms/?do=findComment&comment=238466), where he asked about to add support for sending mails with Postmark, I have added this feature now.
+
+There are 2 ProcessWire Modules in the modules directory which implement the Postmark service in Processwire:
+
+- [WireMailPostmark](https://processwire.com/modules/wire-mail-postmark/) by Netcarver
+- [WireMailPostmarkApp](https://processwire.com/modules/wire-mail-postmark-app/) by NB Communication
+
+Both modules do pretty the same, only the module configuration is slightly different.
+
+If you have installed one of them, you will be able to send mails from this module via the Postmark service.
+
+I have added a new field to the module configuration which let you select, if you want to send the mails of this module via the Postmark service or not.
+
+Please note: This new field is only visible if you have installed one of the modules mentionend above. If not, you will not see this new field.
+
+I have planned to make this module working with other 3rd party mail service modules too, but for now I have only implemented and tested Postmark.
+
+You have to update FrontendForms to the latest version (2.1.57) to be able to update this module, because most of the code changes are done in FrontendForms. The reason for that is, that this addition should be usable in other modules based on FrontendForms too and therefore placing the code directly in FrontendForms was the best way to make this feature applicable in any child module as well.
