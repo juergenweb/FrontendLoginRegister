@@ -150,7 +150,7 @@
             }
             $this->setMailPlaceholder('logintype', $type);
 
-            $m = wireMail();
+            $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
             $m->to($user->email);
             $this->setSenderEmail($m);
             $this->setSenderName($m);
@@ -835,7 +835,7 @@
             $this->setMailPlaceholder('expirationtime', $this->secondsToTime($expire));
 
             // create own email
-            $m = new WireMail();
+            $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
             $m->subject(sprintf($this->_('Your authentication code for %s'), $this->wire('config')->httpHost));
             $m->title($this->_('Use this code to login into your account'));
 
