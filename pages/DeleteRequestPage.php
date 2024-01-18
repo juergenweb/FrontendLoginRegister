@@ -99,7 +99,7 @@
                 $this->setMailPlaceholder('deleteaccountlink', $this->createCodeLink('fl_deleteaccountpage', $deleteCode));
 
                 // send an email with the deletion link to the user in the stored user language, not the site language
-                $m = new WireMail();
+                $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
                 $m->to($this->user->email);
                 $this->setSenderEmail($m);
                 $this->setSenderName($m);
