@@ -43,7 +43,7 @@ The last addition is a new configuration setting, which let you disable the togg
 ## [1.2.9] 23-12-28
 Due to problems of the static method secondsToReadable() in certain IDEs, I have switched to a non-static method. This method is originally from the FrontendForms module. I have copied this function to this module. Be aware to update this module first (or contemporaneously with FrontendForms) before you update FrontendForms. Otherwise you will run into problems if you are using TfaEmail 2-factor authentification and have not updated this module, but you are running the latest FrontendForms the version.
 
-## [1.3.0] 24-01-17
+## [1.3.0] 24-01-18
 Support for [Postmark mail service](https://postmarkapp.com/) added.
 
 Due to a user request by mayks in the support forum (https://processwire.com/talk/topic/28352-frontendloginregister-a-configurable-module-for-fast-implementation-of-an-user-management-system-based-on-frontendforms/?do=findComment&comment=238466), where he asked about to add support for sending mails with Postmark, I have added this feature now.
