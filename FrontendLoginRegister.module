@@ -34,6 +34,7 @@
         protected string $input_emailTemplate = 'inherit'; // The HTML template that should be used for emails
         protected string $input_email = ''; // The email for this page, that will be used to send emails (fe. noreplay@mycompany.com)
         protected string $input_sender = ''; // The name of the sender for the emails (fe MyCompany)
+        protected string $input_mailmodule = ''; // Name of the custom module for sending mails
         protected string|int $input_redirectSuccess = '-1'; // After successful login, the user will be redirected to this page
         protected string|int|null $input_tfa = ''; // Use Tfa by default
         protected string|int|null $input_deleteProfile = null; // allow users to delete their profile
@@ -75,6 +76,8 @@
         protected array $fl_unlockaccount = [];
         protected array $config = []; // array containing the module configuration values
 
+        protected array $customMailModules = []; // array that contains all classes of usable and installed custom mail modules
+
         /**
          * @throws WireException
          * @throws WirePermissionException|ReflectionException
@@ -107,6 +110,7 @@
                 $this->input_emailTemplate = $this->config['input_emailTemplate'];
                 $this->input_email = $this->config['input_email'];
                 $this->input_sender = $this->config['input_sender'];
+                $this->input_mailmodule = $this->config['input_mailmodule'] ?? 'none';
                 $this->input_redirectSuccess = $this->config['input_redirectSuccess'];
                 $this->input_tfa = $this->config['input_tfa'];
                 $this->input_deleteProfile = $this->config['input_deleteProfile'];
@@ -155,6 +159,21 @@
 
             // set upload path for profile image
             $this->setUploadPath($this->tmp_profile_image_dir_path);
+
+
+        }
+
+        /**
+         * Add custom mail modules to the mail module array, if the are installed
+         * @param string $className
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        protected function addCustomMailModule(string $className): void
+        {
+            if ($this->wire('modules')->getModuleID($className)) {
+                $this->customMailModules[$className] = $className;
+            }
         }
 
         /**
@@ -199,6 +218,7 @@
                 'input_emailTemplate' => 'inherit',
                 'input_email' => '',
                 'input_sender' => '',
+                'input_mailmodule' => 'none',
                 'input_redirectSuccess' => '-1',
                 'input_tfa' => 0,
                 'input_deleteProfile' => 0,
@@ -207,7 +227,7 @@
                 'input_max_filesize' => 0,
                 'input_showPrev' => 2,
                 'input_useajax' => 'inherit',
-                'input_hide_passwordtoggle'  => 0,
+                'input_hide_passwordtoggle' => 0,
                 'input_removeCSS' => 0,
                 'input_removeJS' => 0
             ];
@@ -277,7 +297,9 @@
                     if (!$user->fl_reminderdatetime) {
 
                         $activation_date = $user->getUnformatted('created');
-                        $diff_time = $this->input_remind * 60 * 60 * 24;
+                        // TODO delete
+                        //$diff_time = $this->input_remind * 60 * 60 * 24;
+                        $diff_time = $this->input_remind * 60;
 
                         if ((int)$activation_date + $diff_time < time()) {
                             // send reminder email to the user
@@ -1217,6 +1239,12 @@
             $sender->columnWidth = 50;
             $sender->useLanguages = true;
             $emailfieldset->add($sender);
+
+            // Add the InputSelect for choosing a custom mail module for sending mails
+            if (FrontendForms::getNumberOfMailModules($modules) > 0) {
+                $mailModuleSelect = FrontendForms::createMailModuleInputfield($modules, $this);
+                $emailfieldset->add($mailModuleSelect);
+            }
 
             $inputfields->add($emailfieldset);
 
