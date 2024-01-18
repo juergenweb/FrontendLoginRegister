@@ -81,6 +81,7 @@
             if (!$this->setSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
+
             if ($this->___isValid()) {
 
                 // create the recovery code
@@ -134,7 +135,8 @@
                         $this->setMailPlaceholder('recoverPasswordlink',
                             $this->createCodeLink('fl_recoverylogindatapage', $recoveryCode));
 
-                        $m = new WireMail();
+
+                        $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
                         $m->to($user->email);
                         $this->setSenderEmail($m);
                         $this->setSenderName($m);
@@ -152,6 +154,7 @@
                         $m->bodyHTML($body);
                         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
                         $mail_sent = $m->send();
+
 
                         if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                             // set back the language to the site language
