@@ -203,7 +203,7 @@
                     $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($newUser));
 
                     // send an email with the activation link to the user
-                    $m = new WireMail();
+                    $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
                     $m->to($newUser->email);
                     $this->setSenderEmail($m);
                     $this->setSenderName($m);
