@@ -46,6 +46,7 @@
         protected array $loginregisterConfig = []; // array that holds all module configuration properties
         protected array $frontendformsConfig = []; // array that holds all module configuration properties from FrontendForms
         protected bool $useAjax = false;
+
         /*objects*/
         protected Page $login_page; // the login page object
         protected Page $delete_page; // the delete page object
@@ -86,6 +87,11 @@
             // set configuration properties form FrontendForms module configuration
             foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
                 $this->frontendformsConfig[$key] = $value;
+            }
+
+            // Fallback if input_mailmodule is not present
+            if (!array_key_exists('input_mailmodule', $this->loginregisterConfig)) {
+                $this->loginregisterConfig['input_mailmodule'] = 'none';
             }
 
             $this->login_page = $this->wire('pages')->get('template=fl_loginpage');
@@ -430,7 +436,7 @@
             // 4) not registered link
             $this->setMailPlaceholder('notregisteredlink', $this->createNotRegisteredLink($user));
 
-            $m = new WireMail();
+            $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
             $m->to($user->email);
             $this->setSenderEmail($m);
             $this->setSenderName($m);
@@ -492,7 +498,7 @@
                 $this->setMailPlaceholder('registerurl', $this->wire('pages')->get('template=fl_registerpage')->httpUrl);
 
                 // create mail
-                $m = new WireMail();
+                $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
                 $m->to($user->email);
                 $this->setSenderEmail($m);
                 $this->setSenderName($m);
