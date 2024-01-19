@@ -115,6 +115,7 @@
                 $ajax = (bool)$ajax;
             }
             $this->useAjax = $ajax;
+
         }
 
         /**
@@ -561,11 +562,11 @@
 
         /**
          * Set the mail sender name to the mail
-         * @param WireMail $mail
+         * @param $mail
          * @return void
          * @throws WireException
          */
-        protected function setSenderName(WireMail $mail): void
+        protected function setSenderName($mail): void
         {
             $senderName = $this->setLanguageMailValue($mail, 'input_sender');
             if(is_null($senderName)){
@@ -576,17 +577,23 @@
 
         /**
          * Set the mail sender email to the mail
-         * @param \ProcessWire\WireMail $mail
+         * @param $mail
          * @return void
          * @throws \ProcessWire\WireException
          */
-        protected function setSenderEmail(WireMail $mail): void
+        protected function setSenderEmail($mail): void
         {
-            $senderEmail = $this->setLanguageMailValue($mail, 'input_email');
-            if(is_null($senderEmail)){
-                $senderEmail = 'noreply@' . $this->wire('config')->httpHost;
+            // Set from value depending on settings
+            switch($this->loginregisterConfig['input_mailmodule']) {
+                case('WireMailSmtp'):
+                    break;
+                default:
+                    $senderEmail = $this->setLanguageMailValue($mail, 'input_email');
+                    if(is_null($senderEmail)){
+                        $senderEmail = 'noreply@' . $this->wire('config')->httpHost;
+                    }
+                    $mail->from($senderEmail);
             }
-            $mail->from($senderEmail);
         }
 
         /**
