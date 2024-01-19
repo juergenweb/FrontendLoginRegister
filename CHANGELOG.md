@@ -64,3 +64,7 @@ Please note: This new field is only visible if you have installed one of the mod
 I have planned to make this module working with other 3rd party mail service modules too, but for now I have only implemented and tested Postmark.
 
 You have to update FrontendForms to at least version 2.1.57 to be able to update this module, because most of the code changes are done in FrontendForms. The reason for that is, that this addition should be usable in other modules based on FrontendForms too and therefore placing the code directly in FrontendForms was the best way to make this feature applicable in any child module as well.
+
+## [1.3.1] 24-01-19
+
+As the next step, support for an additional mailing module added: [WireMailSmtp](https://processwire.com/modules/wire-mail-smtp/) by Horst.
