@@ -187,7 +187,7 @@
                 'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-                'version' => '1.3.1',
+                'version' => '1.3.0',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.1.59', 'LazyCron'],
