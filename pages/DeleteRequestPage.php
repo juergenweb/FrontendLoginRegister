@@ -13,6 +13,7 @@
      */
 
     use Exception;
+    use FrontendForms\Form;
     use FrontendForms\Button as Button;
     use FrontendForms\Password as Password;
     use ProcessWire\WireException;
@@ -114,7 +115,9 @@
                 }
                 $body = $text . $this->___generateNoReplyText();
 
-                $m->bodyHTML($body);
+                // Add the HTML body property to the Mail object
+                Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
+
                 $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
                 if ($this->wire('modules')->isInstalled('LanguageSupport')) {
