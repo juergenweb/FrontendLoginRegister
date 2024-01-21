@@ -16,6 +16,7 @@
 
     use Exception;
     use FrontendForms\Button as Button;
+    use FrontendForms\Form;
     use FrontendForms\Privacy as Privacy;
     use FrontendForms\PrivacyText as PrivacyText;
     use ProcessWire\TfaEmail;
@@ -218,7 +219,9 @@
                     }
                     $body = $text . $this->___generateNoReplyText();
 
-                    $m->bodyHTML($body);
+                    // Add the HTML body property to the Mail object
+                    Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
+
                     $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
                     $activation_mail_sent = $m->send();
