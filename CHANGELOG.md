@@ -68,3 +68,7 @@ You have to update FrontendForms to at least version 2.1.57 to be able to update
 ## [1.3.1] 24-01-19
 
 As the next step, support for an additional mailing module added: [WireMailSmtp](https://processwire.com/modules/wire-mail-smtp/) by Horst.
+
+## [1.3.2] 24-01-21
+
+Support for sending mails with [WireMailPHPMailer](https://processwire.com/modules/altivebirit/) added.
