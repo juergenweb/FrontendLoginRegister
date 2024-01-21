@@ -16,6 +16,7 @@
     use Exception;
     use FrontendForms\Button as Button;
     use FrontendForms\Email as Email;
+    use FrontendForms\Form;
     use FrontendForms\InputText as InputText;
     use FrontendForms\Link as Link;
     use FrontendForms\Password as Password;
@@ -156,8 +157,12 @@
             $this->setSenderName($m);
             $m->subject($this->_('We have detected suspicious activity on your user account'));
             $m->title($this->_('Action required to unlock your account'));
-            $m->bodyHTML($this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig,
-                    $this->stored_user_lang->id) . $this->___generateNoReplyText());
+            $body = $this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig,
+                    $this->stored_user_lang->id) . $this->___generateNoReplyText();
+
+            // Add the HTML body property to the Mail object
+            Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
+
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
 
             if ($this->wire('modules')->isInstalled('LanguageSupport')) {
@@ -852,7 +857,9 @@
                 $text = $this->loginregisterConfig['input_tfatext'];
             }
             $body = $text . $this->___generateNoReplyText();
-            $m->bodyHTML($body);
+
+            // Add the HTML body property to the Mail object
+            Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
 
             $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
             $code_sent = $m->send();
