@@ -33,7 +33,7 @@ This module creates pages and templates during the installation for faster devel
 - Lock accounts if suspicious login attempts are made
 - Allow users to upload a profile image for their account
 - Support of Ajax form submission
-- Support for following 3rd party mail modules: WireMailPostmarkApp, WireMailPostmark, WireMailSmtp
+- Support for following 3rd party mail modules: WireMailPostmarkApp, WireMailPostmark, WireMailSmtp, WireMailPHPMailer
 
 ## Table of contents
 
