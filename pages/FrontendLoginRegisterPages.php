@@ -139,8 +139,8 @@
         protected function prependBody(): string
         {
             $content = '';
-            if($this->wire('page')->hasField('body')){
-                if($this->prependBody){
+            if ($this->wire('page')->hasField('body')) {
+                if ($this->prependBody) {
                     $this->prepend($this->wire('page')->body);
                 } else {
                     $content = $this->wire('page')->body;
@@ -569,7 +569,7 @@
         protected function setSenderName($mail): void
         {
             $senderName = $this->setLanguageMailValue($mail, 'input_sender');
-            if(is_null($senderName)){
+            if (is_null($senderName)) {
                 $senderName = 'noreply@' . $this->wire('config')->httpHost;
             }
             $mail->fromName($senderName);
@@ -584,12 +584,12 @@
         protected function setSenderEmail($mail): void
         {
             // Set from value depending on settings
-            switch($this->loginregisterConfig['input_mailmodule']) {
+            switch ($this->loginregisterConfig['input_mailmodule']) {
                 case('WireMailSmtp'):
                     break;
                 default:
                     $senderEmail = $this->setLanguageMailValue($mail, 'input_email');
-                    if(is_null($senderEmail)){
+                    if (is_null($senderEmail)) {
                         $senderEmail = 'noreply@' . $this->wire('config')->httpHost;
                     }
                     $mail->from($senderEmail);
