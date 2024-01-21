@@ -17,6 +17,7 @@
     use Exception;
     use FrontendForms\Button as Button;
     use FrontendForms\Email as Email;
+    use FrontendForms\Form;
     use ProcessWire\WireException;
     use ProcessWire\WireMail;
 
@@ -77,6 +78,7 @@
          */
         public function render(): string
         {
+
             $content = '';
             if (!$this->setSubmitWithAjax()) {
                 $content .= $this->prependBody();
@@ -151,11 +153,12 @@
                         }
                         $body = $text . $this->___generateNoReplyText();
 
-                        $m->bodyHTML($body);
+                        // Add the HTML body property to the Mail object
+                        Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
+
                         $m->mailTemplate($this->loginregisterConfig['input_emailTemplate']);
                         $mail_sent = $m->send();
-
-
+                        
                         if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                             // set back the language to the site language
                             $this->user->setLanguage($this->site_language_id);
@@ -163,6 +166,7 @@
 
                         // save user data only if mail was sent successfully
                         if ($mail_sent) {
+
                             // grab the user and store the random string inside the recovery code input
                             $user->of(false);
                             $user->fl_recoverylogindata = $recoveryCode; // save the code in the db
