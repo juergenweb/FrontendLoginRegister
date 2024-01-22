@@ -1261,7 +1261,7 @@
             $size->attr('name', 'input_image_size');
             $size->attr('value', $this->input_image_size);
             $size->description = $this->_('Please specify the desired size of the profile image as it should be displayed on the profile page.');
-            $size->notes = $this->_('Please enter width and height of the image in px separated by a comma (fe 200,200) for a rectangular image or one value (fe 100) for a squared image.');
+            $size->notes = $this->_('Please enter width and height of the image in px separated by a comma (fe 200,300) for a rectangular image or one value (fe 100) for a squared image.');
             $size->columnWidth = 33;
             $size->required = true;
             $imagefieldset->add($size);
