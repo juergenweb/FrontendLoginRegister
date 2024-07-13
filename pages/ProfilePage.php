@@ -135,11 +135,11 @@
                         if ($old_user_lang != $this->user->language->id) {
                             $this->wire('session')->set('language', (string)$this->user->language->id);
                             // redirect to the local page with the new language
-                            $this->wire('session')->redirect($this->wire('pages')->get($this->wire->page->id)->localUrl($this->wire('user')->language));
+                            $this->wire('session')->redirect($this->wire('pages')->get($this->wire->page->id)->localUrl($this->wire('user')->language).$this->segments);
                         }
                     }
                     // redirect to the page -> necessary to show new uploaded image
-                    $this->wire('session')->redirect($this->wire('page')->url);
+                    $this->wire('session')->redirect($this->wire('page')->url.$this->segments);
                 } else {
                     $this->savingUserProblemAlert();
                 }
