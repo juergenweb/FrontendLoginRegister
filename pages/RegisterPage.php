@@ -127,7 +127,7 @@
         public function render(): string
         {
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
             // add privacy notice if set
@@ -274,7 +274,7 @@
                         }
                     }
                 }
-                if ($this->setSubmitWithAjax()) {
+                if ($this->getSubmitWithAjax()) {
                     $content .= $this->prependBody();
                 }
             }
