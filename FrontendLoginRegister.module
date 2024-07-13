@@ -651,6 +651,9 @@
             // check if page is a frontend page
             if (($page->rootParent->id != 2) && (!in_array($page->template->name, $notTrackedPages))) {
                 wire('session')->set('prevPage', $page->id);
+            } else {
+                // redirect to the homepage
+                wire('session')->set('prevPage', 1);
             }
         }
 
