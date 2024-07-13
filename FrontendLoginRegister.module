@@ -86,6 +86,8 @@
         {
             parent::__construct();
 
+
+
             // set the current module version
             $this->version = $this->getModuleInfo()['version'];
 
@@ -240,6 +242,7 @@
          */
         public function init(): void
         {
+
             // send email to remind the user to activate the account
             $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
             // delete inactive accounts after a certain time
@@ -650,10 +653,8 @@
             $notTrackedPages = ['fl_loginpage', 'fl_logoutpage'];
             // check if page is a frontend page
             if (($page->rootParent->id != 2) && (!in_array($page->template->name, $notTrackedPages))) {
-                wire('session')->set('prevPage', $page->id);
-            } else {
-                // redirect to the homepage
-                wire('session')->set('prevPage', 1);
+                if($page->id != 27)
+                    wire('session')->set('prevPage', $page->id);
             }
         }
 
