@@ -665,7 +665,7 @@
             $queryString = $this->wire('input')->queryStringClean(['validNames' => [$queryStringName]]);
             $this->queryString = str_replace($queryStringName . '=', '', $queryString);
             if (!$this->queryString && $redirect) {
-                $this->wire('session')->redirect($redirect);
+                $this->wire('session')->redirect($redirect.$this->segments);
             }
             return $this->queryString;
         }
