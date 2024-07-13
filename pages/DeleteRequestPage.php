@@ -77,7 +77,7 @@
         {
 
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
             if ($this->___isValid()) {
@@ -141,7 +141,7 @@
                     $this->generateEmailSentErrorAlert();
                 }
             } else {
-                if ($this->setSubmitWithAjax()) {
+                if ($this->getSubmitWithAjax()) {
                     $content .= $this->prependBody();
                 }
             }
