@@ -105,7 +105,7 @@
         public function render(): string
         {
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
             if ($this->___isValid()) {
@@ -121,7 +121,7 @@
                 $this->user->save();
                 $this->user->setOutputFormatting();
             } else {
-                if ($this->setSubmitWithAjax()) {
+                if ($this->getSubmitWithAjax()) {
                     $content .= $this->prependBody();
                 }
             }
