@@ -107,7 +107,7 @@
         public function render(): string
         {
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
             // Show the link for account deletion, if enabled in the settings
@@ -151,7 +151,7 @@
                 $this->getFormelementByName('profile-form-pass-confirm')->setAttribute('value', '');
 
             } else {
-                if ($this->setSubmitWithAjax()) {
+                if ($this->getSubmitWithAjax()) {
                     $content .= $this->prependBody();
                 }
             }
