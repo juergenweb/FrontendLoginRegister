@@ -185,6 +185,7 @@
         {
 
             // try to log in the user
+
             if ($this->wire('session')->login($user->name, $this->getValue('password'))) {
                 // login if tfa is not enabled
                 $this->redirectAfterLogin();// redirect after login
@@ -259,9 +260,10 @@
         {
 
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
+
             /*
              Check if "deletion" session from deletion link is active
              This is the case if a user clicks on the deletion link inside the email and is not logged in,
@@ -371,6 +373,7 @@
                 $this->getAlert()->setText($msg);
 
             } else {
+
                 // login form
                 $this->setSuccessMsg($this->_('You are now logged in.'));
 
@@ -381,6 +384,7 @@
                     $email = new Email('email');
                     $this->add($email);
                 } else {
+
                     // username
                     // sanitizers added: pageName, text
                     // validation rules added: required, usernamesyntax, uniqueusername
@@ -549,7 +553,7 @@
                             }
                         }
                     }
-                    if ($this->setSubmitWithAjax()) {
+                    if ($this->getSubmitWithAjax()) {
                         $content .= $this->prependBody();
                     }
                 }
@@ -649,7 +653,6 @@
             } else {
                 // get redirect page from module configuration settings
                 $current_page_id = $this->wire('pages')->get('template=fl_loginpage')->id;
-
                 switch (true) {
                     case($this->loginregisterConfig['input_redirectSuccess'] == -1):
                         if ($this->wire('session')->get('prevPage') > 0) {
@@ -680,6 +683,7 @@
             $id = $this->getRedirectPageIdAfterLogin();
             $query_string = $this->getDeletionQueryString();
 
+
             $this->wire('session')->set('loginID', $id);
             if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
                 $redirectUrl = $this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string;
@@ -690,6 +694,7 @@
                     $this->setRedirectUrlAfterAjax($redirectUrl);
                 } else {
                     // otherwise redirect to a given page
+
                     $this->wire('session')->redirect($redirectUrl);
                     //$this->wire('session')->redirect($this->wire('pages')->get($id)->localUrl($this->wire('user')->language) . $query_string);
                 }
