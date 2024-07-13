@@ -80,3 +80,7 @@ Some bugs fixed for inputfield dependencies usage.
 ## [1.3.4] 24-07-13
 
 Wrong Ajax settings check fixed on various pages of the module.
+
+## [1.3.5] 24-07-13
+
+Support for usage of url segements on profile page added.
