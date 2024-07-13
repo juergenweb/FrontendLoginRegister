@@ -80,7 +80,7 @@
         {
 
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
 
@@ -184,7 +184,7 @@
                     }
                 }
             } else {
-                if ($this->setSubmitWithAjax()) {
+                if ($this->getSubmitWithAjax()) {
                     $content .= $this->prependBody();
                 }
             }
