@@ -72,3 +72,7 @@ As the next step, support for an additional mailing module added: [WireMailSmtp]
 ## [1.3.2] 24-01-21
 
 Support for sending mails with [WireMailPHPMailer](https://processwire.com/modules/altivebirit/) added.
+
+## [1.3.3] 24-07-13
+
+Some bugs fixed for inputfield dependencies usage.
