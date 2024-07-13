@@ -76,3 +76,7 @@ Support for sending mails with [WireMailPHPMailer](https://processwire.com/modul
 ## [1.3.3] 24-07-13
 
 Some bugs fixed for inputfield dependencies usage.
+
+## [1.3.4] 24-07-13
+
+Wrong Ajax settings check fixed on various pages of the module.
