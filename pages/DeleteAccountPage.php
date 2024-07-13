@@ -150,7 +150,7 @@
         public function render(): string
         {
             $content = '';
-            if (!$this->setSubmitWithAjax()) {
+            if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
             if ($this->___isValid()) {
@@ -160,7 +160,7 @@
                     $this->getAlert()->setCSSClass('alert_dangerClass')->setText($this->_('Unfortunately there was a technical problem deleting your account. Please try it once more or contact the webmaster of the site.'));
                 }
             } else {
-                if ($this->setSubmitWithAjax()) {
+                if ($this->getSubmitWithAjax()) {
                     $content .= $this->prependBody();
                 }
             }
