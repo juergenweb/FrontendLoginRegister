@@ -85,7 +85,11 @@ Wrong Ajax settings check fixed on various pages of the module.
 
 Support for usage of url segements on profile page added.
 
-## 24-10-27
+## [1.3.6] 2024-12-18
+
+- **Image picker select added**
+
+The default input select field for selecting the email template has been replaced by a nice image picker select like in FrontendForms.
 
 - **Support for RockLanguage added**
 
