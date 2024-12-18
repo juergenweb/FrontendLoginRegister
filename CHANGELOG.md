@@ -81,11 +81,9 @@ Some bugs fixed for inputfield dependencies usage.
 
 Wrong Ajax settings check fixed on various pages of the module.
 
-## [1.3.5] 24-07-13
+## [1.3.5] 2024-12-18
 
 Support for usage of url segements on profile page added.
-
-## [1.3.6] 2024-12-18
 
 - **Image picker select added**
 
