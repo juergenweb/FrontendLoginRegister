@@ -52,8 +52,8 @@
         protected string|int|null $input_showPrev = 2;
         protected string|int $input_useajax = 'inherit'; // whether to use Ajax for form submission or not
         protected string|int|bool $input_hide_passwordtoggle = 0; // disable the display of the toggle checkbox beside each password field
-        protected string|int|null $input_removeCSS = 0; // whether to remove the frontend CSS file or not
-        protected string|int|null $input_removeJS = 0; // whether to remove the frontend JS file or not
+        protected string|int|null $input_remove_FL_CSS = 0; // whether to remove the frontend CSS file or not
+        protected string|int|null $input_remove_FL_JS = 0; // whether to remove the frontend JS file or not
         protected string $version = ''; // the current module version
         // Declaration of configuration properties for templates and user fields
         protected array $userFields = []; // Array of all user fields
@@ -107,7 +107,6 @@
                 $this->input_remind = $this->config['input_remind'];
                 $this->input_prevent_send_deletion_email = $this->config['input_prevent_send_deletion_email'];
                 $this->input_selectlogin = $this->config['input_selectlogin'];
-                $this->input_removeJS = $this->config['input_removeJS'];
                 $this->input_selectloginregister = $this->config['input_selectloginregister'];
                 $this->input_emailTemplate = $this->config['input_emailTemplate'];
                 $this->input_email = $this->config['input_email'];
@@ -129,8 +128,11 @@
                 $this->input_max_filesize = $this->config['input_max_filesize'] ?? 0;// add fallback
                 $this->input_useajax = $this->config['input_useajax'] ?? 'inherit'; // add fallback
                 $this->input_hide_passwordtoggle = $this->config['input_hide_passwordtoggle'] ?? 0; // add fallback
-                $this->input_removeJS = $this->config['input_removeJS'] ?? 0; // add fallback
-                $this->input_removeCSS = $this->config['input_removeCSS'] ?? 0; // add fallback
+                // fallback
+                $defaultJSValue = (isset($this->config['input_removeJS']) && $this->config['input_removeJS'] == '1') ? 1 : 0;
+                $this->input_remove_FL_JS = $this->config['input_remove_FL_JS'] ?? $defaultJSValue; // add fallback
+                $defaultCSSValue = (isset($this->config['input_removeCSS']) && $this->config['input_removeCSS'] == '1') ? 1 : 0;
+                $this->input_remove_FL_CSS = $this->config['input_remove_FL_CSS'] ?? $defaultCSSValue; // add fallback
             }
 
             // array of the names of all mail text input fields
@@ -230,8 +232,8 @@
                 'input_showPrev' => 2,
                 'input_useajax' => 'inherit',
                 'input_hide_passwordtoggle' => 0,
-                'input_removeCSS' => 0,
-                'input_removeJS' => 0
+                'input_remove_FL_CSS' => 0,
+                'input_remove_FL_JS' => 0
             ];
         }
 
@@ -242,7 +244,6 @@
          */
         public function init(): void
         {
-
             // send email to remind the user to activate the account
             $this->addHookAfter('LazyCron::everyHour', $this, 'remindAccount');
             // delete inactive accounts after a certain time
@@ -670,11 +671,11 @@
             $js = '';
             // load only on frontend
             if ($page->template->name !== 'admin') {
-                if (!$this->input_removeJS) {
+                if (!$this->input_remove_FL_JS) {
                     $js = '<script src="' . $assets . $this->className() . '.js?v=' . $this->version . '"></script>' . PHP_EOL;
                 }
 
-                if (!$this->input_removeCSS) {
+                if (!$this->input_remove_FL_CSS) {
                     $css = '<link rel="stylesheet" type="text/css" href="' . $assets . $this->className() . '.css?v=' . $this->version . '"/>' . PHP_EOL;
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
                 }
@@ -1324,8 +1325,8 @@
 
             // Remove JS on Frontend
             $removeJS = $this->wire('modules')->get('InputfieldCheckbox');
-            $removeJS->attr('name', 'input_removeJS');
-            $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
+            $removeJS->attr('name', 'input_remove_FL_JS');
+            $removeJS->attr('checked', $this->input_remove_FL_JS === 1 ? 'checked' : '');
             $removeJS->label = $this->_('JavaScript setting');
             $removeJS->label2 = $this->_('Remove frontendloginregister.js from the template');
             $removeJS->notes = $this->_('A small JavaScript, which will be needed for some features of the module, will added before the closing body tag on the frontend by default . You can remove the embedding of the script file by checking the box.');
@@ -1334,8 +1335,8 @@
 
             // Remove CSS on Frontend
             $removeCSS = $this->wire('modules')->get('InputfieldCheckbox');
-            $removeCSS->attr('name', 'input_removeCSS');
-            $removeCSS->attr('checked', $this->input_removeCSS === 1 ? 'checked' : '');
+            $removeCSS->attr('name', 'input_remove_FL_CSS');
+            $removeCSS->attr('checked', $this->input_remove_FL_CSS === 1 ? 'checked' : '');
             $removeCSS->label = $this->_('CSS setting');
             $removeCSS->label2 = $this->_('Remove frontendloginregister.css from the template');
             $removeCSS->notes = $this->_('A small CSS file for the forms will be added to the template by default. You can remove the embedding of the CSS file by checking the box.');
