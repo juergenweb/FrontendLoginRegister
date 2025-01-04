@@ -60,6 +60,7 @@
         protected array $templatePages = []; // Array of all template pages
         protected array $textareas = []; // array of all textarea input fields for the mail textes
         protected array $userSettings = []; // Holds the data for the specific user
+        protected string|int|null $input_publicDeletion = 0; // should the profile deletion page public reachable or not
 
         // Declaration of class objects used
         protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
@@ -85,8 +86,6 @@
         public function __construct()
         {
             parent::__construct();
-
-
 
             // set the current module version
             $this->version = $this->getModuleInfo()['version'];
@@ -115,6 +114,7 @@
                 $this->input_redirectSuccess = $this->config['input_redirectSuccess'];
                 $this->input_tfa = $this->config['input_tfa'];
                 $this->input_deleteProfile = $this->config['input_deleteProfile'];
+                $this->input_publicDeletion = $this->config['input_publicDeletion'];
                 $this->input_activationtext = $this->config['input_activationtext'];
                 $this->input_remindertext = $this->config['input_remindertext'];
                 $this->input_tfatext = $this->config['input_tfatext'];
@@ -1038,12 +1038,25 @@
             $deleteProfile->checkboxLabel = $this->_('Allow users to delete their account');
             $deleteProfile->description = $this->_('If the box is checked, the user gets the opportunity to delete his account on his profile page if he is logged in.');
             $deleteProfile->attr('name', 'input_deleteProfile');
-            $deleteProfile->columnWidth = 50;
+            $deleteProfile->columnWidth = 33;
             $deleteProfile->attr('checked', $this->input_deleteProfile == '1' ? 'checked' : '');
             $profilefieldset->add($deleteProfile);
 
+            $deletePublic = $this->modules->get('InputfieldCheckbox');
+            $deletePublic->label = $this->_('Allow public deletion of a user account');
+            $deletePublic->checkboxLabel = $this->_('Make the account deletion page publicly available');
+            $deletePublic->description = $this->_('Check the checkbox to allow users to delete their account without being logged in by making the deletion page public reachable.');
+            $deletePublic->notes = $this->_('For security reasons, the user account deletion page is accessible by default only when the user is logged in. If you would like to make this page publicly accessible, please tick the box.');
+            $deletePublic->attr('name', 'input_publicDeletion');
+            $deletePublic->columnWidth = 33;
+            $deletePublic->showIf = 'input_deleteProfile=1';
+            bd($this->input_publicDeletion);
+            $deletePublic->attr('checked', $this->input_publicDeletion == '1' ? 'checked' : '');
+            $profilefieldset->add($deletePublic);
+
             $profileFields = $this->createFrontendFields('profile', $fields, 50);
             $profileFields->description = $this->_('Please select which fields should be displayed on the frontend profile form.');
+            $profileFields->columnWidth = 34;
             $profilefieldset->add($profileFields);
             $inputfields->add($profilefieldset);
 
