@@ -103,6 +103,8 @@ The (old) CSV files usage is still supported.
 
 Due to a user request, a new configuration field (checkbox) to make the delete request page for a user account public viewable if needed. In the past this page was only viewable if the user was logged in.
 
+If the page is publicly viewable, the user must enter his email address and password in the form and a link to delete the user account will be sent to the user. Once the user is logged in, all he has to do is to enter the password to receive the deletion link.
+
 - **Support for multilanguage fields in user template added**
 
 The following multilanguage fields, which can be used in the user template will be supported now:
