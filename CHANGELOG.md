@@ -101,7 +101,7 @@ The (old) CSV files usage is still supported.
 
 - **Support for making account deletion page public viewable added**
 
-Due to a user request, a new configuration field (checkbox) to make the delete request page for a user account public viewable if needed. In the past this page was only viewable if the user was logged in.
+Due to a user request, a new configuration field (checkbox) appears to make the deletion request page for a user account publicly visible if needed. In the past, this page was only visible when the user was logged in.
 
 If the page is publicly viewable, the user must enter his email address and password in the form and a link to delete the user account will be sent to the user. Once the user is logged in, all he has to do is to enter the password to receive the deletion link.
 
