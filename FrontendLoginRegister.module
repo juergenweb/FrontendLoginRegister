@@ -164,7 +164,6 @@
             // set upload path for profile image
             $this->setUploadPath($this->tmp_profile_image_dir_path);
 
-
         }
 
         /**
@@ -1761,14 +1760,16 @@ EOT;
                 $template = wire('templates')->get('fl_deleterequestpage');
                 if ($template) {
 
-                    if ($this->input_publicDeletion == 1) {
+                    if ($this->wire('input')->post('input_publicDeletion') == 1) {
                         $template->addRole('guest');
+                        $this->message($this->_('Status of delete request pages has been set to public.'));
                     } else {
                         $template->removeRole('guest');
+                        $this->message($this->_('Public Status of delete request pages has been removed again.'));
                     }
                     $template->save();
 
-                    }
+                }
             }
         }
 
