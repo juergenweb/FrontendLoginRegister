@@ -96,3 +96,9 @@ If you have installed the [RockLanguage](https://processwire.com/modules/rock-la
 Please note: The sync will only take place if you are logged in as Superuser and $config->debug is set to true (take a look at the [docs](https://www.baumrock.com/en/processwire/modules/rocklanguage/docs/)).
 
 The (old) CSV files usage is still supported.
+
+## 2025-01-04
+
+- **Support for making account deletion page public viewable added**
+
+Due to a user request, a new configuration field (checkbox) to make the delete request page for a user account public viewable if needed. In the past this page was only viewable if the user was logged in.
