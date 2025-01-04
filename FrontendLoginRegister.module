@@ -60,7 +60,7 @@
         protected array $templatePages = []; // Array of all template pages
         protected array $textareas = []; // array of all textarea input fields for the mail textes
         protected array $userSettings = []; // Holds the data for the specific user
-        protected string|int|null $input_publicDeletion = 0; // should the profile deletion page public reachable or not
+        protected string|int|null $input_publicDeletion = null; // should the profile deletion page public reachable or not
 
         // Declaration of class objects used
         protected ?FrontendForms $frontendForms = null; // the FrontendForms module object
@@ -114,7 +114,7 @@
                 $this->input_redirectSuccess = $this->config['input_redirectSuccess'];
                 $this->input_tfa = $this->config['input_tfa'];
                 $this->input_deleteProfile = $this->config['input_deleteProfile'];
-                $this->input_publicDeletion = $this->config['input_publicDeletion'];
+                $this->input_publicDeletion = $this->config['input_publicDeletion'] ?? null; // add fallback
                 $this->input_activationtext = $this->config['input_activationtext'];
                 $this->input_remindertext = $this->config['input_remindertext'];
                 $this->input_tfatext = $this->config['input_tfatext'];
@@ -225,6 +225,7 @@
                 'input_redirectSuccess' => '-1',
                 'input_tfa' => 0,
                 'input_deleteProfile' => 0,
+                'input_publicDeletion' => 0,
                 'input_phpini' => '',
                 'input_image_size' => '200',
                 'input_max_filesize' => 0,
