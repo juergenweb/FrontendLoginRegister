@@ -1,0 +1,24 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/RecoveryLogindataPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--recoverylogindatapage-php",
+    "translations": {
+        "736bbb38c653ffa3290d84cd8f6b0a4f": {
+            "text": "Ihre neuen Zugangsdaten wurden gespeichert. Sie k\u00f6nnen Sich jetzt bei Ihrem Konto anmelden."
+        },
+        "e9a62c5a0be3e2208f8f4d2449013e05": {
+            "text": "Wenn Sie auch Ihren Benutzernamen vergessen haben sollten, dann k\u00f6nnen Sie hier einen neuen eingeben. Andernfalls lassen Sie dieses Feld leer und f\u00fcllen Sie nur die Passwortfelder aus."
+        },
+        "91796a2b52a53c9c898142cf4361c5a2": {
+            "text": "Ihr neues Passwort wurde gespeichert und Sie k\u00f6nnen sich jetzt bei Ihrem Konto anmelden."
+        },
+        "c015c2977a6ad7af1e7fef14a0db7870": {
+            "text": "Passwortbest\u00e4tigung anzeigen"
+        },
+        "6c9025c5d284889adb27111824de57e0": {
+            "text": "Neues Passwort speichern"
+        },
+        "1515644564af6fed29f9e39ca610d017": {
+            "text": "Neue Zugangsdaten speichern"
+        }
+    }
+}

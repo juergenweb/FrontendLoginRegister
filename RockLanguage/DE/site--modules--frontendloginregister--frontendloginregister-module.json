@@ -1,0 +1,444 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/FrontendLoginRegister.module",
+    "textdomain": "site--modules--frontendloginregister--frontendloginregister-module",
+    "translations": {
+        "eb4f4fc856f569649e5a1d880cc7100e": {
+            "text": "Beschreibung der verwendeten Platzhalter"
+        },
+        "30775a779767a86161c5c81715d1b262": {
+            "text": "Die Texte f\u00fcr die E-Mails auch in der ausgew\u00e4hlten Sprache importieren, sofern diese vorhanden sind."
+        },
+        "cefb9ff4d39117eef90d8f7bef4893b1": {
+            "text": "Bitte beachten Sie: Diese Aktion wird alle Ihre bisher eingegebenen Texte f\u00fcr die E-Mails in der ausgew\u00e4hlten Sprache \u00fcberschreiben."
+        },
+        "de62775a71fc2bf7a13d7530ae24a7ed": {
+            "text": "Allgemeine Einstellungen"
+        },
+        "73b89b7c5c780ac257ed9c427cdf9f95": {
+            "text": "Anmeldung\/Registrierung"
+        },
+        "981310fd227b002baaffdd8205bc18f5": {
+            "text": "W\u00e4hlen Sie aus, ob Sie nur eine Anmeldung haben m\u00f6chten oder zus\u00e4tzlich auch eine Registrierungsm\u00f6glichkeit."
+        },
+        "d9da38a97856e064ae4ee4e28356ae6b": {
+            "text": "Anmeldung und Registrierung"
+        },
+        "2c8ce8d388acc2233e1ea020c3dbf754": {
+            "text": "Nur eine Anmeldung"
+        },
+        "7cce3991bf442fbfda1293c2afde0f51": {
+            "text": "Wenn Sie \"Nur eine Anmeldung\" ausw\u00e4hlen, dann werden die Registrierungs- und Aktivierungsseite deaktiviert."
+        },
+        "1836f8ad166c66506955429b3b2e6ea5": {
+            "text": "Ajax Einstellungen"
+        },
+        "1df26eee6f80d98c1ec1689177643c75": {
+            "text": "W\u00e4hlen Sie aus, ob Sie Ajax zum Absenden der Formulare nutzen m\u00f6chten, oder nicht."
+        },
+        "5bfe6a369b802afdb9bb4909ac726c2d": {
+            "text": "Von FrontendForms \u00fcbernehmen"
+        },
+        "93cba07454f06a4a960172bbd6e2a435": {
+            "text": "Ja"
+        },
+        "bafd7322c6e97d25b6299b5d6fe8920b": {
+            "text": "Nein"
+        },
+        "8934c484186afcbadb6e2239d072fec5": {
+            "text": "Die Checkbox, welche es erm\u00f6glicht das Passwort im Klartext anzeigen zu lassen, neben alle Passwortfeldern nicht anzeigen."
+        },
+        "f17d53beaafba6df586480be94fca2f1": {
+            "text": "Die Checkbox neben den Passwortfeldern nicht anzeigen"
+        },
+        "e1da7ac4c63a4454a17697f66e2588a7": {
+            "text": "Standardm\u00e4\u00dfig wird neben jedem Passwortfeld eine Checkbox angezeigt, mit dem Sie das Kennwort im Klartext anzeigen lassen k\u00f6nnen. Wenn Sie diese Checkbox aktivieren, k\u00f6nnen Sie dieses Verhalten deaktivieren."
+        },
+        "c50bcdf91916f47e39976a3fc267faae": {
+            "text": "Anmelde-Einstellungen"
+        },
+        "397135ffd1127e35c2bfda9db3d3b42f": {
+            "text": "Benutzerdaten f\u00fcr die Anmeldung"
+        },
+        "f3d57aeef905677f6e19ce929fcd712f": {
+            "text": "Anmeldung mit E-Mail und Passwort"
+        },
+        "94202bc85f56af32d436b77d93d9dbbc": {
+            "text": "Anmeldung mit Benutzername und Passwort"
+        },
+        "df88308225dac267f44a693b35b3018a": {
+            "text": "W\u00e4hlen Sie Ihre bevorzugte Anmeldungsart aus."
+        },
+        "1b6498e23a3c43775699129e7ebfcfeb": {
+            "text": "Weiterleitung"
+        },
+        "65dd73c83c2861859ab887694e610f9c": {
+            "text": "Zur vorher besuchten Seite zur\u00fcckleiten"
+        },
+        "3149f517a20eae63b8080d48da6a13e9": {
+            "text": "W\u00e4hlen Sie die Seite aus, zu welcher nach einer erfolgreichen Anmeldung weitergeleitet werden soll."
+        },
+        "30be142d5d4aba22664ae71bcd0d9aaa": {
+            "text": "2-Faktor-Authentifizierung"
+        },
+        "f4ea6c5bde3fa3e70ec00b3c66027b08": {
+            "text": "2-Faktor-Authentifizierung aktivieren"
+        },
+        "b28a8a1b2ebf7a13d6362716ce63f29a": {
+            "text": "Wenn die Box markiert ist, dann wird TfaEmail als 2-Faktor-Authentifizierung verwendet."
+        },
+        "a6a47851203dc0f6d84c746b6908aac9": {
+            "text": "TfaEmail ist nicht installiert. Um diese Anwendung nutzen zu k\u00f6nnen m\u00fcssen Sie zuerst %s herunterladen und installieren."
+        },
+        "ed4fc5b7518c37d1dc5cd23229fcacaf": {
+            "text": "TfaEmail ist installiert. F\u00fcr eine h\u00f6here Sicherheit ist es empfohlen die 2-Faktor-Authentifizierung zu verwenden."
+        },
+        "8ca20688cf389baadf97cd060447734c": {
+            "text": "Registrierungs-Einstellungen"
+        },
+        "cb1c96db701686d4a52af99ff4137611": {
+            "text": "Erinnerungs-Mail senden"
+        },
+        "08f96f69ff93088edfc75cb673069a23": {
+            "text": "Geben Sie einen Zeitraum in Tagen ein, nach dem eine E-Mail an den Benutzer gesendet wird, um ihn daran zu erinnern, sein Konto zu aktivieren, falls die Aktivierung noch aussteht."
+        },
+        "36ac4b7e47c0e3c184f7763ff48197e0": {
+            "text": "Wenn Sie diese Funktion deaktivieren m\u00f6chten, dann geben Sie bitte den Wert 0 ein."
+        },
+        "991a26932c5a8d68e7149cae353cd906": {
+            "text": "Inaktiven Account l\u00f6schen"
+        },
+        "5eb3fe131298728186b065e9d7dc1b18": {
+            "text": "Geben Sie einen Zeitraum in Tagen ein, nach dem das Benutzerkonto gel\u00f6scht wird %s und die Kontobest\u00e4tigung noch immer ausst\u00e4ndig ist."
+        },
+        "f96d57ee423376f2bb4cb1b230a81a39": {
+            "text": ", nachdem eine Erinnerungsmail gesendet wurde"
+        },
+        "fa0af6924ba6cdc289b2594fef1ee2aa": {
+            "text": "Deaktivieren Sie den Versand der L\u00f6schbest\u00e4tigungs-E-Mails"
+        },
+        "6dbcfc63109a23ea4bff2b1bab87c04b": {
+            "text": "Deaktivieren Sie den Versand der E-Mail"
+        },
+        "476567a09713051a7b1258a60c06fdb8": {
+            "text": "Normalerweise wird ein Benutzer per E-Mail informiert, nachdem sein nicht best\u00e4tigtes Konto gel\u00f6scht wurde. Wenn Sie das Kontrollk\u00e4stchen aktivieren, wird der Versand der E-Mail nach der Kontol\u00f6schung deaktiviert."
+        },
+        "a5cd3ed116608dac017f14c046ea56bf": {
+            "text": "Rollen"
+        },
+        "fb006e4ada7f7ff5a3ece9e053779372": {
+            "text": "W\u00e4hlen Sie die Rolle(n) aus, welche einem neu registrierten Benutzer zugewiesen werden sollen."
+        },
+        "80c53233639ee052db80d2cfa861dbc5": {
+            "text": "Bitte w\u00e4hlen Sie aus, welche Eingabe-Felder im Registrierungs-Formular im Frontend angezeigt werden sollen."
+        },
+        "52b7eac43569326f5fd14232ef8c8994": {
+            "text": "Datenschutztext oder Datenschutz-Checkbox zum Formular hinzuf\u00fcgen"
+        },
+        "f25ff33f3e8c3f873dc85b3a401809eb": {
+            "text": "W\u00e4hlen Sie aus, ob Sie nur einen Datenschutztext oder eine Datenschutz-Checkbox \u00fcber der Schaltfl\u00e4che \"Senden\" anzeigen m\u00f6chten."
+        },
+        "89ca52172700db318a89a30e1b677ddc": {
+            "text": "Nichts anzeigen"
+        },
+        "0e99c9e8c94dc2a1c42561e4862923ae": {
+            "text": "Checkbox anzeigen"
+        },
+        "823dbdeca8e8e353dde97aa7708ff251": {
+            "text": "Text anzeigen"
+        },
+        "57e0942ea0dc40513cfa36f66cf8a29c": {
+            "text": "Sie k\u00f6nnen die Anzeige des Datenschutztextes bzw. des Kontrollk\u00e4stchens deaktivieren, aber Sie sollten sich dar\u00fcber im Klaren sein, dass dies zu rechtlichen Konsequenzen f\u00fchren kann, wenn in Ihrem Land ein Datenschutzhinweis erforderlich ist."
+        },
+        "8af703b2bf59cc9742883ae7f4cb0e5b": {
+            "text": "Konto-Einstellungen"
+        },
+        "dee12d83249dd7abd9012ae73fc3b012": {
+            "text": "Konto-L\u00f6schung"
+        },
+        "26f7656eed87edec09b69c177ac8f5df": {
+            "text": "Nutzer erlauben deren Account zu l\u00f6schen"
+        },
+        "0d60bdf6d55fc598e211467ed4746c8a": {
+            "text": "Wenn die Box markiert ist, dann geben Sie Nutzern die M\u00f6glichkeit deren Account auf der Profilseite zu l\u00f6schen, wenn sie angemeldet sind."
+        },
+        "328d2bdc9e3ec2b9c7d5277ddcf198ba": {
+            "text": "Bitte w\u00e4hlen Sie aus, welche Eingabe-Felder im Profil-Formular im Frontend angezeigt werden sollen."
+        },
+        "068b5505c56e3797dd4116db3a0bdf91": {
+            "text": "Texte f\u00fcr die Mails, welche mit diesem Module gesendet werden"
+        },
+        "86306b32cd18f807fbc1430286caf867": {
+            "text": "Diese Felder enthalten die Texte f\u00fcr die E-Mails, die von diesem Modul versendet werden. Sie k\u00f6nnen sie an Ihre Bed\u00fcrfnisse anpassen."
+        },
+        "8562c4895db1bff6571321ffa71eb818": {
+            "text": "Text f\u00fcr die Best\u00e4tigungs-E-Mail"
+        },
+        "9677c6c6ac6d16d352ae1fad218104e3": {
+            "text": "Bitte geben Sie den Text f\u00fcr die Best\u00e4tigungs-E-Mail ein, in der der Benutzer einen Best\u00e4tigungslink zur Aktivierung seines Kontos erh\u00e4lt."
+        },
+        "2466c422a1019a09110a014ddd9f16fd": {
+            "text": "Die Domain Ihrer Website (z.B. http:\/\/mysite.com)."
+        },
+        "0e94692901a0522b74ba7ef0cc9abdfd": {
+            "text": "Gibt das aktuelle Datum und die Uhrzeit aus (z.B. 02.01.2023 09:54)."
+        },
+        "fb2d3896a943b6998be806a875bdefa1": {
+            "text": "Link, der den Verifizierungscode zur Aktivierung des Kontos enth\u00e4lt."
+        },
+        "a5c43c242c06a167d0a50f49c74775ee": {
+            "text": "Link zum L\u00f6schen des Benutzer-Kontos, wenn der der Nutzer sich nicht f\u00fcr ein Konto registriert hat."
+        },
+        "9152be9a4df99e514d428de720cff37d": {
+            "text": "Sie k\u00f6nnen den Text an Ihre Bed\u00fcrfnisse anpassen, aber der Platzhalter [[VERIFICATIONLINK]] muss innerhalb des Textes vorhanden sein, da er den Link zur Verifizierung des Kontos enth\u00e4lt."
+        },
+        "7b0a49360661d1cace921b82aa1769e2": {
+            "text": "Alle andere Platzhalter sind optional."
+        },
+        "07c2bfe28dda20d02c219c1fba43d0b9": {
+            "text": "Text f\u00fcr die E-Mail, welche den TFA-Code enth\u00e4lt"
+        },
+        "4296d65b5abb0bb3236fcf75bc09a25a": {
+            "text": "Geben Sie den Text f\u00fcr die E-Mail ein, welche den TFA-Code enth\u00e4lt, wenn TFA aktiviert ist."
+        },
+        "9056674cdd92808a3e4eb84d6d5417d9": {
+            "text": "Der TFA-Code, der im Anmeldeformular eingegeben werden muss, um sich anzumelden."
+        },
+        "801ba69a6d79564d11d6299101de9ea4": {
+            "text": "Die Zeit, wie lange der Code g\u00fcltig ist inklusive der Einheit (z.B. 5 Minuten)"
+        },
+        "3d4193d81dc2e09e4acbd18bacdebbad": {
+            "text": "Der Platzhalter [[TFACODE]] muss innerhalb des Textes vorhanden sein, da er den TFA-Code enth\u00e4lt."
+        },
+        "469d4e78ee52857c34db2d072d56eac4": {
+            "text": "Text f\u00fcr die Erinnerungs-E-Mail"
+        },
+        "92bfbaf2d6a1235ae01adb46dcf6dfcd": {
+            "text": "Geben Sie den Text f\u00fcr die Erinnerungs-E-Mail ein, die an den Benutzer gesendet wird, wenn die Kontoverifizierung noch aussteht."
+        },
+        "ead0f7449d2f51298f3d2b100147c0e0": {
+            "text": "Das Datum der Registrierung."
+        },
+        "ee33159775576e5d6d7ae1b54a91871b": {
+            "text": "Das Datum, an dem ein nicht best\u00e4tigtes Konto gel\u00f6scht wird."
+        },
+        "460cf3482aad9be68ed54fa5ba91b3ff": {
+            "text": "Der Platzhalter [[VERIFICATIONLINK]] muss innerhalb des Textes vorhanden sein, da er den Link zur Verifizierung des Kontos enth\u00e4lt."
+        },
+        "eece2e3b51dd959651a7f3d05692e464": {
+            "text": "Text f\u00fcr die Passwort-Vergessen-E-Mail"
+        },
+        "aa792f6ec3a6499f8c491886109f5f09": {
+            "text": "Geben Sie den Text f\u00fcr die Mail ein, die einen Link zum Zur\u00fccksetzen des Passworts enth\u00e4lt, falls der Benutzer seine Zugangsdaten vergessen hat."
+        },
+        "3115278f799c681c19f29ffdd914431c": {
+            "text": "Der verwendete Text h\u00e4ngt von Ihren Einstellungen ab: Er kann entweder ein Passwort oder ein Benutzername und ein Passwort sein."
+        },
+        "f502495829aa445090d4751a53c80ad8": {
+            "text": "Link, der den Wiederherstellungscode enth\u00e4lt, um neue Anmeldedaten f\u00fcr das Konto zu erstellen."
+        },
+        "2bd0d10c8607fb23fa12a6120089a75a": {
+            "text": "Der Platzhalter [[RECOVERPASSWORDLINK]] muss innerhalb des Textes vorhanden sein, da er den Link zum Erstellen eines neuen Passworts enth\u00e4lt."
+        },
+        "3ab7d87f27e22f677d7edee825f58ee5": {
+            "text": "Text f\u00fcr die E-Mail zum L\u00f6schen des Kontos"
+        },
+        "c6b312b88880da51f94725b59d11dbf4": {
+            "text": "Geben Sie den Text f\u00fcr die E-Mail ein, die einen Link zum L\u00f6schen des Kontos enth\u00e4lt."
+        },
+        "ebefeb80d179992a15e7f75f9c1a4919": {
+            "text": "Link, der den L\u00f6schungscode enth\u00e4lt, um das Konto endg\u00fcltig zu l\u00f6schen."
+        },
+        "00126d3192c06e04aecfc5e0aadbfb23": {
+            "text": "Der Platzhalter [[DELETEACCOUNTLINK]] muss innerhalb des Textes vorhanden sein, da er den Link zum L\u00f6schen des Kontos enth\u00e4lt."
+        },
+        "c070d5f7a2e51f43c0fc89d0f07a2df3": {
+            "text": "Text f\u00fcr E-Mail, welche die Information zur Best\u00e4tigung der L\u00f6schung des Kontos beinhaltet"
+        },
+        "ab907baef538f64963d34e16888ea018": {
+            "text": "Geben Sie den Text f\u00fcr die E-Mail ein, die dem Benutzer nach erfolgreicher L\u00f6schung seines Kontos zugesandt wird."
+        },
+        "5da8ee36fbf1e5c8a2ae5a7c7228b6fa": {
+            "text": "Die URL zur Registrierungsseite."
+        },
+        "8d0d88318f778ae6f815a0dabcf2aec3": {
+            "text": "Text f\u00fcr E-Mail zur Entsperrung des Benutzerkontos"
+        },
+        "e133c9068e9265df2dd421653af9af9c": {
+            "text": "Geben Sie den Text f\u00fcr die E-Mail ein, welche zu einem Nutzer gesendet wird nachdem sein Konto gesperrt wurde"
+        },
+        "51e885f5870856524ff3828b48e8e933": {
+            "text": "H\u00e4ngt von Ihren Einstellungen ab: Kann entweder die E-Mail Adresse oder der Benutzername sein."
+        },
+        "adda571b6801bf339ac105d8a60bf8ed": {
+            "text": "Link, der den Freischaltcode enth\u00e4lt, um das Konto zu entsperren, wenn es nach zu vielen fehlgeschlagenen Anmeldeversuchen gesperrt wurde."
+        },
+        "3f4a9d21490fca7b0035eb68b3199b1f": {
+            "text": "Der Platzhalter [[UNLOCKACCOUNTLINK]]  muss im Text vorhanden sein, da er den Link zum Entsperren des Kontos beinhaltet."
+        },
+        "402a1824266ea385c5e77bfcc22afbb5": {
+            "text": "Liste aller zus\u00e4tzlichen Platzhalter, welche in den Email Texten verwendet werden k\u00f6nnen"
+        },
+        "5fd47edee5fb7ed41a078abb9c9b621f": {
+            "text": "Wenn Sie m\u00f6chten, k\u00f6nnen Sie jeden der folgenden Platzhalter in Ihren E-Mail-Texten verwenden."
+        },
+        "5386484801d01d2ece73fbc5f605f739": {
+            "text": "E-Mail Einstellungen"
+        },
+        "68fe21d1830d41680d6ccb3235ae4803": {
+            "text": "E-Mail HTML-Vorlage"
+        },
+        "dee5cc8e11f9dd3e06cf25eff32b5ea3": {
+            "text": "Bitte w\u00e4hlen Sie eine E-Mail Vorlage aus."
+        },
+        "6f6da7aec649851c977b6bf4e083977d": {
+            "text": "Absender E-Mail Adresse"
+        },
+        "0482d6e0f2a909850d26e7da6b7b2e33": {
+            "text": "Diese E-Mail Adresse wird als Absender-Adresse bei den E-Mails verwendet, welche von diesem Modul verschickt werden."
+        },
+        "c3a7ea0c38bac179a545dbfaf4ebb013": {
+            "text": "Absender Name"
+        },
+        "8eea8281628fde6ba6c3589554795bd2": {
+            "text": "z.B. Meine Firma"
+        },
+        "b42205d93dbb06d2df7d25582ce08d22": {
+            "text": "Diese Name wird als Absender bei den E-Mails verwendet, welche von diesem Modul verschickt werden."
+        },
+        "0b898628f6b1cbdef5dc423b7095016c": {
+            "text": "Wenn kein Name eingegeben wurden, dann wird stattdessen %s als Absender-Name verwendet."
+        },
+        "9856d52777e7412a5a513b30ec9ef55e": {
+            "text": "Profilbild Einstellungen"
+        },
+        "2f6588ea77f396b18268f573588a804b": {
+            "text": "Profilbild Gr\u00f6\u00dfe"
+        },
+        "36c0d698080c855ab2baa2d9d3d736d8": {
+            "text": "Bitte geben Sie die gew\u00fcnschte Gr\u00f6\u00dfe des Profilbildes an, wie es auf der Profilseite angezeigt werden soll."
+        },
+        "c2bfc697bee27cd6441d07365f619936": {
+            "text": "Geben Sie die max Dateigr\u00f6\u00dfe ein"
+        },
+        "9cfe1b3e9c3f486d1d9ee2f5e8a28577": {
+            "text": "Wenn Sie die maximale Dateigr\u00f6\u00dfe der hochgeladenen Bilder begrenzen m\u00f6chten, geben Sie bitte einen Wert in kB ein."
+        },
+        "64c99c1b059d4a4e7301be2400757709": {
+            "text": "0 bedeutet keine Einschr\u00e4nkungen."
+        },
+        "a8de457b2f918d7c83304dd2d93877f6": {
+            "text": "Validierung von php.ini max-filesize deaktivieren"
+        },
+        "015fa2c665983a378c32a44c6418bd04": {
+            "text": "Die \u00dcberpr\u00fcfung von php.ini max-filesize unterbinden"
+        },
+        "8cdc883542abcd1410c02fb6f2401059": {
+            "text": "Standardm\u00e4\u00dfig wird die Gr\u00f6\u00dfe des hochgeladenen Bildes mit der maximal zul\u00e4ssigen Dateigr\u00f6\u00dfe verglichen, die in der Datei php.ini festgelegt ist. Wenn Sie die \u00dcberpr\u00fcfung deaktivieren m\u00f6chten, setzen Sie bitte ein H\u00e4kchen in das K\u00e4stchen."
+        },
+        "dff9c99dcc3efa7d316eea9c813b9548": {
+            "text": "In einigen F\u00e4llen kann es notwendig sein, diese Pr\u00fcfung zu deaktivieren. Insbesondere, wenn Sie sich in einer Entwicklungsumgebung befinden (z.B XAMPP, WAMPP,..) und die maximal zul\u00e4ssige Dateigr\u00f6\u00dfe sehr klein ist."
+        },
+        "8de54c75177179d272fe06d894266e14": {
+            "text": "Benutzerdefinierte Klasse f\u00fcr den Bild-Tag"
+        },
+        "a6d9f151057228693382cd0ff8f1ffdf": {
+            "text": "F\u00fcgen Sie weitere CSS-Klassen durch Leerzeichen getrennt f\u00fcr den Image-Tag des Profilbildes ein."
+        },
+        "a8f3ab0dd7779e55e93b7cb0ffc21a65": {
+            "text": "Standardm\u00e4\u00dfig enth\u00e4lt der Bild-Tag die CSS-Klasse \"profile-image\", aber wenn Sie beispielsweise ein CSS-Framework verwenden, k\u00f6nnen Sie weitere Klassen hinzuf\u00fcgen, um das Bild zu gestalten."
+        },
+        "144ebb595f72c73fd10b73d1c9a7b670": {
+            "text": "Benutzerdefinierte Klasse f\u00fcr den Positionierungscontainer"
+        },
+        "c8f5eb198e640cbad437733fc078fe2f": {
+            "text": "F\u00fcgen Sie weitere CSS-Klassen durch ein Leerzeichen getrennt f\u00fcr den \u00e4u\u00dferen div-Container des Profilbildes ein."
+        },
+        "6023fd7cec17886ba841058c2e3118e4": {
+            "text": "Dieser div-Container enth\u00e4lt standardm\u00e4\u00dfig die CSS-Klasse \"positioning-container\" und ist speziell f\u00fcr die Positionierung des Bildes (links, mittig, rechts) vorgesehen. Wenn Sie ein CSS-Framework verwenden, k\u00f6nnen Sie Ihre eigenen Klassen hinzuf\u00fcgen, um das Bild zu positionieren."
+        },
+        "0b6d45e98b7b1d82cb6fd88cedff9ce0": {
+            "text": "Stylesheets und Skripte entfernen"
+        },
+        "357853c882146f370f895e57c5dd3f52": {
+            "text": "Javascript Einstellung"
+        },
+        "32162e094b5137592b46811fcdb1408a": {
+            "text": "Die Datei frontendloginregister.js aus der Vorlage entfernen"
+        },
+        "356a30ec2958824a1f27a2919821c62d": {
+            "text": "Ein kleines JavaScript, das f\u00fcr einige Funktionen des Moduls ben\u00f6tigt wird, wird standardm\u00e4\u00dfig vor dem schlie\u00dfenden Body-Tag im Frontend eingef\u00fcgt. Sie k\u00f6nnen die Einbettung der Skriptdatei verhindern, indem Sie das Kontrollk\u00e4stchen aktivieren."
+        },
+        "6bfa90ae9f841ec2adedb46975347afd": {
+            "text": "CSS-Einstellung"
+        },
+        "6960773de7f19a2a725d64a66cc60741": {
+            "text": "Die Datei frontendloginregister.css aus der Vorlage entfernen"
+        },
+        "a0a34efcb7026e3f77c8e54472b84fd8": {
+            "text": "Eine kleine CSS-Datei f\u00fcr die Formulare wird der Vorlage standardm\u00e4\u00dfig hinzugef\u00fcgt. Sie k\u00f6nnen die Einbettung der CSS-Datei verhindern, indem Sie das Kontrollk\u00e4stchen aktivieren."
+        },
+        "c5e4f5aabbf40308e472cc8fb519f47b": {
+            "text": "Sie haben die Anmeldung mit Benutzernamen und Passwort gew\u00e4hlt. Daher ist es nicht erforderlich, aber empfehlenswert, das Feld Benutzername auch in das Profilformular einzuf\u00fcgen."
+        },
+        "f6039d44b29456b20f8f373155ae4973": {
+            "text": "Benutzername"
+        },
+        "17205fcab94ebacb63fd0f1a2f1625f9": {
+            "text": "Felder des Registrierungsformulars"
+        },
+        "7c3c830dd1354cd3e57886538aa6c659": {
+            "text": "Das E-Mail- und Passwortfeld sind Pflichtfelder und m\u00fcssen in den Formularfeldern enthalten sein. Alle anderen Felder sind optional."
+        },
+        "8eef8846de9eed399b71a9df194652ff": {
+            "text": "Das E-Mail-, Benutzername- und Passwortfeld sind Pflichtfelder und m\u00fcssen in den Formularfeldern enthalten sein. Alle anderen Felder sind optional."
+        },
+        "a2ee3fbf583f0510f5754803ec638190": {
+            "text": "Felder des Profilformulars"
+        },
+        "eec58268aa178fa116ba54e6c552114f": {
+            "text": "Es wird empfohlen mindestens das E-Mail- und Passwordfeld auszuw\u00e4hlen."
+        },
+        "dfe677e63d44bffb6f2dbd1e298b0508": {
+            "text": "Es wird empfohlen mindestens das E-Mail-,  Benutzername- und Passwordfeld auszuw\u00e4hlen."
+        },
+        "207d9f1e507bf62843b1d84d689c0148": {
+            "text": "Das E-Mail Feld wurde auf unique gesetzt, da dies f\u00fcr das Senden von E-Mails notwendig ist."
+        },
+        "f79c07e6117fb91612af56d2469a68f1": {
+            "text": "Die folgenden Felder m\u00fcssen zum Eingabefeld \"%s\" hinzugef\u00fcgt werden: %s"
+        },
+        "389e14351e62950fc2abf37611b22254": {
+            "text": "Es ist nicht unbedingt erforderlich, aber empfohlen die folgenden Felder zum Eingabefeld \"%s\" hinzuzuf\u00fcgen: %s"
+        },
+        "e807d3ccf8d24c8c1a3d86db5da78da8": {
+            "text": "Tage"
+        },
+        "81ab11fbe84d59b70b91cfa26e671874": {
+            "text": "Entsprechend Ihrer Einstellungen wird ein nicht best\u00e4tigtes Benutzerkonto nach %s Tag(en) gel\u00f6scht."
+        },
+        "3e56c011b37f0bc78fb9eb175c1181c6": {
+            "text": "="
+        },
+        "7ee9462371378bc060d017bc5ab276ea": {
+            "text": "Bitte geben Sie f\u00fcr ein rechteckiges Bild die Breite und H\u00f6he des Bildes in px durch ein Komma getrennt ein (z.B 200,300) oder einen einzelnen Wert (z.B. 100) f\u00fcr ein quadratisches Bild."
+        },
+        "e9c1667d224ab93d8e1dc721a8d0c369": {
+            "text": "\u00d6ffentliches L\u00f6schen eines Benutzerkontos zulassen"
+        },
+        "8a97a0f7124856a423cdb18368f32976": {
+            "text": "Machen Sie die Seite zum L\u00f6schen von Benutzer-Konten \u00f6ffentlich zug\u00e4nglich"
+        },
+        "36b494577995cd32d730ba0d9730b7a5": {
+            "text": "Aktivieren Sie das Kontrollk\u00e4stchen, um Benutzern die L\u00f6schung ihres Kontos ohne vorherige Anmeldung zu erm\u00f6glichen, indem Sie die Seite zum L\u00f6schen des Kontos \u00f6ffentlich zug\u00e4nglich machen."
+        },
+        "85f44fd582851ba61c660a301d2d508f": {
+            "text": "Aus Sicherheitsgr\u00fcnden ist die Seite zum L\u00f6schen des Benutzerkontos standardm\u00e4\u00dfig nur zug\u00e4nglich, wenn der Benutzer angemeldet ist. Wenn Sie diese Seite \u00f6ffentlich zug\u00e4nglich machen m\u00f6chten, setzen Sie bitte ein H\u00e4kchen."
+        },
+        "fac5ad60ca3d2b2785bda829fc90d72d": {
+            "text": "Der Status der Seite zum L\u00f6schen des Kontos wurde auf \u00f6ffentlich gesetzt."
+        },
+        "d2e4ec678579cc363328190cd88b86e1": {
+            "text": "Der \u00f6ffentliche Status der Seite zum L\u00f6schen des Benutzerkontos wurde wieder entfernt."
+        }
+    }
+}

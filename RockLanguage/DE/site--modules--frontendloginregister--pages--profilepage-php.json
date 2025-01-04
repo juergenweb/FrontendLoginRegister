@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/ProfilePage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--profilepage-php",
+    "translations": {
+        "06933067aafd48425d67bcb01bba5cb6": {
+            "text": "Aktualisieren"
+        },
+        "e6e049c44a797fda2a175d07df838e49": {
+            "text": "Konto l\u00f6schen"
+        },
+        "8244477c3ea7d3e9553e53823f744785": {
+            "text": "Ihre Profildaten wurden erfolgreich aktualisiert."
+        }
+    }
+}

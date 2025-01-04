@@ -1,0 +1,27 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/RegisterPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--registerpage-php",
+    "translations": {
+        "0ba7583639a274c434bbe6ef797115a4": {
+            "text": "Registrieren"
+        },
+        "fc6b228c1c76a11ae16c0ae5cfdd61c8": {
+            "text": "Aktion erforderlich, um Ihr Konto zu aktivieren"
+        },
+        "78f57f6c4a3b51ecc88251df372db6f1": {
+            "text": "Bitte klicken Sie auf den Link um Ihre Registrierung zu best\u00e4tigen"
+        },
+        "1f96a8d9a0cfe745c555bb777dc4d56c": {
+            "text": "Sollten Sie die E-Mail in ein paar Minuten noch immer nicht erhalten haben, dann \u00fcberpr\u00fcfen Sie bitte auch Ihren \u201eJunk-Mail\u201c-Ordner oder \u201eSpam\u201c-Ordner."
+        },
+        "7a09a7bb3cff4123175ed0651b2eaaab": {
+            "text": "Wenn Sie trotzdem keine E-Mail erhalten haben, dann f\u00fcllen Sie bitte das Registrierungsformular erneut aus, um einen neuen Aktivierungslink zu erhalten."
+        },
+        "e2b68380e5dcb61d51032f3bf14f036d": {
+            "text": "Ihr Konto wurde erfolgreich erstellt. Um Ihr Konto zu aktivieren, folgen Sie bitte den Anweisungen in der E-Mail, welche zu Ihnen gesendet wurde."
+        },
+        "1b525e06fa78b920b8bcb28a7461de2c": {
+            "text": "Anscheinend haben Sie sich schon einmal registriert, aber vergessen, Ihr Konto zu aktivieren. Um Ihr Konto zu aktivieren, folgen Sie bitte den Anweisungen in der E-Mail, die soeben zu Ihnen gesendet wurde."
+        }
+    }
+}

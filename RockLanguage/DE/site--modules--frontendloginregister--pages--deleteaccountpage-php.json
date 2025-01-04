@@ -1,0 +1,39 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/DeleteAccountPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--deleteaccountpage-php",
+    "translations": {
+        "0743cd2f951c8ad9615bf579d95a79df": {
+            "text": "Ihr Konto wurde erfolgreich gel\u00f6scht."
+        },
+        "e1e9eb60be23d54e105f3b4a9b4d361d": {
+            "text": "Sind Sie sicher, dass Sie Ihr gesamtes Konto l\u00f6schen m\u00f6chten?"
+        },
+        "7b59dbe3aebbb843fcc12bf886cf7f7a": {
+            "text": "Ihr Profil und die zugeh\u00f6rigen Kontoinformationen werden f\u00fcr immer gel\u00f6scht!"
+        },
+        "4b0db3fa088ec9b583234f92f151d1b7": {
+            "text": "Bitte beachten Sie, dass es keine M\u00f6glichkeit gibt, das Konto wiederherzustellen, sobald es gel\u00f6scht wurde."
+        },
+        "ea4f9cc83e5544863384db9717bf655e": {
+            "text": "Wenn Sie sich absolut sicher sind, dann kreuzen Sie bitte das K\u00e4stchen unten an, um Ihre L\u00f6schung zu best\u00e4tigen."
+        },
+        "dea89892c1019ca2812e91bcd455a9ef": {
+            "text": "Ich habe die obigen Hinweise gelesen und best\u00e4tige die L\u00f6schung meines Kontos."
+        },
+        "db3164c61aec152bb83d2c14b5e6216f": {
+            "text": "Sie m\u00fcssen die L\u00f6schung Ihres Kontos best\u00e4tigen."
+        },
+        "e6e049c44a797fda2a175d07df838e49": {
+            "text": "Konto l\u00f6schen"
+        },
+        "10573b873d2fa5a365d558a45e328e47": {
+            "text": "Konto-l\u00f6schen-Link"
+        },
+        "ca4cd4cb2d91a8c2385175477e248cca": {
+            "text": "Ihr Konto-l\u00f6schen-Link ist abgelaufen. Dieser war nur f\u00fcr 5 Minuten g\u00fcltig. Sie m\u00fcssen daher einen neuen %s beantragen."
+        },
+        "075d1132546c0ce786b0969800c3b5bc": {
+            "text": "Es gab leider ein technisches Problem beim L\u00f6schen Ihres Kontos. Bitte versuchen Sie es nocheinmal oder kontaktieren Sie den Webmaster dieser Seite."
+        }
+    }
+}

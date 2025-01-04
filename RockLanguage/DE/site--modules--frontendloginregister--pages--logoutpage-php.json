@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/LogoutPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--logoutpage-php",
+    "translations": {
+        "b62217857115d79e0b4f8c1ec570f203": {
+            "text": "Sie haben sich erfolgreich abgemeldet."
+        }
+    }
+}

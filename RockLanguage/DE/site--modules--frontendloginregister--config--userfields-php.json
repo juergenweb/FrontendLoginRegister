@@ -1,0 +1,54 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/config\/userFields.php",
+    "textdomain": "site--modules--frontendloginregister--config--userfields-php",
+    "translations": {
+        "008aeca484f4370679310037e98baa88": {
+            "text": "Aktivierungs-Code"
+        },
+        "8510cce68342b048165e728c4d44cd2a": {
+            "text": "Dieses Feld enth\u00e4lt den Aktivierungscode, wenn das Konto noch nicht aktiviert wurde. Anderenfalls ist es leer."
+        },
+        "5f86b92860f7ffd7492f8af58d9037b4": {
+            "text": "Konto best\u00e4tigt"
+        },
+        "36301ab33ef7afdffd670dcf581ab65c": {
+            "text": "Dieses Feld enth\u00e4lt die Datums-\/Zeitangabe, wann das Konto aktiviert wurde. Anderenfalls ist es leer."
+        },
+        "14e102fc2f55a6edaa3ee2c46adf4200": {
+            "text": "Errinnerungsmail Datums-\/Zeitangabe des Sendezeitpunktes"
+        },
+        "ead714521805efaa7c7131293a7efe63": {
+            "text": "Dieses Feld enth\u00e4lt die Datums-\/Zeitangabe, wann die Erinnerungs-Mail gesendet wurde. Anderenfalls ist es leer."
+        },
+        "713ceb511bc0951301b4b8ce88f38eaa": {
+            "text": "Passwort-Wiederherstellungs-Code"
+        },
+        "ac94304ff2aeefbd3acb5f9c8485aec8": {
+            "text": "Dieses Feld enth\u00e4lt den Wiederherstellungs-Code, wenn ein Nutzer diesen angefordert hat. Anderenfalls ist es leer."
+        },
+        "7c3ac4975d92b82de7b9a79d1a964597": {
+            "text": "Passwort Wiederherstellung Datums-\/Zeitangabe"
+        },
+        "f0f547d6d37c102bd34f845cfc4de757": {
+            "text": "Dieses Feld enth\u00e4lt die Datums-\/Zeitangabe, wann der Wiederherstellungs-Code erstellt wurde. Anderenfalls ist es leer."
+        },
+        "ac07b18a1ce48cd8aeb3b47eca029a92": {
+            "text": "Konto-L\u00f6schungs-Code"
+        },
+        "c231f52f4a4da7c76718ac92a404ffce": {
+            "text": "Dieses Feld enth\u00e4lt den L\u00f6schungs-Code, wenn ein Nutzer diesen angefordert hat. Anderenfalls ist es leer."
+        },
+        "98169a5545d9bc48686533b1697e2b5f": {
+            "text": "Konto L\u00f6schung Datums-\/Zeitangabe"
+        },
+        "84a008e4ec59b7d143e4f0041e10482a": {
+            "text": "Dieses Feld enth\u00e4lt die Datums-\/Zeitangabe, wann der Kontol\u00f6schungs-Code erstellt wurde. Anderenfalls ist es leer."
+        },
+        "7d8ecf645b15706b2ee83b409a9e40f4": {
+            "text": "Sperrcode"
+        },
+        "9ef3c28a853342923681def764a0492b": {
+            "text": "Dieses Feld enth\u00e4lt den Sperrcode, wenn die Anmeldung mit demselben Benutzernamen oder derselben E-Mail-Adresse nach einer bestimmten Anzahl von Versuchen fehlgeschlagen ist, andernfalls ist es leer."
+        }
+    }
+}

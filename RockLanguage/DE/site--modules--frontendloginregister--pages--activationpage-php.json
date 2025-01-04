@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/ActivationPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--activationpage-php",
+    "translations": {
+        "52887f21a9faf4c39d9cbb10d06ff65c": {
+            "text": "Ihr Konto wurde erfolgreich aktiviert. %s"
+        },
+        "907c2cd6e03c316df7a0a0f8a4e01113": {
+            "text": "Vielen Dank f\u00fcr Ihre R\u00fcckmeldung! Das entsprechende Benutzer-Konto wurde dauerhaft gel\u00f6scht und Sie werden keine weiteren E-Mails von %s mehr erhalten."
+        },
+        "c29ec956215900c9a2ecf4bcad43bbfe": {
+            "text": "Es ist leider etwas schief gelaufen. Der Aktivierungs-Code wurde entweder bereits verwendet, ist nicht mehr g\u00fcltig oder wurde in der Datenbank nicht gefunden."
+        }
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/config\/templatePages.php",
+    "textdomain": "site--modules--frontendloginregister--config--templatepages-php",
+    "translations": {
+        "0f98b7f230f3c91292f0de4c99e263f2": {
+            "text": "Registrierung"
+        },
+        "2562a70723c3aade96730a9867831ae4": {
+            "text": "Registrieren Sie sich und Sie erhalten Zugang zu nicht \u00f6ffentlichen Seiten. Es ist kostenlos."
+        },
+        "99dea78007133396a7b8ed70578ac6ae": {
+            "text": "Anmeldung"
+        },
+        "6de126efe667c8b4f0b4e43f95164e82": {
+            "text": "Auf dieser Seite k\u00f6nnen Sie sich anmelden, wenn Sie sich zuvor f\u00fcr ein Konto registriert haben."
+        },
+        "0323de4f66a1700e2173e9bcdce02715": {
+            "text": "Abmeldung"
+        },
+        "aa9ec7e98f63c9748e9b47724c48a41a": {
+            "text": "Dies ist die Abmeldungsseite, um den geschlossenen Mitgliederbereich wieder zu verlassen, falls Sie angemeldet sind."
+        },
+        "cce99c598cfdb9773ab041d54c3d973a": {
+            "text": "Meine Profil-Seite"
+        },
+        "aa53f8338558906ddde1d8f43f8098ae": {
+            "text": "Auf dieser Seite k\u00f6nnen Sie Ihre pers\u00f6nlichen Daten, wie beispielsweise Passwort, E-Mail Adresse und mehr aktualisieren."
+        },
+        "1753bb4531e557654d12b71c6ed98fd6": {
+            "text": "Zugangsdaten anfordern"
+        },
+        "57fc03026b737456f06259bfa9ed9067": {
+            "text": "Wenn Sie Ihre Zugangsdaten vergessen haben sollten, dann geben Sie bitte Ihre E-Mail Adresse ein und Sie erhalten eine E-Mail um Ihre Zugangsdaten zur\u00fcck zu setzen."
+        },
+        "21aef00a23a6f3f19c70ef7daddea1a8": {
+            "text": "Neue Zugangsdaten erstellen"
+        },
+        "8d2a872c716314c69e6da7320ad9a40b": {
+            "text": "Wenn Sie Ihre Zugangsdaten vergessen haben sollten, dann k\u00f6nnen Sie auf dieser Seite einen Link zur Erstellung neuer Zugangsdaten anfordern."
+        },
+        "ef5872ccb6ea77c26a046f51371a6043": {
+            "text": "Konto Aktivierung"
+        },
+        "96ff718c4607a1863f1cd642ef964d76": {
+            "text": "Auf dieser Seite wird Ihr Konto aktiviert, falls Sie den richtigen Aktivierungscode gesendet haben."
+        },
+        "dee12d83249dd7abd9012ae73fc3b012": {
+            "text": "Konto L\u00f6schung"
+        },
+        "23ac96093ddff47f7ac65de3ead3c585": {
+            "text": "Auf dieser Seite k\u00f6nnen Sie einen Link zur dauerhaften L\u00f6schung Ihres Kontos anfordern."
+        },
+        "cf17d29e95d5dd8e91806a4d8a0879dc": {
+            "text": "Konto-L\u00f6schung Best\u00e4tigung"
+        },
+        "663c26c7adbf7f1c1af75021d06883e8": {
+            "text": "Dies ist die Best\u00e4tigungsseite zur L\u00f6schung Ihres Kontos, nachdem Sie durch Klick auf den Link die L\u00f6schung best\u00e4tigt haben."
+        },
+        "6a5e2245a59fa1823aee98c980fc2567": {
+            "text": "Entsperrung Ihres Kontos"
+        },
+        "49a1ebd568e287ce93c4f9693f81236b": {
+            "text": "Bitte geben Sie Ihr Passwort ein, um Ihr Konto zu entsperren."
+        },
+        "dd234a82889475fb18d0c8ce2fa10050": {
+            "text": "Entsperren Sie Ihr Konto, nachdem es aufgrund mehrerer erfolgloser Anmeldeversuche gesperrt wurde."
+        },
+        "4d36cf62652ab2e024113c2773aec86e": {
+            "text": "Wenn Sie Ihr Konto endg\u00fcltig l\u00f6schen m\u00f6chten, geben Sie bitte die geforderten Nutzer-Daten in das Formular unten ein. Sie erhalten danach einen Link, welcher 5 Minuten lang g\u00fcltig ist, um Ihr Konto zu l\u00f6schen."
+        }
+    }
+}

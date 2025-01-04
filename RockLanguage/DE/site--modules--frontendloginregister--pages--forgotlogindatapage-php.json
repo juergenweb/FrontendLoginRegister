@@ -1,0 +1,33 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/ForgotLogindataPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--forgotlogindatapage-php",
+    "translations": {
+        "7d611031243bf8c552e04555fb70dc01": {
+            "text": "Wenn die angegebene E-Mail-Adresse gefunden wurde, erhalten Sie eine E-Mail mit weiteren Anweisungen. Bitte \u00fcberpr\u00fcfen Sie Ihr E-Mail-Konto innerhalb der n\u00e4chsten Minuten, einschlie\u00dflich Junk- oder Spam-Ordner."
+        },
+        "50e63ff81efd77612d085e41e76f81d3": {
+            "text": "Passwort wiederherstellen"
+        },
+        "cde45d6d9673c9fcb5a15c29b9af486a": {
+            "text": "Zugangsdaten anfordern"
+        },
+        "dee2e98698aeacd93932380e90114ac9": {
+            "text": "Anscheinend haben Sie sich bereits f\u00fcr ein Konto registriert, aber die Best\u00e4tigung ist noch ausst\u00e4ndig. Um Ihr Konto zu aktivieren, folgen Sie bitte den Anweisungen in der E-Mail, die Sie soeben zu Ihnen gesendet wurde. Danach k\u00f6nnen Sie Ihre neuen Zugangsdaten erstellen."
+        },
+        "ac65b18179b5dea639f4c505ab9e7938": {
+            "text": "die Zugangsdaten (Passwort und\/oder Benutzername)"
+        },
+        "25e2fccf9401ff0d9e20dbc86e2e71e4": {
+            "text": "das Passwort"
+        },
+        "58f00a47f8006f0aebf4a40c67963d99": {
+            "text": "die Zugangsdaten"
+        },
+        "a9617c66ee842332161c7b2522094baa": {
+            "text": "Aktion erforderlich, um Ihre %s zur\u00fcckzusetzen"
+        },
+        "43767dfa93591b6111c17054981dd8ed": {
+            "text": "%s erstellen"
+        }
+    }
+}

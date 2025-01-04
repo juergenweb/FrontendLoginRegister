@@ -1,0 +1,18 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/DeleteRequestPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--deleterequestpage-php",
+    "translations": {
+        "6d7ca2d55fe344158d2238a36841699f": {
+            "text": "Ein Link zur endg\u00fcltigen L\u00f6schung Ihres Kontos wurde an Ihre E-Mail Adresse gesendet."
+        },
+        "3ca845674c04875ca1aae27bb48b3086": {
+            "text": "Konto-l\u00f6schen-Link anfordern"
+        },
+        "d828f98420fcbb2b6a63f795b80d94f6": {
+            "text": "Aktion erforderlich, um Ihr Konto zu l\u00f6schen"
+        },
+        "db4dc77f3565f5c02ba9f6deea3400a3": {
+            "text": "Bitte den Link in der E-Mail anklicken"
+        }
+    }
+}

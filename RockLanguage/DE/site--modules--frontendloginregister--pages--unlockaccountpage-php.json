@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/pages\/UnlockAccountPage.php",
+    "textdomain": "site--modules--frontendloginregister--pages--unlockaccountpage-php",
+    "translations": {
+        "c42b700b5da2c2880998a156692e30fa": {
+            "text": "Ihr Benutzer-Konto is nun entsperrt."
+        },
+        "6a5e2245a59fa1823aee98c980fc2567": {
+            "text": "Entsperren Sie Ihr Benutzer-Konto"
+        }
+    }
+}
