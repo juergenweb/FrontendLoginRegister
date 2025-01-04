@@ -36,11 +36,8 @@
              * if user is guest -> not allowed to be here -> let's redirect to the homepage
              * redirect takes only place if page is not public reachable
              * */
-            bd($this->loginregisterConfig['input_deleteProfile']);
-            bd($this->loginregisterConfig['input_publicDeletion']);
-
             if(!$this->loginregisterConfig['input_deleteProfile']){
-                $this->redirectToHomepage(true);
+                    $this->redirectToHomepage(false);
             } else {
                 if(!$this->loginregisterConfig['input_publicDeletion']){
                     $this->redirectToHomepage(true);
@@ -134,7 +131,7 @@
                 } else {
                     $userEmail = $this->getValue('email');
                 }
-                bd($userEmail);
+                
                 $m->to($userEmail);
                 $this->setSenderEmail($m);
                 $this->setSenderName($m);
