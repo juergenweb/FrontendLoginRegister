@@ -14,6 +14,7 @@
 
     use Exception;
     use FrontendForms\Form;
+    use FrontendForms\Email;
     use FrontendForms\Button as Button;
     use FrontendForms\Password as Password;
     use ProcessWire\WireException;
@@ -31,8 +32,20 @@
 
             parent::__construct($id);
 
-            // if user is guest -> not allowed to be here -> let's redirect to the homepage
-            $this->redirectToHomepage(true);
+            /**
+             * if user is guest -> not allowed to be here -> let's redirect to the homepage
+             * redirect takes only place if page is not public reachable
+             * */
+            bd($this->loginregisterConfig['input_deleteProfile']);
+            bd($this->loginregisterConfig['input_publicDeletion']);
+
+            if(!$this->loginregisterConfig['input_deleteProfile']){
+                $this->redirectToHomepage(true);
+            } else {
+                if(!$this->loginregisterConfig['input_publicDeletion']){
+                    $this->redirectToHomepage(true);
+                }
+            }
 
             // default settings
             $this->setMaxAttempts(5);
@@ -41,14 +54,29 @@
             $this->setSuccessMsg($this->_('A link to complete your account deletion has been sent to your email address.'));
             $this->setSubmitWithAjax($this->useAjax);
 
+            // show email field only if user is not logged in and deletion page is public reachable
+            if($this->loginregisterConfig['input_publicDeletion'] && (!$this->user->isLoggedin())){
+                // user email field
+                $email = new Email('email');
+                $this->add($email);
+            }
+
             // password field
             // sanitizers added: text
             // validation rules added: required, checkPasswordOfUser
             $pass = new Password('pass');
-            $pass->setRule('checkPasswordOfUser', $this->user);
+
             // remove unnecessary validation rules
             $pass->removeRule('safePassword');
             $pass->removeRule('meetsPasswordConditions');
+
+            // check for password and email match
+            if($this->loginregisterConfig['input_publicDeletion'] && (!$this->user->isLoggedin())){
+                $pass->setRule('matchEmail', 'email');
+            } else {
+                $pass->setRule('checkPasswordOfUser', $this->user);
+            }
+
             $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
             $this->add($pass);
 
@@ -101,7 +129,13 @@
 
                 // send an email with the deletion link to the user in the stored user language, not the site language
                 $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
-                $m->to($this->user->email);
+                if($this->user->isLoggedin()){
+                   $userEmail = $this->user->email;
+                } else {
+                    $userEmail = $this->getValue('email');
+                }
+                bd($userEmail);
+                $m->to($userEmail);
                 $this->setSenderEmail($m);
                 $this->setSenderName($m);
                 $m->subject($this->_('Action required to delete your account'));
