@@ -111,4 +111,4 @@ The following multilanguage fields, which can be used in the user template will 
 * FieldtypeTextareaLanguage
 * FieldtypeUrlLanguage
 
-This fieldtype were not supported in the past and the usage of them inside the user template led to an error. This should be fixed now in this update.
+These fieldtypes were not supported in the past and the usage of them inside the user template led to an error. This should be fixed now after this update.
