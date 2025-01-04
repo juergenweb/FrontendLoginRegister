@@ -94,7 +94,7 @@ $this->templatePages = [
     ],
     'fl_deleterequestpage' => [
         'title' => $this->_('Account deletion'),
-        'body' => $this->_('If you want to delete your account permanently, enter your password in the input field below. Then you will get a link, which is valid for 5 minutes, to delete your account.'),
+        'body' => $this->_('If you want to delete your account permanently, enter the required user data in the form below. Then you will receive a link that is valid for 5 minutes to delete your account.'),
         'description' => $this->_('On this page you can request for a deletion link to delete your account permanently.'),
         'priority' => '0.1',
         'sitemap' => 0,
