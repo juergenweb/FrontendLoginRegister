@@ -97,8 +97,18 @@ Please note: The sync will only take place if you are logged in as Superuser and
 
 The (old) CSV files usage is still supported.
 
-## 2025-01-04
+## [1.3.6] 2025-01-04
 
 - **Support for making account deletion page public viewable added**
 
 Due to a user request, a new configuration field (checkbox) to make the delete request page for a user account public viewable if needed. In the past this page was only viewable if the user was logged in.
+
+- **Support for multilanguage fields in user template added**
+
+The following multilanguage fields, which can be used in the user template will be supported now:
+
+* FieldtypeTextLanguage
+* FieldtypeTextareaLanguage
+* FieldtypeUrlLanguage
+
+This fieldtype were not supported in the past and the usage of them inside the user template led to an error. This should be fixed now in this update.
