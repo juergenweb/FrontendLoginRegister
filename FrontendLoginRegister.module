@@ -1759,15 +1759,19 @@ EOT;
                 // get template 'fl_deleterequestpage'
                 $template = wire('templates')->get('fl_deleterequestpage');
                 if ($template) {
+                
+                    if ($this->wire('input')->post('input_publicDeletion') != $this->input_publicDeletion) {
 
-                    if ($this->wire('input')->post('input_publicDeletion') == 1) {
-                        $template->addRole('guest');
-                        $this->message($this->_('The status of the account deletion page has been set to public.'));
-                    } else {
-                        $template->removeRole('guest');
-                        $this->message($this->_('The public status of the account deletion page has been removed again.'));
+                        if ($this->wire('input')->post('input_publicDeletion') == 1) {
+                            $template->addRole('guest');
+                            $this->message($this->_('The status of the account deletion page has been set to public.'));
+                        } else {
+                            $template->removeRole('guest');
+                            $this->message($this->_('The public status of the account deletion page has been removed again.'));
+                        }
+                        $template->save();
+
                     }
-                    $template->save();
 
                 }
             }
