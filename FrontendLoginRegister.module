@@ -272,7 +272,8 @@
             $this->addHookAfter('Inputfield::render', $this, 'addPlaceholderInfo');
             // add additional checkbox after import languages select
             $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
-
+            // set template access to guest too if delete request page should be public reachable
+            $this->addHookAfter('Modules::saveConfig', $this, 'setAccessGuest');
             // add CSS and JS to the backend
             $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $this->version);
 
@@ -654,7 +655,7 @@
             $notTrackedPages = ['fl_loginpage', 'fl_logoutpage'];
             // check if page is a frontend page
             if (($page->rootParent->id != 2) && (!in_array($page->template->name, $notTrackedPages))) {
-                if($page->id != 27)
+                if ($page->id != 27)
                     wire('session')->set('prevPage', $page->id);
             }
         }
@@ -1050,7 +1051,6 @@
             $deletePublic->attr('name', 'input_publicDeletion');
             $deletePublic->columnWidth = 33;
             $deletePublic->showIf = 'input_deleteProfile=1';
-            bd($this->input_publicDeletion);
             $deletePublic->attr('checked', $this->input_publicDeletion == '1' ? 'checked' : '');
             $profilefieldset->add($deletePublic);
 
@@ -1742,6 +1742,33 @@ EOT;
                 if (file_exists($file)) {
                     unlink($file);
                 }
+            }
+        }
+
+        /**
+         * Hook method to change the access for viewing the delete request page
+         * @param \ProcessWire\HookEvent $e
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function setAccessGuest(HookEvent $e): void
+        {
+            $class = $e->arguments(0);
+            // run only on the FrontendLoginRegister module
+            if ($class == 'FrontendLoginRegister') {
+                // get template 'fl_deleterequestpage'
+                $template = wire('templates')->get('fl_deleterequestpage');
+                if ($template) {
+
+                    if ($this->input_publicDeletion == 1) {
+                        $template->addRole('guest');
+                    } else {
+                        $template->removeRole('guest');
+                    }
+                    $template->save();
+
+                    }
             }
         }
 
