@@ -282,12 +282,15 @@
             'FieldtypeEmail' => 'InputText',
             'FieldtypePassword' => 'InputPassword',
             'FieldtypeText' => 'InputText',
+            'FieldtypeTextLanguage' => 'InputText',
             'FieldtypeTextarea' => 'Textarea',
+            'FieldtypeTextareaLanguage' => 'Textarea',
             'FieldtypeCheckbox' => 'InputCheckbox',
             'FieldtypeInteger' => 'InputNumber',
             'FieldtypeFloat' => 'InputText',
             'FieldtypeDatetime' => 'InputDateTime',
             'FieldtypeURL' => 'InputUrl',
+            'FieldtypeURLLanguage' => 'InputUrl',
             'FieldtypePage' => 'InputText',
             'FieldtypeImage' => 'FileUploadSingle',
             'FieldtypeCroppableImage3' => 'FileUploadSingle'
@@ -962,6 +965,7 @@
         public function createFormField(Field $fieldtype): ?Inputfields
         {
             $fieldtypeName = ltrim(stristr((string)$fieldtype->type, 'Fieldtype'));
+
             if (array_key_exists($fieldtypeName, $this->linkingFieldTypes)) {
                 $class = 'FrontendForms\\' . $this->linkingFieldTypes[$fieldtypeName];
                 $field = new $class($fieldtype->name);
