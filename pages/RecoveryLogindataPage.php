@@ -67,7 +67,7 @@
             // sanitizers added: text
             // validation rules added: meetsPasswordConditions, required, safePassword
             $pass = new Password('password');
-            $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+            $pass->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
             $pass->showPasswordRequirements(); // show the conditions for the password
             $this->add($pass);
 
