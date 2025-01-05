@@ -22,6 +22,8 @@
 
         protected Alert $alert; // the alert object
         protected bool $verify = false; // verify the account (true) or delete the user (false)
+        protected string $fl_activation = '';
+        protected int $fl_activationdatetime = 0;
 
         public function __construct()
         {
