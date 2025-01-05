@@ -47,6 +47,7 @@
         protected array $frontendformsConfig = []; // array that holds all module configuration properties from FrontendForms
         protected bool $useAjax = false;
 
+
         /*objects*/
         protected Page $login_page; // the login page object
         protected Page $delete_page; // the delete page object
@@ -56,7 +57,7 @@
         protected string $tmp_profile_image_dir_path = ''; // the path to the temp folder for the profile image upload
         protected Field $image_field; // the profile image field
         protected array $image_fields = []; // array containing all names of the image fields if present
-        protected string $moduleversion = ''; // get the current version of FrontendForms
+
         protected bool|string|int $prependBody = false; // select if the body text should be prepended to the form or not
 
         /**
@@ -151,7 +152,7 @@
 
 
         /**
-         * Save an uploaded image to an user
+         * Save an uploaded image to a user
          * @param User $user
          * @param string $form_name
          * @return void
@@ -405,6 +406,7 @@
          * @return bool
          * @throws WireException
          * @throws \DOMException
+         * @throws \DateMalformedStringException
          */
         protected function sendReminderMail(User $user): bool
         {
@@ -541,7 +543,7 @@
         }
 
         /**
-         * Set alert for error message if there occurs an error during the storage of a user
+         * Set alert for the error message if there occurs an error during the storage of a user
          * @return void
          */
         public function savingUserProblemAlert(): void
@@ -549,6 +551,9 @@
             $this->getAlert()->setCSSClass('alert_warningClass')->setText($this->_('A technical problem occurred during the saving of the user data, so the user data could not be saved. Please try it once more. If the problem persists please contact the webmaster of this site.'));
         }
 
+        /**
+         * @throws \ProcessWire\WireException
+         */
         protected function setLanguageMailValue(WireMail $mail, string $fieldName): string|null
         {
             $value = null;
@@ -751,7 +756,7 @@
             $passConfirm->setRule('requiredWith', $this->getID() . '-oldpass');
             $passConfirm->showPasswordToggle();
             $this->add($passConfirm);
-            // create fieldset end
+            // create the fieldset end
             if ($type == 'input_profile') {
                 $pwfieldsetClose = new FieldsetClose();
                 $this->add($pwfieldsetClose);
@@ -1004,7 +1009,7 @@
                 }
 
                 $field->setLabel($fieldtype->label);
-                // add stored values if user is logged in
+                // add stored values if a user is logged in
                 if ($this->wire('user')->isLoggedin()) {
                     $field_name = $fieldtype->name;
                     $field->setAttribute('value', $this->wire('user')->$field_name);
