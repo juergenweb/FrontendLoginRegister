@@ -427,9 +427,6 @@
                 if ($this->getSubmitWithAjax()) {
                     if ((!$this->loginregisterConfig['input_tfa']) || ($this->deletionCode)) {
                         $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url . $this->deletionCode);
-                    } else {
-
-                        $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url);
                     }
 
                 }
@@ -473,7 +470,7 @@
                                 } else {
                                     $this->wire('session')->remove('showed');
                                     // TODO remove if everything works as expected
-                                    //$this->defaultLogin($user);
+                                    $this->defaultLogin($user);
                                 }
                             } else {
                                 $this->defaultLogin($user);
