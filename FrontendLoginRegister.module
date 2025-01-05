@@ -146,8 +146,9 @@
                 'input_unlock_account'
             ];
 
-            // include configuration file for additional user fields for FrontendLoginRegister
+            // include a configuration file for additional user fields for FrontendLoginRegister
             include('config/userFields.php');
+
             // create property of each user field
             foreach ($this->userFields as $key => $value) {
                 $this->$key = $value;
@@ -161,13 +162,13 @@
             $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/pages');
             $this->wire('classLoader')->addNamespace($this->className(), __DIR__ . '/traits');
 
-            // set upload path for profile image
+            // set the upload path for profile image
             $this->setUploadPath($this->tmp_profile_image_dir_path);
 
         }
 
         /**
-         * Add custom mail modules to the mail module array, if the are installed
+         * Add custom mail modules to the mail module array if they are installed
          * @param string $className
          * @return void
          * @throws \ProcessWire\WireException
@@ -264,7 +265,7 @@
             $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToPages');
             // store the id of the page currently visited in a session - needed to get the last visited page
             $this->addHookAfter('Page::render', $this, 'setPageVisitedSession');
-            // add javascript file to the HEAD section
+            // add JavaScript file to the HEAD section
             $this->addHookAfter('Page::render', $this, 'addAssets');
             // allow HTML tags in field notes and descriptions
             $this->addHookBefore('Inputfield::render', $this, 'allowHTML');
@@ -272,7 +273,7 @@
             $this->addHookAfter('Inputfield::render', $this, 'addPlaceholderInfo');
             // add additional checkbox after import languages select
             $this->addHookAfter('ProcessModule::executeTranslation', $this, 'addCheckbox');
-            // set template access to guest too if delete request page should be public reachable
+            // set template access to guest too if the delete request page should be public reachable
             $this->addHookAfter('Modules::saveConfig', $this, 'setAccessGuest');
             // add CSS and JS to the backend
             $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendloginregister.js?v=' . $this->version);
@@ -288,6 +289,7 @@
          * Save the timestamp of the reminding in the database
          * @return void
          * @throws \DOMException
+         * @throws \DateMalformedStringException
          * @throws \ProcessWire\WireException
          */
         protected function remindAccount(): void
@@ -1737,7 +1739,7 @@ EOT;
                     }
                 }
 
-                // delete physical file in templates folder
+                // delete the physical file in the templates folder
                 $file = wire('config')->paths->templates . $template . '.php';
                 if (file_exists($file)) {
                     unlink($file);
