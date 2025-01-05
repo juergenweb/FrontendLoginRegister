@@ -26,9 +26,7 @@
     use ProcessWire\User;
     use ProcessWire\WireException;
     use ProcessWire\WireLog as WireLog;
-    use ProcessWire\WireMail;
     use ProcessWire\WirePermissionException;
-    use function ProcessWire\wireMail;
 
     class LoginPage extends FrontendLoginRegisterPages
     {
@@ -199,7 +197,7 @@
         }
 
         /**
-         * Convert seconds to human readable format (fe 200 seconds will be converted to 3 minutes and 20 seconds)
+         * Convert seconds to human-readable format (fe 200 seconds will be converted to 3 minutes and 20 seconds)
          * @param int $ss
          * @return string
          */
@@ -409,7 +407,7 @@
                 }
                 // no need to show password requirements here
                 $password->showPasswordRequirements(false);
-                $password->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+                $password->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
                 $this->add($password);
 
                 // button
