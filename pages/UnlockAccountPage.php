@@ -23,6 +23,8 @@
     class UnlockAccountPage extends FrontendLoginRegisterPages
     {
 
+        protected string $fl_unlockaccount = '';
+
         /**
          * Every form must have an ID, so let's add it via the constructor
          * @throws WireException
@@ -53,7 +55,7 @@
 
             //pass
             $pass = new Password('password');
-            $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+            $pass->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
             $pass->setRule('required');
             $pass->setRule('checkPasswordOfUser', $this->user);
             $this->add($pass);
