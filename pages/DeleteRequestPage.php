@@ -37,7 +37,7 @@
              * redirect takes only place if page is not public reachable
              * */
             if(!$this->loginregisterConfig['input_deleteProfile']){
-                    $this->redirectToHomepage(false);
+                $this->redirectToHomepage(false);
             } else {
                 if(!$this->loginregisterConfig['input_publicDeletion']){
                     $this->redirectToHomepage(true);
@@ -66,6 +66,9 @@
             // remove unnecessary validation rules
             $pass->removeRule('safePassword');
             $pass->removeRule('meetsPasswordConditions');
+
+            // remove password requirement text on this form
+            $pass->showPasswordRequirements(false);
 
             // check for password and email match
             if($this->loginregisterConfig['input_publicDeletion'] && (!$this->user->isLoggedin())){
@@ -127,11 +130,11 @@
                 // send an email with the deletion link to the user in the stored user language, not the site language
                 $m = $this->newMailInstance($this->loginregisterConfig['input_mailmodule']);
                 if($this->user->isLoggedin()){
-                   $userEmail = $this->user->email;
+                    $userEmail = $this->user->email;
                 } else {
                     $userEmail = $this->getValue('email');
                 }
-                
+
                 $m->to($userEmail);
                 $this->setSenderEmail($m);
                 $this->setSenderName($m);
