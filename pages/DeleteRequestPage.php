@@ -18,7 +18,6 @@
     use FrontendForms\Button as Button;
     use FrontendForms\Password as Password;
     use ProcessWire\WireException;
-    use ProcessWire\WireMail;
 
     class DeleteRequestPage extends FrontendLoginRegisterPages
     {
@@ -37,7 +36,7 @@
              * redirect takes only place if page is not public reachable
              * */
             if(!$this->loginregisterConfig['input_deleteProfile']){
-                $this->redirectToHomepage(false);
+                $this->redirectToHomepage();
             } else {
                 if(!$this->loginregisterConfig['input_publicDeletion']){
                     $this->redirectToHomepage(true);
@@ -51,7 +50,7 @@
             $this->setSuccessMsg($this->_('A link to complete your account deletion has been sent to your email address.'));
             $this->setSubmitWithAjax($this->useAjax);
 
-            // show email field only if user is not logged in and deletion page is public reachable
+            // show email field only if a user is not logged in and the deletion page is publicly reachable
             if($this->loginregisterConfig['input_publicDeletion'] && (!$this->user->isLoggedin())){
                 // user email field
                 $email = new Email('email');
@@ -77,7 +76,7 @@
                 $pass->setRule('checkPasswordOfUser', $this->user);
             }
 
-            $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+            $pass->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
             $this->add($pass);
 
             // button object
