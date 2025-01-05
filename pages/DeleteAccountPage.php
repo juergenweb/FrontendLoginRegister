@@ -67,6 +67,8 @@
                     // password
                     $pass = new Password('pass');
                     $pass->setRule('checkPasswordOfUser', $this->user);
+                    // no need to display the password requirements here
+                    $pass->showPasswordRequirements(false);
                     $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
                     $this->add($pass);
 
