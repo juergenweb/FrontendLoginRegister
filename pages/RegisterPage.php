@@ -22,7 +22,6 @@
     use ProcessWire\TfaEmail;
     use ProcessWire\User;
     use ProcessWire\WireException;
-    use ProcessWire\WireMail;
     use ProcessWire\WirePermissionException;
 
     class RegisterPage extends FrontendLoginRegisterPages
@@ -58,8 +57,8 @@
             $this->createFormFields('input_registration', $this);
 
             // show or hide the display of the toggle checkbox next to password fields
-            $this->getFormelementByName('pass')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
-            $this->getFormelementByName('pass-confirm')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+            $this->getFormelementByName('pass')->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
+            $this->getFormelementByName('pass-confirm')->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
 
             // add the button
             $button = new Button('submit');
