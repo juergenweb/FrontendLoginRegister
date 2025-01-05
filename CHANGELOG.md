@@ -114,3 +114,9 @@ The following multilanguage fields, which can be used in the user template will 
 * FieldtypeUrlLanguage
 
 These fieldtypes were not supported in the past and the usage of them inside the user template led to an error. This should be fixed now after this update.
+
+## 2025-01-06
+
+- **Missing redirect on Ajax submission added**
+
+If Ajax form submission and TFA were enabled, but the current user has no TFA enabled, then the Ajax redirect after successful login did not worked. This has been fixed now and the user will be redirected to another page. The page is set inside the module configuration.
