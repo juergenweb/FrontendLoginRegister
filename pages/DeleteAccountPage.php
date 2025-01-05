@@ -24,6 +24,9 @@
     class DeleteAccountPage extends FrontendLoginRegisterPages
     {
 
+        protected string $fl_deleteaccount = '';
+        protected int|string $fl_deleteaccountdatetime = '';
+
         /**
          * Every form must have an ID, so let's add it via the constructor
          * @throws WireException
@@ -69,7 +72,7 @@
                     $pass->setRule('checkPasswordOfUser', $this->user);
                     // no need to display the password requirements here
                     $pass->showPasswordRequirements(false);
-                    $pass->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
+                    $pass->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
                     $this->add($pass);
 
                     // create info box for account deletion
