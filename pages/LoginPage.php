@@ -374,6 +374,11 @@
 
             } else {
 
+                // Special case: Tfa is enabled, but user has not TFA enabled
+                if (!$this->user->hasTfa() && $this->loginregisterConfig['input_tfa']) {
+                    $this->redirectAfterLogin();
+                }
+
                 // login form
                 $this->setSuccessMsg($this->_('You are now logged in.'));
 
@@ -469,7 +474,6 @@
                                     $this->tfa->start($user->name, $this->getValue('pass')); // redirects if Ajax is not enabled
                                 } else {
                                     $this->wire('session')->remove('showed');
-                                    // TODO remove if everything works as expected
                                     $this->defaultLogin($user);
                                 }
                             } else {
@@ -683,7 +687,6 @@
         {
             $id = $this->getRedirectPageIdAfterLogin();
             $query_string = $this->getDeletionQueryString();
-
 
             $this->wire('session')->set('loginID', $id);
             if (($this->wire('languages')) && (count($this->wire('languages')) > 1)) {
