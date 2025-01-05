@@ -51,9 +51,9 @@
             $this->createFormFields('input_profile', $this);
 
             // show or hide the display of the toggle checkbox next to password fields
-            $this->getFormelementByName('pass')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
-            $this->getFormelementByName('pass-confirm')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']));
-            $this->getFormelementByName('oldpass')->showPasswordToggle((bool)(!$this->loginregisterConfig['input_hide_passwordtoggle']))->showPasswordRequirements(false);
+            $this->getFormelementByName('pass')->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
+            $this->getFormelementByName('pass-confirm')->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle']);
+            $this->getFormelementByName('oldpass')->showPasswordToggle(!$this->loginregisterConfig['input_hide_passwordtoggle'])->showPasswordRequirements(false);
             
             // create and add the submission button to the form
             $button = new Button('submit');
@@ -130,7 +130,7 @@
 
                 if ($this->user->save()) {
                     $this->wire('session')->set('valid', '1');
-                    // check if site is multi-lingual
+                    // check if the site is multilingual
                     if ($this->wire('languages') && count($this->wire('languages')) > 1) {
                         if ($old_user_lang != $this->user->language->id) {
                             $this->wire('session')->set('language', (string)$this->user->language->id);
