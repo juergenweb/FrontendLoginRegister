@@ -19,10 +19,12 @@
     use FrontendForms\Email as Email;
     use FrontendForms\Form;
     use ProcessWire\WireException;
-    use ProcessWire\WireMail;
 
     class ForgotLogindataPage extends FrontendLoginRegisterPages
     {
+
+        protected string $fl_recoverylogindata = '';
+        protected int|string $fl_recoverylogindatadatetime = '';
 
         /**
          * @throws WireException
