@@ -49,6 +49,10 @@
             $this->setMaxTime(3600);
             $this->setSuccessMsg($this->_('A link to complete your account deletion has been sent to your email address.'));
             $this->setSubmitWithAjax($this->useAjax);
+            // disable CAPTCHA if user is logged in
+            if($this->user->isLoggedin()){
+                $this->disableCaptcha();
+            }
 
             // show email field only if a user is not logged in and the deletion page is publicly reachable
             if($this->loginregisterConfig['input_publicDeletion'] && (!$this->user->isLoggedin())){
