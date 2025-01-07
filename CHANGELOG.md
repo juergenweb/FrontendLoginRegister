@@ -120,3 +120,7 @@ These fieldtypes were not supported in the past and the usage of them inside the
 - **Missing redirect on Ajax submission added**
 
 If Ajax form submission and TFA were enabled, but the current user has no TFA enabled, then the Ajax redirect after successful login did not worked. This has been fixed now and the user will be redirected to another page. The page is set inside the module configuration.
+
+- **Display of CAPTCHA disabled if user is already logged in**
+
+It does not make sense and is not really userfriendly to use a CAPTCHA on non-public reachable pages. Therefore I have disabled the display/usage of a CAPTCHA on pages, that can only be displayed after login. To be more precious: The display of a CAPTCHA is now disabled on the "Delete request page" if a user is logged in and on the "Delete account page".
