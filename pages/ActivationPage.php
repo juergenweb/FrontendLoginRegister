@@ -76,7 +76,7 @@
                     if ($this->user->save()) {
                         // output success message
                         $this->alert->setText(sprintf($this->_('Your account has been successfully activated. %s'),
-                            $this->___loginLink()->___render()));
+                            $this->loginLink()->render()));
                         $this->alert->setCSSClass('alert_successClass');
                     } else {
                         // output warning message that a problem occurs during saving of user
@@ -96,7 +96,7 @@
                 $this->alert->setCSSClass('alert_dangerClass');
             }
 
-            return $this->alert->___render();
+            return $this->alert->render();
         }
 
         /**
