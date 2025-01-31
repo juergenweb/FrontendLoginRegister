@@ -374,7 +374,7 @@
             $link->setQueryString($codeName . '=' . $code);
             $linkt_text = (!is_null($linktext)) ? $linktext : $targetPage->httpUrl;
             $link->setLinkText($linkt_text);
-            return $link->___render();
+            return $link->render();
         }
 
         /**
@@ -459,7 +459,7 @@
                 $text = $this->loginregisterConfig['input_remindertext'];
             }
 
-            $body = $this->generateEmailPreHeader($m) . $text . $this->___generateNoReplyText();
+            $body = $this->generateEmailPreHeader($m) . $text . $this->generateNoReplyText();
             $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
             $this->setMailPlaceholder('body', $body);
             $m->bodyHTML($body);
@@ -521,7 +521,7 @@
                     $text = $this->loginregisterConfig['input_deletion_confirmation'];
                 }
 
-                $body = $this->generateEmailPreHeader($m) . $text . $this->___generateNoReplyText();
+                $body = $this->generateEmailPreHeader($m) . $text . $this->generateNoReplyText();
                 $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
                     ['tagOpen' => '[[', 'tagClose' => ']]']);
 
@@ -947,7 +947,7 @@
                     $delete_checkbox->setAttribute('value', 'remove');
                     // add JavaScript onchange attribute for the image preview to the field
                     $delete_checkbox->setAttribute('onclick', 'removePreview(this);');
-                    $string .= $delete_checkbox->___render();
+                    $string .= $delete_checkbox->render();
                 } else {
 
                     $string .= '<div id="' . $this->getID() . '-' . $fieldname . '-preview" class="' . $outer_classes . '" data-width="' . $sizes[0] . 'px" data-class="' . $image_classes . '"></div>';
