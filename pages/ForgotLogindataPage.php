@@ -86,7 +86,7 @@
                 $content .= $this->prependBody();
             }
 
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
 
                 // create the recovery code
                 $recoveryCode = $this->createQueryCode();
@@ -153,7 +153,7 @@
                         } else {
                             $text = $this->loginregisterConfig['input_passwordforgottentext'];
                         }
-                        $body = $text . $this->___generateNoReplyText();
+                        $body = $text . $this->generateNoReplyText();
 
                         // Add the HTML body property to the Mail object
                         Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
