@@ -151,7 +151,7 @@
                     $this->remove($this->privacy);
             }
 
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
 
                 $activationCode = $this->createQueryCode();// create the activation code
 
@@ -216,7 +216,7 @@
                     } else {
                         $text = $this->loginregisterConfig['input_activationtext'];
                     }
-                    $body = $text . $this->___generateNoReplyText();
+                    $body = $text . $this->generateNoReplyText();
 
                     // Add the HTML body property to the Mail object
                     Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
