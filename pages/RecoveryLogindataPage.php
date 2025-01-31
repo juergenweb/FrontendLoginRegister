@@ -61,7 +61,7 @@
             } else {
                 $successMsg = $this->_('Your new password has been saved, and you can log in into your account now.');
             }
-            $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
+            $this->setSuccessMsg($successMsg . ' ' . $this->loginLink()->render());
 
             //pass
             // sanitizers added: text
@@ -108,7 +108,7 @@
             if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
                 // grab the user and store the new password
                 $this->user->setOutputFormatting(false);
                 $this->user->fl_recoverylogindata = ''; // delete the recovery code
