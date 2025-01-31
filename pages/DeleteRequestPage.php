@@ -111,7 +111,7 @@
             if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
 
                 if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                     // get the ID of the user language as stored inside the db
@@ -150,7 +150,7 @@
                 } else {
                     $text = $this->loginregisterConfig['input_deleteaccounttext'];
                 }
-                $body = $text . $this->___generateNoReplyText();
+                $body = $text . $this->generateNoReplyText();
 
                 // Add the HTML body property to the Mail object
                 Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
