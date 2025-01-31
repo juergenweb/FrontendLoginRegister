@@ -46,7 +46,7 @@
          */
         public function render(): string
         {
-            return $this->alert->___render();
+            return $this->alert->render();
         }
 
     }
