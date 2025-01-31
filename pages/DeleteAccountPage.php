@@ -125,7 +125,7 @@
 
             if ((time() - $this->user->getUnformatted('fl_deleteaccountdatetime')) > 300) {
                 $this->getAlert()->setCSSClass('alert_dangerClass')->setText(sprintf($this->_('Your deletion link is expired. It was only valid for 5 minutes. Please %s for a new deletion link.'),
-                    $this->___requestLink()->___render()));
+                    $this->requestLink()->render()));
                 $this->showForm = false;
 
                 //delete deletion code and time
@@ -159,7 +159,7 @@
             if (!$this->getSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
                 // delete the user
                 if (!$this->wire('users')->delete($this->user)) {
                     // problem deleting the user - set an alert to inform the user
