@@ -50,7 +50,7 @@
             $this->setSubmitWithAjax($this->useAjax);
             $this->setAttribute('action', $this->wire('page')->url . '?unlockaccountcode=' . $this->queryString);
             $successMsg = $this->_('Your account is now unlocked.');
-            $this->setSuccessMsg($successMsg . ' ' . $this->___loginLink()->___render());
+            $this->setSuccessMsg($successMsg . ' ' . $this->loginLink()->render());
             $this->setPrependBody(true); // this disables the display of the body text after successfull form submission
 
             //pass
@@ -86,7 +86,7 @@
             if (!$this->setSubmitWithAjax()) {
                 $content .= $this->prependBody();
             }
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
                 // grab the user and remove the lock code from the database
                 $this->user->setOutputFormatting(false);
                 $this->user->fl_unlockaccount = ''; // delete the lock code in the database
