@@ -112,10 +112,10 @@
             }
             // Show the link for account deletion, if enabled in the settings
             if ($this->loginregisterConfig['input_deleteProfile']) {
-                $this->add($this->___deleteAccountLink());
+                $this->add($this->deleteAccountLink());
             }
 
-            if ($this->___isValid()) {
+            if ($this->isValid()) {
 
                 // grab the user language id before the saving process on multi-language site
                 if ($this->wire('languages') && count($this->wire('languages')) > 1) {
