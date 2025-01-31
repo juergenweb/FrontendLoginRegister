@@ -156,7 +156,7 @@
             $m->subject($this->_('We have detected suspicious activity on your user account'));
             $m->title($this->_('Action required to unlock your account'));
             $body = $this->getLangValueOfConfigField('input_unlock_account', $this->loginregisterConfig,
-                    $this->stored_user_lang->id) . $this->___generateNoReplyText();
+                    $this->stored_user_lang->id) . $this->generateNoReplyText();
 
             // Add the HTML body property to the Mail object
             Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
@@ -330,7 +330,7 @@
 
                 // show or hide the cancel link depending on settings
                 if ($this->tfa->showCancel) {
-                    $this->add($this->___cancelLink());
+                    $this->add($this->cancelLink());
                 }
 
                 // log failed attempts if enabled
@@ -341,7 +341,7 @@
                     $this->setRedirectUrlAfterAjax($this->wire('pages')->get($this->getRedirectPageIdAfterLogin())->url . $this->deletionCode);
                 }
 
-                if ($this->___isValid()) {
+                if ($this->isValid()) {
                     $this->wire('session')->remove('showed');
                     $this->tfa->sessionReset(); // remove all tfa session values
                     $this->wire('session')->forceLogin($user); // force login
@@ -420,7 +420,7 @@
 
                 // register link
                 if ($this->loginregisterConfig['input_selectloginregister'] == 'loginregister') {
-                    $this->add($this->___registerLink());
+                    $this->add($this->registerLink());
                 }
 
                 // log failed attempts if enabled
@@ -434,7 +434,7 @@
 
                 }
 
-                if ($this->___isValid()) {
+                if ($this->isValid()) {
 
                     if ($this->loginregisterConfig['input_selectlogin'] == 'email') {
                         // login with email
@@ -861,7 +861,7 @@
             } else {
                 $text = $this->loginregisterConfig['input_tfatext'];
             }
-            $body = $text . $this->___generateNoReplyText();
+            $body = $text . $this->generateNoReplyText();
 
             // Add the HTML body property to the Mail object
             Form::setBody($m, $body, $this->loginregisterConfig['input_mailmodule']);
