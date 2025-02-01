@@ -115,7 +115,7 @@ The following multilanguage fields, which can be used in the user template will 
 
 These fieldtypes were not supported in the past and the usage of them inside the user template led to an error. This should be fixed now after this update.
 
-## 2025-01-06
+## [1.3.7] 2025-02-01
 
 - **Missing redirect on Ajax submission added**
 
