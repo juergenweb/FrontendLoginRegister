@@ -18,12 +18,14 @@ function onReady() {
 
         // show/hide text inside input_delete description
         function showHideRemindText(){
-            if(remind_input.value > 0){
+            if(!!remind_input && remind_input.value > 0){
                 remind_desc_text.removeAttribute("style");
                 remind_desc_text.style.display = "inline-block";
             } else {
-                remind_desc_text.removeAttribute("style");
-                remind_desc_text.style.display = "none";
+                if(!!remind_desc_text) {
+                    remind_desc_text.removeAttribute("style");
+                    remind_desc_text.style.display = "none";
+                }
             }
         }
 
@@ -38,7 +40,7 @@ function onReady() {
 
         // calculate days to delete on delete_input change
         function calculateDeleteDate() {
-            if(delete_input.value > 0){
+            if(!!delete_input && delete_input.value > 0){
                 calculation();
             }
             showHideRemindText();
@@ -47,8 +49,12 @@ function onReady() {
         calculateDeleteDate();
 
         // add event listeners
-        remind_input.addEventListener("change", calculateDeleteDate);
-        delete_input.addEventListener("change", showHideText);
+        if(!!remind_input){
+            remind_input.addEventListener("change", calculateDeleteDate);
+        }
+        if(!!delete_input) {
+            delete_input.addEventListener("change", showHideText);
+        }
 
         function showHideText(){
             if(delete_input.value > 0){
