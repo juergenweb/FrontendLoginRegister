@@ -5,8 +5,6 @@
 A module for ProcessWire CMS to integrate a user registration/login functionality based on the FrontendForms module.
 This module creates pages and templates during the installation for faster development.
 
-> ⚠ This module is early Beta stage - so be aware of using it on live sites!
-
 
 ## Requirements
 - ProcessWire 3.0.195 or newer
