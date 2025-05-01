@@ -124,3 +124,9 @@ If Ajax form submission and TFA were enabled, but the current user has no TFA en
 - **Display of CAPTCHA disabled if user is already logged in**
 
 It does not make sense and is not really userfriendly to use a CAPTCHA on non-public reachable pages. Therefore I have disabled the display/usage of a CAPTCHA on pages, that can only be displayed after login. To be more precious: The display of a CAPTCHA is now disabled on the "Delete request page" if a user is logged in and on the "Delete account page".
+
+## 2025-05-01
+
+- **Selective loading of assets added**
+
+Now the backend JavaScript file will be only loaded on the module configuration page of this module instead of all pages. This helps to decrease the loading time.
