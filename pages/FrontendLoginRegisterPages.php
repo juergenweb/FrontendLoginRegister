@@ -82,6 +82,10 @@
                 $this->loginregisterConfig[$key] = $value;
             }
 
+            // add sender email address containing the host name to the config properties
+            // this is important to send mails from shared hosts
+            $this->loginregisterConfig['input_email'] = 'noreply@'.$this->wire('config')->httpHost;
+
             // set FrontendForms object
             $this->frontendForms = $this->wire('modules')->get('FrontendForms');
 
