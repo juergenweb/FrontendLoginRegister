@@ -130,8 +130,6 @@ Roles,Rollen,,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,a5
 "Email settings","E-Mail Einstellungen",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,5386484801d01d2ece73fbc5f605f739
 "Email HTML template","E-Mail HTML-Vorlage",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,68fe21d1830d41680d6ccb3235ae4803
 "Please select an email template.","Bitte wählen Sie eine E-Mail Vorlage aus.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,dee5cc8e11f9dd3e06cf25eff32b5ea3
-"From email address","Absender E-Mail Adresse",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,6f6da7aec649851c977b6bf4e083977d
-"This email address will be displayed as the sender of the emails sent by this module.","Diese E-Mail Adresse wird als Absender-Adresse bei den E-Mails verwendet, welche von diesem Modul verschickt werden.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,0482d6e0f2a909850d26e7da6b7b2e33
 "From name","Absender Name",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,c3a7ea0c38bac179a545dbfaf4ebb013
 "fe. My company","z.B. Meine Firma",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,8eea8281628fde6ba6c3589554795bd2
 "This name will be displayed as the sender of the emails sent by this module.","Diese Name wird als Absender bei den E-Mails verwendet, welche von diesem Modul verschickt werden.",,site/modules/FrontendLoginRegister/FrontendLoginRegister.module,b42205d93dbb06d2df7d25582ce08d22
