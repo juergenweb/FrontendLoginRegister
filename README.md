@@ -69,7 +69,6 @@ The FrontendLoginRegister module works out of the box, but it offers the followi
 * **`Offer account deletion`** Select if you want to enable account deletion for users so that the user can delete his
   account by himself
 * **`Select email template`** Select which HTML email template should be used for sending emails
-* **`From email address`** Enter the email address, which should be displayed as the sender email address for emails
 * **`Sender name`** Enter the name, which should be displayed as the sender of the emails
 * **`Select using an external mail service for sending mails`** If you have installed 3rd party modules for sending mails and these modules are compatible with this module, you can select if you want to use one of these modules for sending the mails of this module or not.
 * **`Email Texts`** You can customize the text of each email that will be sent by this module using a CKEditor field
@@ -361,3 +360,4 @@ Just to mention: On the "Unlock your account" page, I have set "prependBody" by 
 * Testing, testing, testing....
 
 This read me file will be extended time after time - so please be patient ;-)
+
