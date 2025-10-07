@@ -716,7 +716,7 @@
          * @throws Exception
          * @throws Exception
          */
-        protected function createPass(string $type = null): void
+        protected function createPass(string|null $type = null): void
         {
             // add password fields
             if ($type == 'input_profile') {
