@@ -137,4 +137,9 @@ The configuration field where you can set a custom email address as the sender e
 
 To prevent such a behaviour, this configuration field is now removed and the no-changeable email address noreply@yourhostname.com will be used instead (yourhostname.com will be replaced with the actual host name).
 
+## [1.3.79] 2025-10-07
+
+- **Updates for PHP 8.4**
+
+Some deprecated code parts have been re-written to be compatible with PHP 8.4.
 
