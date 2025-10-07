@@ -614,7 +614,7 @@
          * @param string|null $textarea - the value of the textarea field
          * @return array
          */
-        protected function newLineToArray(string $textarea = null): array
+        protected function newLineToArray(string|null $textarea = null): array
         {
             $textarea_array = array_map('trim', explode("\n", $textarea)); // remove extra spaces from each array value
             $final_array = [];
