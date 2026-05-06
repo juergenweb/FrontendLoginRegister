@@ -778,6 +778,8 @@
             // add the email field
             $email = new Email('email');
             $email->setRule('uniqueEmail');
+            $email->setRule('required');
+
             if ($this->wire('user')->isLoggedIn()) {
                 $email->setAttribute('value', $this->wire('user')->email);
             }
