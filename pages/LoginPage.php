@@ -385,6 +385,7 @@
                     // sanitizers added: text
                     // validation rules added: email, emailDNS, required
                     $email = new Email('email');
+                    $email->setRule('required');
                     $this->add($email);
                 } else {
 
