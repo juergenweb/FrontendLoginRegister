@@ -47,6 +47,7 @@
 
             // email field
             $email = new Email('email');
+            $email->setRule('required');
             $this->add($email);
 
             // button object
