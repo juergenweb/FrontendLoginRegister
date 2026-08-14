@@ -1007,11 +1007,6 @@
                     // add JavaScript onchange attribute for the image preview to the field
                     $on_change = $field->getAttribute('onchange');
                     $field->setAttribute('onchange', 'showPreview(event);' . $on_change);
-
-                    $link = $field->getClearLink();
-                    $onclick = $link->getAttribute('onclick');
-                    $link->setAttribute('onclick', 'removeImageTag(this);' . $onclick);
-                    $field->prepend($this->createProfileImagePreview($field->getAttribute('name')));
                 }
 
                 $field->setLabel($fieldtype->label);
