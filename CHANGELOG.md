@@ -125,7 +125,7 @@ If Ajax form submission and TFA were enabled, but the current user has no TFA en
 
 It does not make sense and is not really userfriendly to use a CAPTCHA on non-public reachable pages. Therefore I have disabled the display/usage of a CAPTCHA on pages, that can only be displayed after login. To be more precious: The display of a CAPTCHA is now disabled on the "Delete request page" if a user is logged in and on the "Delete account page".
 
-## [1.3.78] 2025-08-25
+## [1.3.8] 2025-08-25
 
 - **Selective loading of assets added**
 
@@ -137,9 +137,14 @@ The configuration field where you can set a custom email address as the sender e
 
 To prevent such a behaviour, this configuration field is now removed and the no-changeable email address noreply@yourhostname.com will be used instead (yourhostname.com will be replaced with the actual host name).
 
-## [1.3.79] 2025-10-07
+## [1.3.9] 2025-10-07
 
 - **Updates for PHP 8.4**
 
 Some deprecated code parts have been re-written to be compatible with PHP 8.4.
 
+## [1.3.10] 2025-10-07
+
+- **Image preview removed**
+
+Due to significant changes inside the FrontendForms module, the image preview feature does not work anymore. So it has been removed now.
