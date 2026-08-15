@@ -1006,7 +1006,7 @@
 
                     // add JavaScript onchange attribute for the image preview to the field
                     $on_change = $field->getAttribute('onchange');
-                    $field->setAttribute('onchange', 'showPreview(event);' . $on_change);
+                    //$field->setAttribute('onchange', 'showPreview(event);' . $on_change);
                 }
 
                 $field->setLabel($fieldtype->label);
