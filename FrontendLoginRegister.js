@@ -3,75 +3,202 @@ JavaScript file for FrontendLoginRegister module
 contains no JQuery - pure JavaScript
 */
 
+(function () {
+    "use strict";
 
-/**
- * Change the image in the preview depending on the image selected in the input type file
- * @param event
- */
-function showPreview(event) {
+    /**
+     * Escape dangerous characters before inserting a value into HTML markup
+     * built via string concatenation, to prevent XSS in case any of these
+     * values are ever influenced by less trusted data. Kept as a local copy
+     * rather than relying on frontendforms-frontend.js's own escapeHTML(),
+     * since that one is scoped inside that file's own IIFE and not
+     * accessible here.
+     * @param str
+     * @returns {string}
+     */
+    function escapeHTML(str) {
+        return String(str).replace(/[&<>"']/g, function (m) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[m];
+        });
+    }
 
-    if (event.target.files.length > 0) {
-        let id = event.target.id;
-
-        let old_img = document.getElementById(id + "-image");
-        let preview_wrapper = document.getElementById(id + "-preview");
-        if (old_img) {
-            // write it as data-attribute to the preview wrapper container
-            preview_wrapper.dataset.oldsrc = old_img.src;
+    /**
+     * Restore the original image (if one was captured) or remove the
+     * preview image entirely for a given field name, and clear the
+     * stored original src afterwards. Shared by removeImageTag() (called
+     * from the "clear" link) and the delegated "ff-close" click handler
+     * below (called when a file-upload badge's own close icon is
+     * clicked), so both stay in sync without duplicating this logic.
+     * @param name - the upload field's name attribute (not its id)
+     */
+    function resetImagePreview(name) {
+        let preview_wrapper = document.getElementById(name + "-preview");
+        if (!preview_wrapper) {
+            return;
         }
-        let file = event.target.files[0];
-        // check if the file is present and it is an image
-        if (file && file["type"].split('/')[0] === "image") {
-            let src = URL.createObjectURL(event.target.files[0]);
-            if (old_img) {
-                old_img.src = src;
-            } else {
-                let image_width = preview_wrapper.dataset.width;
-                let image_class = preview_wrapper.dataset.class;
-                preview_wrapper.innerHTML = '<img id="' + id + '-image" class="' + image_class + '" alt="' + src + '" src="' + src + '" style="width:' + image_width + ';">';
+
+        let image_tag = document.getElementById(name + "-image");
+
+        if (preview_wrapper.dataset.oldsrc && image_tag) {
+            image_tag.src = preview_wrapper.dataset.oldsrc;
+        } else if (image_tag) {
+            image_tag.remove();
+        }
+        // clear the stored original src regardless of which branch ran
+        // above, so a later re-selection + removal cycle doesn't
+        // incorrectly restore this now-stale reference
+        delete preview_wrapper.dataset.oldsrc;
+    }
+
+    /**
+     * Change the image in the preview depending on the image selected in the input type file
+     * @param event
+     */
+    function showPreview(event) {
+
+        if (event.target.files.length > 0) {
+            let name = event.target.name;
+
+            let old_img = document.getElementById(name + "-image");
+            let preview_wrapper = document.getElementById(name + "-preview");
+
+            if (!preview_wrapper) {
+                return;
+            }
+
+            // Only capture the original src the very first time a file is
+            // selected for this field, and only if old_img currently
+            // holds a genuine, pre-existing image (not a blob: URL).
+            // Without the blob check, a field that had NO original image
+            // to begin with (old_img gets created fresh by the else
+            // branch below on the very first selection) would - on a
+            // second file selection - incorrectly treat that first
+            // file's own blob preview as if it were "the original",
+            // since old_img now exists. removeImageTag()/ff-close would
+            // then wrongly restore the first file's preview instead of
+            // clearing the field entirely.
+            if (old_img && !preview_wrapper.dataset.oldsrc && !old_img.src.startsWith("blob:")) {
+                preview_wrapper.dataset.oldsrc = old_img.src;
+            }
+            let file = event.target.files[0];
+            // check if the file is present and it is an image
+            if (file && file["type"].split('/')[0] === "image") {
+                let src = URL.createObjectURL(event.target.files[0]);
+                if (old_img) {
+                    // release the previous blob URL (if any) before
+                    // replacing it, to avoid leaking memory when the user
+                    // selects several different files in a row before
+                    // submitting the form
+                    if (old_img.src && old_img.src.startsWith("blob:")) {
+                        URL.revokeObjectURL(old_img.src);
+                    }
+                    old_img.src = src;
+                } else {
+                    let image_width = preview_wrapper.dataset.width;
+                    let image_class = preview_wrapper.dataset.class;
+                    // src itself does not need escaping - it is a blob: URL
+                    // generated by the browser, never derived from user input
+                    preview_wrapper.innerHTML = '<img id="' + escapeHTML(name) + '-image" class="' + escapeHTML(image_class) + '" alt="' + src + '" src="' + src + '" style="width:' + escapeHTML(image_width) + ';">';
+                }
             }
         }
     }
-}
 
-/**
- * Show or hide the image depending on if the checkbox is checked or not
- * @param checkbox
- */
-function removePreview(checkbox) {
+    /**
+     * Show or hide the image depending on if the checkbox is checked or not
+     * @param checkbox
+     */
+    function removePreview(checkbox) {
 
-    let id = checkbox.id;
-    let image_id = id.replace("remove", "preview");
-    let preview = document.getElementById(image_id);
+        let id = checkbox.id;
+        let image_id = id.replace("remove", "preview");
+        let preview = document.getElementById(image_id);
 
-    if (preview) {
-        if (checkbox.checked) {
-            preview.style.display = "none"; // hide the image
-        } else {
-            preview.style.display = "block"; // show the image again
-        }
-    }
-}
-
-
-/**
- * Remove the image preview if the empty upload field link is clicked
- * @param event
- */
-function removeImageTag(event) {
-    let id = event.id;
-    let image_tag_id = id.replace("clear", "image");
-    let image_tag = document.getElementById(image_tag_id);
-    // check if data-oldsrc is present
-    let preview_wrapper_id = id.replace("clear", "preview");
-    let preview_wrapper = document.getElementById(preview_wrapper_id);
-    if (preview_wrapper) {
-        if (preview_wrapper.dataset.oldsrc) {
-            image_tag.src = preview_wrapper.dataset.oldsrc;
-        } else {
-            image_tag.remove();
+        if (preview) {
+            if (checkbox.checked) {
+                preview.style.display = "none"; // hide the image
+            } else {
+                preview.style.display = "block"; // show the image again
+            }
         }
     }
 
-}
 
+    /**
+     * Remove the image preview if the empty upload field link is clicked
+     * @param event
+     */
+    function removeImageTag(event) {
+        let id = event.id;
+        let preview_wrapper_id = id.replace("clear", "preview");
+        let preview_wrapper = document.getElementById(preview_wrapper_id);
+        if (!preview_wrapper) {
+            return;
+        }
+        // preview_wrapper_id is "{name}-preview" - strip the suffix to
+        // get back the plain field name resetImagePreview() expects
+        let name = preview_wrapper_id.replace(/-preview$/, "");
+        resetImagePreview(name);
+    }
+
+    /**
+     * When the "close"/delete icon inside a file-upload badge is clicked
+     * (added dynamically by frontendforms-frontend.js's handleFileUploads()
+     * whenever a file is selected), also clear the larger image preview
+     * for that same field, if one exists - keeping both in sync, since
+     * selecting a file shows both the small file-badge and the larger
+     * preview at the same time.
+     *
+     * Registered with useCapture=true (the trailing "true" argument) so
+     * this runs during the capturing phase, BEFORE
+     * frontendforms-frontend.js's own bubbling-phase listener on
+     * ".file-delete" (which removes the clicked file's badge from the
+     * DOM entirely). Without this, that removal would already have
+     * detached the badge - and with it the path back up to the file
+     * list container - from the DOM by the time this handler ran,
+     * making closest() below unable to find it.
+     */
+    document.addEventListener("click", function (event) {
+
+        if (!event.target.classList.contains("ff-close")) {
+            return;
+        }
+
+        // find the enclosing file-upload field's own file list container,
+        // then its <input> element, to read the field's name attribute -
+        // the preview wrapper/image use name-based ids, not the
+        // "-fileupload"-suffixed input id
+        let fileList = event.target.closest("[id$='-files']");
+        if (!fileList) {
+            return;
+        }
+
+        let fileuploadFieldID = fileList.id.replace(/-files$/, "");
+        let fileuploadField = document.getElementById(fileuploadFieldID);
+        if (!fileuploadField) {
+            return;
+        }
+
+        // only relevant for upload fields that actually have an image
+        // preview - a regular (non-image) file upload field has no
+        // "-preview" wrapper at all, so resetImagePreview() simply does
+        // nothing for those
+        resetImagePreview(fileuploadField.name);
+
+    }, true);
+
+    // exposed on window because these are called from inline onchange="" /
+    // onclick="" HTML attributes (see InputFile.php and the profile image
+    // upload markup), which can only reach global functions - escapeHTML()
+    // is used only internally and deliberately stays private.
+    window.showPreview = showPreview;
+    window.removePreview = removePreview;
+    window.removeImageTag = removeImageTag;
+
+})();
