@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * Local configuration for the integration test suite (tests/Integration/) - tells
+ * bootstrap.php where your ProcessWire installation lives, so it can boot a REAL ProcessWire
+ * instance for these tests to run against.
+ *
+ * Copy this file to "pw-root.php" (same directory) and adjust the path below. That file is
+ * gitignored on purpose - it's specific to your machine and is NOT meant to be committed.
+ *
+ * IMPORTANT: integration tests hit a real database and create/delete real Page/User records.
+ * Point this at a local development or dedicated test site - never at production.
+ *
+ * Return the absolute path to the ProcessWire root directory - the one that directly contains
+ * index.php (fe "C:/laragon/www/webseite2" or "/var/www/mysite").
+ */
+return 'C:/laragon/www/webseite2';

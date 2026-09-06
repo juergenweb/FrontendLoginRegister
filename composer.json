@@ -1,0 +1,29 @@
+{
+    "name": "juergenweb/frontend-login-register",
+    "description": "User login/registration component for ProcessWire using the FrontendForms module.",
+    "type": "processwire-module",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "classmap": [
+            "helpers/"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FrontendLoginRegister\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:integration": "phpunit --testsuite integration"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

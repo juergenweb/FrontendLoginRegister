@@ -143,15 +143,8 @@ To prevent such a behaviour, this configuration field is now removed and the no-
 
 Some deprecated code parts have been re-written to be compatible with PHP 8.4.
 
-## [1.3.10] 2026-08-15
+## [1.3.10] 2025-10-07
 
 - **Image preview removed**
 
 Due to significant changes inside the FrontendForms module, the image preview feature does not work anymore. So it has been removed now.
-
-## [1.3.11] 2026-08-16
-
-- **Image preview added again**
-
-The image preview is back. The JS code has been capsuled, a security issue is fixed now, some minor bugs have been fixed and everything should work like before. Module have been tested to work with the upcoming version of FrontendForms (3.0.0) too.
-

@@ -1,0 +1,24 @@
+# This file controls what ends up in an exported copy of the repository - eg. GitHub's "Download
+# ZIP", a GitHub release source archive, `git archive`, or a Composer install from this repository
+# without a separate dist artifact. Files marked export-ignore are only used during development
+# (tests, docs, screenshots, translator tooling) and are not needed to run the module, so they are
+# left out of what gets shipped/installed.
+
+/tests export-ignore
+/phpunit.xml export-ignore
+/README.md export-ignore
+/CHANGELOG.md export-ignore
+/images export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+
+# These are already covered by .gitignore and should never actually be tracked, but they are
+# export-ignored here too as a safety net in case one of them ends up committed by mistake -
+# eg. by someone running "git add -A" before checking .gitignore.
+/.phpunit.cache export-ignore
+/.phpunit.result.cache export-ignore
+/composer.lock export-ignore
+/vendor export-ignore
+
+# Note: composer.json is deliberately NOT export-ignored - it is required for a Composer-based
+# install of this module (it defines the classmap autoloading for helpers/).

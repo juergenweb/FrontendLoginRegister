@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         defaultTestSuite="unit">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <!-- Needs a real ProcessWire install configured, see tests/Integration/pw-root.php.dist.
+             Not run by "composer test" (which uses the default suite, "unit"); run it explicitly
+             with "composer test:integration" (or vendor/bin/phpunit with the testsuite option
+             set to "integration"). -->
+        <testsuite name="integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">./traits</directory>
+            <directory suffix=".php">./pages</directory>
+            <file>./FrontendLoginRegister.module</file>
+        </include>
+    </source>
+</phpunit>

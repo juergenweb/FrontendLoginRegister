@@ -43,7 +43,7 @@ $this->templatePages = [
         'sitemap' => 0,
         'noFollow' => 1,
         'noIndex' => 1,
-        'roles' => ['guest','registered'],
+        'roles' => ['registered'],
         'className' => $this->getAllClasses()['fl_logoutpage']
     ],
     'fl_profilepage' => [
@@ -112,7 +112,7 @@ $this->templatePages = [
         'noFollow' => 1,
         'noIndex' => 1,
         'status' => 'hidden',
-        'roles' => ['guest','registered'],
+        'roles' => ['registered'],
         'className' => $this->getAllClasses()['fl_deleteaccountpage']
     ],
     'fl_unlockaccountpage' => [
