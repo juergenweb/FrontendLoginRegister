@@ -205,10 +205,10 @@ class FrontendLoginRegister extends WireData implements Module, ConfigurableModu
             'summary' => 'User login/registration component for ProcessWire using the FrontendForms module.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendLoginRegister',
-            'version' => '1.3.10',
+            'version' => '2.0.0',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=2.2.33', 'LazyCron'],
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.195', 'FrontendForms>=3.0.0', 'LazyCron'],
             'icon' => 'sign-in'
         ];
     }
