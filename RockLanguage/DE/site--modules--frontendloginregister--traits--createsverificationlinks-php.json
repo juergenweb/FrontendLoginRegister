@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/traits\/CreatesVerificationLinks.php",
+    "textdomain": "site--modules--frontendloginregister--traits--createsverificationlinks-php",
+    "translations": {
+        "8c81405575ad2673b1ca89ebcd7125ad": {
+            "text": "Ich habe ein Konto registriert \u2013 mein Konto jetzt aktivieren."
+        },
+        "c0b573f315326f74c6dd9e211f1c5973": {
+            "text": "Es wurde leider kein Benutzer mit diesem Code gefunden."
+        },
+        "bb7c1708a922295f035145c08dc752a6": {
+            "text": "Ich habe kein Konto registriert \u2013 Konto l\u00f6schen."
+        }
+    }
+}

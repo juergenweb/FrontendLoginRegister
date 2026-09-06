@@ -1,0 +1,18 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/traits\/BuildsFormFields.php",
+    "textdomain": "site--modules--frontendloginregister--traits--buildsformfields-php",
+    "translations": {
+        "0b39c5aca15b84b1ad53a94d6b3feb78": {
+            "text": "Passwort \u00e4ndern"
+        },
+        "062d2b8bc2cfac7772c75ae8090fb9d1": {
+            "text": "Altes Passwort"
+        },
+        "3544848f820b9d94a3f3871a382cf138": {
+            "text": "Neues Passwort"
+        },
+        "61bca12cd76652bf2fe763b5c4952066": {
+            "text": "="
+        }
+    }
+}

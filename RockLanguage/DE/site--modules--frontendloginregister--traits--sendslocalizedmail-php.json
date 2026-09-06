@@ -1,0 +1,18 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/traits\/SendsLocalizedMail.php",
+    "textdomain": "site--modules--frontendloginregister--traits--sendslocalizedmail-php",
+    "translations": {
+        "fc6b228c1c76a11ae16c0ae5cfdd61c8": {
+            "text": "Aktion erforderlich, um Ihr Konto zu aktivieren"
+        },
+        "dd79d2ddc57b56fbb60b6e534495e2b7": {
+            "text": "Haben Sie vergessen, Ihr Konto zu best\u00e4tigen?"
+        },
+        "220d4fb4dc0df6ce398ab2143fe1b991": {
+            "text": "Ihr Konto wurde gel\u00f6scht."
+        },
+        "45dbe67ab9d69929dc41b8bfe83ce764": {
+            "text": "Auf Wiedersehen!"
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendLoginRegister\/traits\/HandlesProfileImage.php",
+    "textdomain": "site--modules--frontendloginregister--traits--handlesprofileimage-php",
+    "translations": {
+        "014fe1878c312d890ced94491f20695c": {
+            "text": "Profilbild von %s"
+        },
+        "73c8a0a1101c3a8b45d2115a99c7c9c7": {
+            "text": "Dieses Bild entfernen"
+        }
+    }
+}
