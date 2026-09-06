@@ -1,0 +1,6 @@
+Commands for tests:
+
+* Go to the dir: cd C:\laragon\www\webseite2\site\modules\FrontendLoginRegister\
+* Unit tests: vendor\bin\phpunit
+* Integration tests: composer test:integration
+* Complete test of the suite: composer test
